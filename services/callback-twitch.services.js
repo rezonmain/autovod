@@ -1,4 +1,5 @@
 /** @import { Request as ExpressRequest, Response as ExpressResponse} from "express" */
+import crypto from "crypto";
 import {
   TWITCH_EVENT_MESSAGE_TYPE,
   TWITCH_WEBHOOK_HEADERS,
