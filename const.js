@@ -6,5 +6,11 @@ export const TWITCH_WEBHOOK_HEADERS = {
   MESSAGE_ID: "Twitch-Eventsub-Message-Id".toLowerCase(),
   MESSAGE_TIMESTAMP: "Twitch-Eventsub-Message-Timestamp".toLowerCase(),
   MESSAGE_SIGNATURE: "Twitch-Eventsub-Message-Signature".toLowerCase(),
+  MESSAGE_TYPE: "Twitch-Eventsub-Message-Type".toLowerCase(),
 };
 export const TWITCH_WEBHOOK_HMAC_PREFIX = "sha256=";
+export const TWITCH_EVENT_MESSAGE_TYPE = {
+  NOTIFICATION: "notification",
+  VERIFICATION: "webhook_callback_verification",
+  REVOCATION: "revocation",
+};

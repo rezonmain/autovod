@@ -1,10 +1,8 @@
-import { twitchAuth } from "./modules/twitch-auth.js";
+import express from "express";
+import { callbackTwitchController } from "./controllers/callback-twitch.controller.js";
+import { pingController } from "./controllers/ping.controller.js";
 
-const [error, accessToken] = await twitchAuth.getAccessToken();
+const server = express();
 
-if (error) {
-  console.error(error);
-  process.exit(1);
-}
-
-console.log(accessToken);
+server.use("/callback/twitch", callbackTwitchController);
+server.use("/ping", pingController);

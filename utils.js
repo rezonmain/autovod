@@ -17,7 +17,7 @@ export const empty = (value) => {
   }
 
   if (typeof value === "string") {
-    return value.trim() === "";
+    return value === "";
   }
 
   if (Array.isArray(value)) {
