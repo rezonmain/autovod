@@ -11,9 +11,9 @@ if (tokenError) {
   process.exit(1);
 }
 
-// paymoneywubby
+// rezonmain
 const subscriptionError = await twitchNotifier.subscribeToStreamOnlineEvents(
-  38251312,
+  916663933,
   accessToken
 );
 
