@@ -70,7 +70,7 @@ export const fileCache = {
   _read(hash) {
     try {
       return fs.readFileSync(`${hash}.${EXTENSION}`, "utf8");
-    } catch () {
+    } catch {
       return null;
     }
   },
