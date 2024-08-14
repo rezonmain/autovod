@@ -32,7 +32,7 @@ export const twitchNotifier = {
       },
       transport: {
         method: "webhook",
-        callback: `${process.env.DOMAIN}/callback/twitch/eventsub`,
+        callback: `${callbackBaseUrl}/callback/twitch/eventsub`,
         secret: webhookSecret,
       },
     };
