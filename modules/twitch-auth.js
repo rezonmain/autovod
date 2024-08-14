@@ -2,13 +2,6 @@ import { CACHE_KEYS, TWITCH_TOKEN_URL } from "../const.js";
 import { empty } from "../utils.js";
 import { fileCache } from "./file-cache.js";
 
-/**
- * @typedef {Object} TwitchAccess
- * @property {string} accessToken
- * @property {number} expiresAt
- * @property {string} tokenType
- */
-
 export const twitchAuth = {
   /**
    * @param {string} clientId
