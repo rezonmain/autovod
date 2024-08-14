@@ -4,12 +4,14 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env index.js",
+    "dev": "nodemon --env-file=.env index.js",
     "random32": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "eslint": "^9.9.0",
-    "globals": "^15.9.0"
+    "globals": "^15.9.0",
+    "nodemon": "^3.1.4"
   },
   "dependencies": {
     "express": "^4.19.2"

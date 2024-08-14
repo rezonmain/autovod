@@ -56,8 +56,8 @@ async function handleEventSub(req, res) {
       console.log(`reason: ${notification.subscription.status}`);
       return;
     default:
-      console.log("[twitchNotifier.handleEventSub] Unknown message type");
       res.sendStatus(204);
+      console.log("[twitchNotifier.handleEventSub] Unknown message type");
       return;
   }
 }
