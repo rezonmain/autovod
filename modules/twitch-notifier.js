@@ -1,5 +1,5 @@
-import { TWITCH_API_URLS, TWITCH_EVENTSUB_TYPES } from "../const";
-import { empty } from "../utils";
+import { TWITCH_API_URLS, TWITCH_EVENTSUB_TYPES } from "../const.js";
+import { empty } from "../utils.js";
 
 export const twitchNotifier = {
   /**
