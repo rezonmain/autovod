@@ -1,20 +1,13 @@
-import express from "express";
-import { callbackTwitchController } from "./controllers/callback-twitch.controller.js";
-import { pingController } from "./controllers/ping.controller.js";
-import { empty } from "./utils.js";
+import { server } from "./modules/server.js";
+import { twitchAuth } from "./modules/twitch-auth.js";
 
-const server = express();
+server.start();
 
-server.use("/callback/twitch", callbackTwitchController);
-server.use("/ping", pingController);
+const [error, accessToken] = await twitchAuth.getAccessToken();
 
-const port = process.env.LISTEN_PORT;
-
-if (empty(port)) {
-  console.error("LISTEN_PORT is not set");
+if (error) {
+  console.error("Error getting Twitch access token", error);
   process.exit(1);
 }
 
-server.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}`);
-});
+console.log("Twitch access token", accessToken);

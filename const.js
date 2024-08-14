@@ -14,3 +14,6 @@ export const TWITCH_EVENT_MESSAGE_TYPE = {
   VERIFICATION: "webhook_callback_verification",
   REVOCATION: "revocation",
 };
+export const TWITCH_API_URLS = {
+  SEARCH_CHANNELS: "https://api.twitch.tv/helix/search/channels",
+};
