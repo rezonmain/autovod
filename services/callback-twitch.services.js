@@ -6,6 +6,7 @@ import {
   TWITCH_WEBHOOK_HMAC_PREFIX,
 } from "../const.js";
 import { empty } from "../utils.js";
+import { twitchNotifier } from "../modules/twitch-notifier.js";
 
 /**
  * https://dev.twitch.tv/docs/eventsub/handling-webhook-events/#processing-an-event
@@ -45,7 +46,8 @@ async function handleEventSub(req, res) {
       return;
     case TWITCH_EVENT_MESSAGE_TYPE.NOTIFICATION:
       res.sendStatus(204);
-      console.log("[twitchNotifier.handleEventSub] Notification", notification);
+      console.log("[twitchNotifier.handleEventSub] Notification");
+      await twitchNotifier.handleNotification(notification);
       return;
     case TWITCH_EVENT_MESSAGE_TYPE.REVOCATION:
       res.sendStatus(204);

@@ -1,5 +1,7 @@
+/** @import { TwitchWebhookNotification } from "../jsdoc.types.js" */
 import { TWITCH_API_URLS, TWITCH_EVENTSUB_TYPES } from "../const.js";
 import { empty } from "../utils.js";
+import { Telegram } from "./telegram.js";
 
 export const twitchNotifier = {
   /**
@@ -61,5 +63,38 @@ export const twitchNotifier = {
     } catch {
       return new Error(`[subscribeToStreamOnlineEvents] something went wrong`);
     }
+  },
+
+  /**
+   * @param {TwitchWebhookNotification} notification
+   */
+  handleNotification: async (notification) => {
+    const notificationType = notification.subscription.type;
+
+    switch (notificationType) {
+      case TWITCH_EVENTSUB_TYPES.STREAM_ONLINE.type:
+        await twitchNotifier.handleStreamOnlineEvent(notification);
+        return;
+      case TWITCH_EVENTSUB_TYPES.STREAM_OFFLINE.type:
+        return console.log(
+          "[twitchNotifier.handleNotification] Stream offline"
+        );
+      default:
+        return console.log(
+          `[twitchNotifier.handleNotification] Unknown notification type: ${notificationType}`
+        );
+    }
+  },
+
+  /**
+   * @param {TwitchWebhookNotification} notification
+   */
+  handleStreamOnlineEvent: async (notification) => {
+    const telegram = new Telegram();
+    telegram.start();
+    await telegram.sendMessage(
+      `*${notification.event.broadcaster_user_name}* is live NOW!`
+    );
+    await telegram.stop();
   },
 };
