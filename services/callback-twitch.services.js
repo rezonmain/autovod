@@ -44,9 +44,8 @@ async function handleEventSub(req, res) {
       );
       return;
     case TWITCH_EVENT_MESSAGE_TYPE.NOTIFICATION:
-      // spawn process to handle notification
       res.sendStatus(204);
-      console.log("[twitchNotifier.handleEventSub] Notification", req.body);
+      console.log("[twitchNotifier.handleEventSub] Notification", notification);
       return;
     case TWITCH_EVENT_MESSAGE_TYPE.REVOCATION:
       res.sendStatus(204);
