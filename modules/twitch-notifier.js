@@ -93,7 +93,7 @@ export const twitchNotifier = {
     const telegram = new Telegram();
     telegram.start();
     await telegram.sendMessage(
-      `*${notification.event.broadcaster_user_name}* is live NOW!`
+      `*${notification.event.broadcaster_user_name}* is live NOW\\!`
     );
     await telegram.stop();
   },
