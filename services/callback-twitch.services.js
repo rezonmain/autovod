@@ -19,7 +19,18 @@ async function handleEventSub(req, res) {
     return;
   }
 
-  const notification = JSON.parse(req.body);
+  let notification = {};
+
+  try {
+    notification = JSON.parse(req.body);
+  } catch (error) {
+    console.log(
+      "[twitchNotifier.handleEventSub] Error parsing notification",
+      error
+    );
+    res.sendStatus(400);
+    return;
+  }
 
   switch (req.headers[TWITCH_WEBHOOK_HEADERS.MESSAGE_TYPE]) {
     case TWITCH_EVENT_MESSAGE_TYPE.VERIFICATION:
