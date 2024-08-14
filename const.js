@@ -19,6 +19,6 @@ export const TWITCH_API_URLS = {
   EVENTSUB: "https://api.twitch.tv/helix/eventsub/subscriptions",
 };
 export const TWITCH_EVENTSUB_TYPES = {
-  STREAM_ONLINE: { type: "stream.online", version: 1 },
-  STREAM_OFFLINE: { type: "stream.offline", version: 1 },
+  STREAM_ONLINE: { type: "stream.online", version: "1" },
+  STREAM_OFFLINE: { type: "stream.offline", version: "1" },
 };

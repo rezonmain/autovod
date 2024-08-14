@@ -28,7 +28,7 @@ export const twitchNotifier = {
       type: TWITCH_EVENTSUB_TYPES.STREAM_ONLINE.type,
       version: TWITCH_EVENTSUB_TYPES.STREAM_ONLINE.version,
       condition: {
-        broadcaster_user_id: channelId,
+        broadcaster_user_id: String(channelId),
       },
       transport: {
         method: "webhook",
@@ -50,13 +50,13 @@ export const twitchNotifier = {
 
       if (!response.ok) {
         return new Error(
-          `Error subscribing to Twitch stream online events: ${response.statusText}`
+          `[subscribeToStreamOnlineEvents] bad request: ${response.status} | ${response.body}`
         );
       }
 
       return null;
     } catch {
-      return new Error("Error subscribing to Twitch stream online events");
+      return new Error(`[subscribeToStreamOnlineEvents] something went wrong`);
     }
   },
 };
