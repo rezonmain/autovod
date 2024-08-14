@@ -39,15 +39,20 @@ async function handleEventSub(req, res) {
         .set("Content-Type", "text/plain")
         .status(200)
         .send(notification.challenge);
-      break;
+      console.log(
+        `[twitchNotifier.handleEventSub] Verification challenge: ${notification.challenge}`
+      );
+      return;
     case TWITCH_EVENT_MESSAGE_TYPE.NOTIFICATION:
-      console.log("[twitchNotifier.handleEventSub] Notification", req.body);
       // spawn process to handle notification
       res.sendStatus(204);
+      console.log("[twitchNotifier.handleEventSub] Notification", req.body);
       return;
     case TWITCH_EVENT_MESSAGE_TYPE.REVOCATION:
       res.sendStatus(204);
-      console.log(`${notification.subscription.type} notifications revoked!`);
+      console.log(
+        `[twitchNotifier.handleEventSub] ${notification.subscription.type} notifications revoked!`
+      );
       console.log(`reason: ${notification.subscription.status}`);
       return;
     default:
@@ -55,7 +60,6 @@ async function handleEventSub(req, res) {
       res.sendStatus(204);
       return;
   }
-  res.sendStatus(400);
 }
 
 /**
