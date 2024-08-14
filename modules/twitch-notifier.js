@@ -49,8 +49,11 @@ export const twitchNotifier = {
       });
 
       if (!response.ok) {
+        const responseJson = await response.json();
         return new Error(
-          `[subscribeToStreamOnlineEvents] bad request: ${response.status} | ${response.body}`
+          `[subscribeToStreamOnlineEvents] bad request: ${
+            response.status
+          } | ${JSON.stringify(responseJson, null, 4)}`
         );
       }
 
