@@ -16,4 +16,9 @@ export const TWITCH_EVENT_MESSAGE_TYPE = {
 };
 export const TWITCH_API_URLS = {
   SEARCH_CHANNELS: "https://api.twitch.tv/helix/search/channels",
+  EVENTSUB: "https://api.twitch.tv/helix/eventsub/subscriptions",
+};
+export const TWITCH_EVENTSUB_TYPES = {
+  STREAM_ONLINE: { type: "stream.online", version: 1 },
+  STREAM_OFFLINE: { type: "stream.offline", version: 1 },
 };

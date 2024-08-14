@@ -1,13 +1,23 @@
 import { server } from "./modules/server.js";
 import { twitchAuth } from "./modules/twitch-auth.js";
+import { twitchNotifier } from "./modules/twitch-notifier.js";
 
 server.start();
 
-const [error, accessToken] = await twitchAuth.getAccessToken();
+const [tokenError, accessToken] = await twitchAuth.getAccessToken();
 
-if (error) {
-  console.error("Error getting Twitch access token", error);
+if (tokenError) {
+  console.error("Error getting Twitch access token", tokenError);
   process.exit(1);
 }
 
-console.log("Twitch access token", accessToken);
+// paymoneywubby
+const subscriptionError = await twitchNotifier.subscribeToStreamOnlineEvents(
+  38251312,
+  accessToken
+);
+
+if (subscriptionError) {
+  console.error(subscriptionError);
+  process.exit(1);
+}
