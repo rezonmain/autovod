@@ -23,7 +23,7 @@ async function handleEventSub(req, res) {
   let notification = {};
 
   try {
-    notification = JSON.parse(req.body);
+    notification = JSON.parse(req.rawBody);
   } catch (error) {
     console.log(
       "[twitchNotifier.handleEventSub] Error parsing notification",
@@ -78,7 +78,7 @@ function verifyMessage(req) {
     const message =
       req.headers[TWITCH_WEBHOOK_HEADERS.MESSAGE_ID] +
       req.headers[TWITCH_WEBHOOK_HEADERS.MESSAGE_TIMESTAMP] +
-      req.body;
+      req.rawBody;
 
     const hmac =
       TWITCH_WEBHOOK_HMAC_PREFIX +
