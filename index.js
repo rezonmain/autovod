@@ -14,9 +14,11 @@ if (tokenError) {
 
 const twitchApi = new TwitchApi(accessToken);
 
-const subError = await twitchApi.subscribeToStreamOnlineEvents(143825043);
+const [subsError, subscriptions] = await twitchApi.listFormattedSubscriptions();
 
-if (subError) {
-  console.error(subError);
+console.log(subscriptions);
+
+if (subsError) {
+  console.error("Error getting Twitch subscriptions", subsError);
   process.exit(1);
 }

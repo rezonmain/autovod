@@ -1,5 +1,7 @@
+/** @import { TwitchSubscription, TwitchUser } from '../jsdoc.types.js'*/
 import { ENV_KEYS, TWITCH_API_URLS, TWITCH_EVENTSUB_TYPES } from "../const.js";
 import { env, envs } from "../env.js";
+import { nil } from "../utils.js";
 
 export class TwitchApi {
   accessToken;
@@ -48,9 +50,106 @@ export class TwitchApi {
   };
 
   /**
-   *
+   *  @returns {Promise<[Error, {data: TwitchSubscription[], total: number, total_cost: number, max_total_cost: number}]>}
    */
-  listSubscriptions = async () => {};
+  getSubscriptions = async (options) => {
+    const url = new URL(TWITCH_API_URLS.EVENTSUB);
+    const queryParams = new URLSearchParams(options);
+    url.search = queryParams.toString();
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "Client-Id": this.clientId,
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const responseJson = await response.json();
+      return [null, responseJson];
+    } catch (error) {
+      return [error, null];
+    }
+  };
+
+  /**
+   * @param {string[]} userIds
+   * @return {Promise<[Error, TwitchUser[]]>}
+   */
+  getUsers = async (userIds) => {
+    const url = new URL(TWITCH_API_URLS.USERS);
+    const queryParams = `id=${userIds.join("&id=")}`;
+    url.search = queryParams.toString();
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "Client-Id": this.clientId,
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const responseJson = await response.json();
+      return [null, responseJson.data];
+    } catch (error) {
+      return [error, null];
+    }
+  };
+
+  /**
+   *
+   * @returns {Promise<[Error, {channel: string, eventsubType: string, status: string}[]]>}
+   */
+  listFormattedSubscriptions = async () => {
+    const [subError, subscriptions] = await this.getSubscriptions();
+    if (subError) {
+      return [subError, null];
+    }
+
+    const broadcasterIds = subscriptions.data.map(
+      (sub) => sub.condition.broadcaster_user_id
+    );
+
+    if (!broadcasterIds.length) {
+      return [null, []];
+    }
+
+    if (broadcasterIds.length > 100) {
+      return [
+        new Error("Currently I only support up to 100 subscriptions"),
+        null,
+      ];
+    }
+
+    const [usersError, users] = await this.getUsers(broadcasterIds);
+    if (usersError) {
+      return [usersError, null];
+    }
+
+    const formattedSubscriptions = subscriptions.data.map((sub) => {
+      const user = users.find(
+        (user) => user.id === sub.condition.broadcaster_user_id
+      );
+      if (nil(user)) {
+        return { channel: "", eventsubType: "", status: "" };
+      }
+      return {
+        channel: user.display_name,
+        eventsubType: sub.type,
+        status: sub.status,
+      };
+    });
+
+    return [null, formattedSubscriptions];
+  };
 
   /**
    * @param {number} channelId
