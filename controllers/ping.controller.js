@@ -2,7 +2,7 @@ import express from "express";
 
 export const pingController = express.Router();
 
-pingController.get("/", (req, res) => {
+pingController.get("/", (_, res) => {
   res.set("Content-Type", "application/json");
   const response = {
     ts: Date.now(),

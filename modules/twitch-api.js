@@ -151,10 +151,7 @@ export class TwitchApi {
     }
 
     if (broadcasterIds.length > 100) {
-      return [
-        new Error("Currently I only support up to 100 subscriptions"),
-        null,
-      ];
+      return [new Error("Method supports up to 100 subscriptions"), null];
     }
 
     const [usersError, users] = await this.getUsers(broadcasterIds);

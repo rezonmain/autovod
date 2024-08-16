@@ -6,7 +6,7 @@ const EXTENSION = "che";
 
 export const fileCache = {
   /**
-   * @param {string} key - the unique key to retrieve the value
+   * @param {string} key - the unique key used to retrieve the value
    * @param {number} ttl - timestamp when the data will expire Ex. `Date.now() + 1000`
    * @param {string[]} data - data to store, store multiple values passing them as additional arguments
    * @returns {boolean}
@@ -18,7 +18,7 @@ export const fileCache = {
   },
 
   /**
-   * @param {string} key - the unique key to retrieve the value
+   * @param {string} key - the unique key used to retrieve the value
    * @returns {string[] | null}
    */
   get: (key) => {
@@ -41,7 +41,7 @@ export const fileCache = {
 
   /**
    *
-   * @param {string} key - the unique key to retrieve the value
+   * @param {string} key - the unique key used to retrieve the value
    * @returns {string | null} the first value stored
    */
   getOne: (key) => {
@@ -51,7 +51,7 @@ export const fileCache = {
 
   /**
    *
-   * @param {string} key - the unique key to delete
+   * @param {string} key - the unique key used to delete the cached value
    * @returns
    */
   remove: (key) => {
