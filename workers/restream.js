@@ -4,11 +4,16 @@ import { parentPort } from "node:worker_threads";
  * @param {string} login
  */
 function start(login) {
-  console.log(`Starting restream for ${login}`);
+  console.log(
+    `[${new Date().toISOString()}][RestreamWorker] Starting restream for ${login}`
+  );
 }
 
 function stop() {
-  console.log("Stopping restream");
+  console.log(
+    `[${new Date().toISOString()}][RestreamWorker] Stopping restream`
+  );
+  process.exit();
 }
 
 parentPort.on("message", (data) => {
