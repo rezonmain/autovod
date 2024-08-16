@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo Hello world!
+sudo docker run -p 1119:1119 autovod
