@@ -1,23 +1,22 @@
-import { server } from "./modules/server.js";
-// import { twitchAuth } from "./modules/twitch-auth.js";
+// import { server } from "./modules/server.js";
+import { TwitchApi } from "./modules/twitch-api.js";
+import { twitchAuth } from "./modules/twitch-auth.js";
 // import { twitchNotifier } from "./modules/twitch-notifier.js";
 
-server.start();
+// server.start();
 
-// const [tokenError, accessToken] = await twitchAuth.getAccessToken();
+const [tokenError, accessToken] = await twitchAuth.getAccessToken();
 
-// if (tokenError) {
-//   console.error("Error getting Twitch access token", tokenError);
-//   process.exit(1);
-// }
+if (tokenError) {
+  console.error("Error getting Twitch access token", tokenError);
+  process.exit(1);
+}
 
-// // rezonmain
-// const subscriptionError = await twitchNotifier.subscribeToStreamOnlineEvents(
-//   916663933,
-//   accessToken
-// );
+const twitchApi = new TwitchApi(accessToken);
 
-// if (subscriptionError) {
-//   console.error(subscriptionError);
-//   process.exit(1);
-// }
+const subError = await twitchApi.subscribeToStreamOnlineEvents(143825043);
+
+if (subError) {
+  console.error(subError);
+  process.exit(1);
+}
