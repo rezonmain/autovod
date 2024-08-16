@@ -32,3 +32,6 @@ export const ENV_KEYS = {
   TELEGRAM_TOKEN: "TELEGRAM_TOKEN",
   TELEGRAM_CHAT_ID: "TELEGRAM_CHAT_ID",
 };
+export const TWITCH_PUBLIC_CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
+export const TWITCH_GQL_URL = "https://gql.twitch.tv/gql";
+export const TWITCH_M3U8_URL = "https://usher.ttvnw.net/api/channel/hls";

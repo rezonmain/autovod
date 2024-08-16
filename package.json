@@ -9,7 +9,8 @@
     "getid": "node --env-file=.env ./scripts/print-broadcaster-id.js",
     "listsubs": "node --env-file=.env ./scripts/print-subscriptions.js",
     "deletesub": "node --env-file=.env ./scripts/delete-subscription.js",
-    "createsub": "node --env-file=.env ./scripts/create-subscription.js"
+    "createsub": "node --env-file=.env ./scripts/create-subscription.js",
+    "m3u8url": "node --env-file=.env ./scripts/get-m3u8-url.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
