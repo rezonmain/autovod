@@ -19,6 +19,8 @@ if (subsError) {
 
 subscriptions.forEach((sub, index) => {
   console.log(
-    `${index + 1}. ${sub.channel} | ${sub.eventsubType} | ${sub.status}`
+    `${index + 1}. ${sub.id} | ${sub.channel} | ${sub.eventsubType} | ${
+      sub.status
+    }`
   );
 });

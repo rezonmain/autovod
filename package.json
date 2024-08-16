@@ -6,8 +6,10 @@
     "start": "node --env-file=.env index.js",
     "dev": "nodemon --env-file=.env index.js",
     "random32": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
-    "printid": "node --env-file=.env ./scripts/print-broadcaster-id.js",
-    "printsubs": "node --env-file=.env ./scripts/print-subscriptions.js"
+    "getid": "node --env-file=.env ./scripts/print-broadcaster-id.js",
+    "listsubs": "node --env-file=.env ./scripts/print-subscriptions.js",
+    "deletesub": "node --env-file=.env ./scripts/delete-subscription.js",
+    "createsub": "node --env-file=.env ./scripts/create-subscription.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
