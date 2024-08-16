@@ -91,6 +91,14 @@ export const twitchPlaylist = {
       const response = await fetch(url);
 
       if (!response.ok) {
+        if (response.status === 404) {
+          return [
+            new Error(
+              `[getM3U8Playlist] stream for ${login} is offline or does not exist`
+            ),
+            null,
+          ];
+        }
         return [
           new Error(`[getM3U8Playlist] bad request: ${response.status}`),
           null,
