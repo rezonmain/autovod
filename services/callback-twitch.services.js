@@ -47,7 +47,7 @@ async function handleEventSub(req, res) {
     case TWITCH_EVENT_MESSAGE_TYPE.NOTIFICATION:
       res.sendStatus(204);
       console.log(
-        `[${new Date()}][twitchNotifier.handleEventSub] Notification | ${
+        `[${new Date().toISOString()}][twitchNotifier.handleEventSub] Notification | ${
           notification.event.broadcaster_user_name
         } | ${notification.event.type}`
       );
