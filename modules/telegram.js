@@ -1,4 +1,6 @@
 import { Bot } from "grammy";
+import { ENV_KEYS } from "../const.js";
+import { env } from "../env.js";
 
 class Telegram {
   token;
@@ -6,8 +8,8 @@ class Telegram {
   chatId;
 
   constructor(
-    token = process.env.TELEGRAM_TOKEN,
-    chatId = process.env.TELEGRAM_CHAT_ID
+    token = env(ENV_KEYS.TELEGRAM_TOKEN),
+    chatId = env(ENV_KEYS.TELEGRAM_CHAT_ID)
   ) {
     this.token = token;
     this.chatId = chatId;

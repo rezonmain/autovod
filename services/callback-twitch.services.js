@@ -1,12 +1,13 @@
 /** @import { Request as ExpressRequest, Response as ExpressResponse} from "express" */
 import crypto from "crypto";
 import {
+  ENV_KEYS,
   TWITCH_EVENT_MESSAGE_TYPE,
   TWITCH_WEBHOOK_HEADERS,
   TWITCH_WEBHOOK_HMAC_PREFIX,
 } from "../const.js";
-import { empty } from "../utils.js";
 import { twitchNotifier } from "../modules/twitch-notifier.js";
+import { env } from "../env.js";
 
 /**
  * https://dev.twitch.tv/docs/eventsub/handling-webhook-events/#processing-an-event
@@ -73,13 +74,9 @@ async function handleEventSub(req, res) {
  * @returns {Promise<boolean>}
  */
 function verifyMessage(req) {
-  const secret = process.env.TWITCH_WEBHOOK_SECRET;
+  const secret = env(ENV_KEYS.TWITCH_WEBHOOK_SECRET);
 
   try {
-    if (empty(secret)) {
-      throw new Error("Webhook Secret is required");
-    }
-
     const message =
       req.headers[TWITCH_WEBHOOK_HEADERS.MESSAGE_ID] +
       req.headers[TWITCH_WEBHOOK_HEADERS.MESSAGE_TIMESTAMP] +
