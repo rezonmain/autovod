@@ -35,3 +35,4 @@ export const ENV_KEYS = {
 export const TWITCH_PUBLIC_CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
 export const TWITCH_GQL_URL = "https://gql.twitch.tv/gql";
 export const TWITCH_M3U8_URL = "https://usher.ttvnw.net/api/channel/hls";
+export const YT_HLS_INGEST_URL = "https://a.upload.youtube.com/http_upload_hls";
