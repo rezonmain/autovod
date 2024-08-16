@@ -1,5 +1,6 @@
 /** @import { TwitchWebhookNotification } from "../jsdoc.types.js" */
 import { TWITCH_EVENTSUB_TYPES } from "../const.js";
+import { restreamWorker } from "./singleton-restream-worker.js";
 import { Telegram } from "./telegram.js";
 
 export const twitchNotifier = {
@@ -27,6 +28,10 @@ export const twitchNotifier = {
    * @param {TwitchWebhookNotification} notification
    */
   handleStreamOnlineEvent: async (notification) => {
+    restreamWorker.worker.postMessage(
+      `START:${notification.event.broadcaster_user_login}`
+    );
+
     const telegram = new Telegram();
     telegram.start();
     await telegram.sendMessage(
@@ -39,6 +44,8 @@ export const twitchNotifier = {
    * @param {TwitchWebhookNotification} notification
    */
   handleStreamOfflineEvent: async (notification) => {
+    restreamWorker.worker.postMessage("STOP");
+
     const telegram = new Telegram();
     telegram.start();
     await telegram.sendMessage(
