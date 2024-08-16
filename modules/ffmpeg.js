@@ -24,11 +24,9 @@ export const ffmpeg = {
     const child = spawn(
       "ffmpeg",
       [
-        "-re", // real time
+        "-re", // real-time
         "-i", // input
         `"${m3u8PlaylistUrl}"`, // input url
-        "-map", // select stream program from m3u8 playlist
-        "p:1", // select program 1 (second program lower resolution)
         "-f",
         "hls",
         `"${ingestUrl}"`,
