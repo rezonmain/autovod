@@ -27,7 +27,7 @@ async function start(login) {
     return;
   }
   const playlistUrl = twitchPlaylist.buildM3u8Url(login, access);
-  process = ffmpeg.restreamToTY(playlistUrl);
+  process = ffmpeg.restreamToTY(playlistUrl, true);
 }
 
 function stop() {
