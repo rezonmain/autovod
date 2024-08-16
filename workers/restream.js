@@ -13,7 +13,6 @@ function stop() {
   console.log(
     `[${new Date().toISOString()}][RestreamWorker] Stopping restream`
   );
-  process.exit();
 }
 
 parentPort.on("message", (data) => {
