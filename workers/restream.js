@@ -27,13 +27,13 @@ async function start(login) {
     return;
   }
   const playlistUrl = twitchPlaylist.buildM3u8Url(login, access);
-  process = ffmpeg.restreamToTY(playlistUrl, true);
+  process = ffmpeg.restreamToTY(playlistUrl);
 }
 
 function stop() {
   if (nil(process) || process.killed) {
     console.log(
-      `[${new Date().toISOString()}][RestreamWorker] Restream ffmpeg process is not running`
+      `[${new Date().toISOString()}][RestreamWorker] Tried to stop Restream but ffmpeg process is not running`
     );
     process = null;
     return;
@@ -41,13 +41,7 @@ function stop() {
   console.log(
     `[${new Date().toISOString()}][RestreamWorker] Stopping restream`
   );
-  const killed = process.kill("SIGINT");
-
-  if (!killed) {
-    console.error(
-      `[${new Date().toISOString()}][RestreamWorker] Error killing restream process`
-    );
-  }
+  process.kill("SIGINT");
   process = null;
 }
 
