@@ -1,5 +1,6 @@
 import { spawn, exec as syncExec } from "node:child_process";
 import { promisify, format } from "node:util";
+import { qt } from "../utils.js";
 import { env } from "../env.js";
 import { ENV_KEYS, YT_HLS_INGEST_URL } from "../const.js";
 
@@ -22,16 +23,11 @@ export const ffmpeg = {
   ) => {
     const ingestUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
     const child = spawn(
-      "ffmpeg",
-      [
-        "-re", // real-time
-        "-i", // input
-        `"${m3u8PlaylistUrl}"`, // input url
-        "-f",
-        "hls",
-        `"${ingestUrl}"`,
-      ],
-      { shell: true }
+      "./scripts/restream.sh",
+      [qt(ingestUrl), qt(m3u8PlaylistUrl)],
+      {
+        shell: true,
+      }
     );
 
     if (log) {

@@ -30,3 +30,12 @@ export const empty = (value) => {
 
   return false;
 };
+
+/**
+ * Quote a string
+ * @param {string} value
+ * @returns
+ */
+export const qt = (value) => {
+  return `"${value}"`;
+};
