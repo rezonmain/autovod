@@ -1,6 +1,5 @@
 import { spawn, exec as syncExec } from "node:child_process";
 import { promisify, format } from "node:util";
-import { qt } from "../utils.js";
 import { env } from "../env.js";
 import { ENV_KEYS, YT_HLS_INGEST_URL } from "../const.js";
 
@@ -22,10 +21,7 @@ export const ffmpeg = {
     ytStreamKey = env(ENV_KEYS.YT_STREAM_KEY)
   ) => {
     const ingestUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
-    const child = spawn("./scripts/restream.sh", [
-      qt(ingestUrl),
-      qt(m3u8PlaylistUrl),
-    ]);
+    const child = spawn("./scripts/restream.sh", [ingestUrl, m3u8PlaylistUrl]);
 
     if (log) {
       child.stdout.on("data", (data) => {
