@@ -1,4 +1,6 @@
-FROM node:20.10.0-alpine
+ARG node_version
+
+FROM node:${node_version}-alpine
 RUN apk add --no-cache ffmpeg
 WORKDIR /app
 COPY package.json .

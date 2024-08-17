@@ -9,7 +9,7 @@ const expressServer = express();
 expressServer.use("/ping", pingController);
 expressServer.use("/callback/twitch", callbackTwitchController);
 
-const port = env(ENV_KEYS.LISTEN_PORT);
+const port = env(ENV_KEYS.APPLICATION_PORT);
 const domainBaseUrl = env(ENV_KEYS.DOMAIN_BASE_URL);
 
 function start() {

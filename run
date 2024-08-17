@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export $(grep -v '^#' .env | xargs)
+
+docker run -d -p $HOST_PORT:$APPLICATION_PORT autovod
