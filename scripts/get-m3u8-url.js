@@ -1,5 +1,5 @@
 import { twitchPlaylist } from "../modules/twitch-playlist.js";
-import { empty } from "../utils.js";
+import { empty } from "../utils/utils.js";
 
 const [, , login] = process.argv;
 

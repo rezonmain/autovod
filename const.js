@@ -1,6 +1,7 @@
 export const TWITCH_TOKEN_URL = "https://id.twitch.tv/oauth2/token";
 export const CACHE_KEYS = {
   TWITCH_ACCESS: "@twitch-access",
+  YT_ACCESS: "@yt-access",
 };
 export const TWITCH_WEBHOOK_HEADERS = {
   MESSAGE_ID: "Twitch-Eventsub-Message-Id".toLowerCase(),
@@ -33,9 +34,19 @@ export const ENV_KEYS = {
   TELEGRAM_TOKEN: "TELEGRAM_TOKEN",
   TELEGRAM_CHAT_ID: "TELEGRAM_CHAT_ID",
   YT_STREAM_KEY: "YT_STREAM_KEY",
+  YT_SERVICE_ACCOUNT_KEY_ID: "YT_SERVICE_ACCOUNT_KEY_ID",
+  YT_SERVICE_ACCOUNT_EMAIL: "YT_SERVICE_ACCOUNT_EMAIL",
+};
+export const SECRETS = {
+  GOOGLE_SERVICE_ACCOUNT_KEY: "google-service-account-key.secret",
 };
 export const TWITCH_PUBLIC_CLIENT_ID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
 export const TWITCH_GQL_URL = "https://gql.twitch.tv/gql";
 export const TWITCH_M3U8_URL = "https://usher.ttvnw.net/api/channel/hls";
 export const YT_HLS_INGEST_URL =
   "https://a.upload.youtube.com/http_upload_hls?cid=%s&copy=0&file=stream.m3u8";
+export const YT_TOKEN_URL = "https://oauth2.googleapis.com/token";
+export const YT_API_URLS = {
+  BROADCAST: "https://www.googleapis.com/youtube/v3/liveBroadcasts",
+  STREAM: "https://www.googleapis.com/youtube/v3/liveStreams",
+};

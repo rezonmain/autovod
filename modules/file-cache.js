@@ -1,8 +1,12 @@
 import fs from "fs";
+import path from "node:path";
 import crypto from "crypto";
-import { empty } from "../utils.js";
+import { empty } from "../utils/utils.js";
 const SEPARATOR = "";
 const EXTENSION = "che";
+
+const DIRNAME = process.cwd();
+const CACHE_PATH = path.resolve(DIRNAME, "cache");
 
 export const fileCache = {
   /**
@@ -60,22 +64,31 @@ export const fileCache = {
   },
 
   _hash(key) {
-    return crypto.createHash("sha1").update(key).digest("base64");
+    return encodeURIComponent(
+      crypto.createHash("sha1").update(key).digest("base64")
+    );
   },
 
   _write(hash, data) {
-    return fs.writeFileSync(`${hash}.${EXTENSION}`, data, "utf8");
+    return fs.writeFileSync(
+      path.join(CACHE_PATH, `${hash}.${EXTENSION}`),
+      data,
+      "utf8"
+    );
   },
 
   _read(hash) {
     try {
-      return fs.readFileSync(`${hash}.${EXTENSION}`, "utf8");
+      return fs.readFileSync(
+        path.join(CACHE_PATH, `${hash}.${EXTENSION}`),
+        "utf8"
+      );
     } catch {
       return null;
     }
   },
 
   _delete(hash) {
-    return fs.unlinkSync(`${hash}.${EXTENSION}`);
+    return fs.unlinkSync(path.join(CACHE_PATH, `${hash}.${EXTENSION}`));
   },
 };

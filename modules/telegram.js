@@ -1,6 +1,6 @@
 import { Bot } from "grammy";
 import { ENV_KEYS } from "../const.js";
-import { env } from "../env.js";
+import { env } from "../utils/env.js";
 
 class Telegram {
   token;

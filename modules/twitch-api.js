@@ -1,7 +1,7 @@
 /** @import { TwitchSubscription, TwitchUser } from '../jsdoc.types.js'*/
 import { ENV_KEYS, TWITCH_API_URLS, TWITCH_EVENTSUB_TYPES } from "../const.js";
-import { env, envs } from "../env.js";
-import { nil } from "../utils.js";
+import { env, envs } from "../utils/env.js";
+import { nil } from "../utils/utils.js";
 
 export class TwitchApi {
   accessToken;

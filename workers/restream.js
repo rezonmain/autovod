@@ -1,7 +1,7 @@
 import { parentPort } from "node:worker_threads";
 import { ffmpeg } from "../modules/ffmpeg.js";
 import { twitchPlaylist } from "../modules/twitch-playlist.js";
-import { nil } from "../utils.js";
+import { nil } from "../utils/utils.js";
 
 /**
  * @type {import("child_process").ChildProcess | null}

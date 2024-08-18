@@ -1,5 +1,5 @@
 import { CACHE_KEYS, ENV_KEYS, TWITCH_TOKEN_URL } from "../const.js";
-import { env } from "../env.js";
+import { env } from "../utils/env.js";
 import { fileCache } from "./file-cache.js";
 
 export const twitchAuth = {

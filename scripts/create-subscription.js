@@ -1,6 +1,6 @@
 import { TwitchApi } from "../modules/twitch-api.js";
 import { twitchAuth } from "../modules/twitch-auth.js";
-import { empty } from "../utils.js";
+import { empty } from "../utils/utils.js";
 
 const SUPPORTED = ["stream.online", "stream.offline"];
 const printUsage = () =>
