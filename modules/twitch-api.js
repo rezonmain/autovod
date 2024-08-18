@@ -1,4 +1,4 @@
-/** @import { TwitchSubscription, TwitchUser } from '../jsdoc.types.js'*/
+/** @import { TwitchSubscription, TwitchUser, TwitchStream } from '../jsdoc.types.js'*/
 import { ENV_KEYS, TWITCH_API_URLS, TWITCH_EVENTSUB_TYPES } from "../const.js";
 import { env, envs } from "../utils/env.js";
 import { nil } from "../utils/utils.js";
@@ -164,11 +164,13 @@ export class TwitchApi {
         (user) => user.id === sub.condition.broadcaster_user_id
       );
       if (nil(user)) {
-        return { id: ",", channel: "", eventsubType: "", status: "" };
+        return {};
       }
       return {
         id: sub.id,
         channel: user.display_name,
+        login: user.login,
+        broadcasterId: user.id,
         eventsubType: sub.type,
         status: sub.status,
       };
@@ -274,6 +276,44 @@ export class TwitchApi {
       return null;
     } catch {
       return new Error(`[subscribeToStreamOfflineEvents] something went wrong`);
+    }
+  };
+
+  /**
+   *
+   * @param {Object} options
+   * @param {string} options.user_id
+   * @param {string} options.user_login
+   * @param {string} options.game_id
+   * @param {"all" | "live"} options.type
+   * @param {string} options.language
+   * @param {number} options.first
+   * @param {string} options.after
+   * @param {string} options.before
+   * @returns {Promise<[Error, TwitchStream[]]>}
+   */
+  getStreams = async (options) => {
+    const url = new URL(TWITCH_API_URLS.STREAMS);
+    const queryParams = new URLSearchParams(options);
+    url.search = queryParams.toString();
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "Client-Id": this.clientId,
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const responseJson = await response.json();
+
+      return [null, responseJson.data];
+    } catch (error) {
+      return [error, null];
     }
   };
 }

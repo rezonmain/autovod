@@ -9,7 +9,6 @@ class SingletonRestreamWorker {
    * @type {Worker}
    */
   worker = null;
-  isStreaming = false;
   /**
    * @param {string} path
    * @param {any} initialData
@@ -17,6 +16,7 @@ class SingletonRestreamWorker {
   constructor(path, initialData) {
     this.worker = new Worker(path, { workerData: initialData });
     this.#registerEvents();
+    this.worker.postMessage("INIT");
   }
 
   #registerEvents() {

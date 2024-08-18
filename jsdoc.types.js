@@ -44,4 +44,23 @@
  * @property {string} created_at
  */
 
+/**
+ * @typedef {Object} TwitchStream
+ * @property {string} id
+ * @property {string} user_id
+ * @property {string} user_login
+ * @property {string} user_name
+ * @property {string} game_id
+ * @property {string} game_name
+ * @property {string} type
+ * @property {string} title
+ * @property {string[]} tags
+ * @property {number} viewer_count
+ * @property {string} started_at
+ * @property {string} language
+ * @property {string} thumbnail_url
+ * @property {string[]} tag_ids
+ * @property {boolean} is_mature
+ */
+
 export {};
