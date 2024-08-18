@@ -66,3 +66,9 @@ $ npm run restream h3h3productions
 [hls @ 0x7f33f456a600]
 Skip ('#EXT-X-TWITCH-INFO:NODE="video-edge-ee538e.iad05",MANIFEST-[...]
 ```
+
+# Bookmarks
+
+For when I forget how to do stuff
+
+- [How to authenticate requests to Google API's](https://developers.google.com/identity/protocols/oauth2/service-account#httprest)
