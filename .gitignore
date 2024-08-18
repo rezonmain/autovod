@@ -5,3 +5,4 @@
 .env.local
 *.che
 node_modules
+*.secret

@@ -7,7 +7,7 @@ import {
   TWITCH_WEBHOOK_HMAC_PREFIX,
 } from "../const.js";
 import { twitchNotifier } from "../modules/twitch-notifier.js";
-import { env } from "../env.js";
+import { env } from "../utils/env.js";
 
 /**
  * https://dev.twitch.tv/docs/eventsub/handling-webhook-events/#processing-an-event

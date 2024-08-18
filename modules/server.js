@@ -1,7 +1,7 @@
 import express from "express";
 import { callbackTwitchController } from "../controllers/callback-twitch.controller.js";
 import { pingController } from "../controllers/ping.controller.js";
-import { env } from "../env.js";
+import { env } from "../utils/env.js";
 import { ENV_KEYS } from "../const.js";
 
 const expressServer = express();

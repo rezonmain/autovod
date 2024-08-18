@@ -1,6 +1,6 @@
 import { spawn, exec as syncExec } from "node:child_process";
 import { promisify, format } from "node:util";
-import { env } from "../env.js";
+import { env } from "../utils/env.js";
 import { ENV_KEYS, YT_HLS_INGEST_URL } from "../const.js";
 
 const exec = promisify(syncExec);
