@@ -4,6 +4,7 @@ import { twitchPlaylist } from "../modules/twitch-playlist.js";
 import { twitchAuth } from "../modules/twitch-auth.js";
 import { TwitchApi } from "../modules/twitch-api.js";
 import { empty, nil } from "../utils/utils.js";
+import { SingletonRestreamWorker } from "../modules/singleton-restream-worker.js";
 
 /**
  * @type {import("child_process").ChildProcess | null}
@@ -107,7 +108,8 @@ async function init() {
     }`
   );
 
-  start(onlineStreams[0].user_name);
+  const restreamWorker = SingletonRestreamWorker.getInstance().worker;
+  restreamWorker.postMessage(`START:${onlineStreams[0].user_login}`);
 }
 
 parentPort.on("message", (data) => {
