@@ -2,7 +2,6 @@ import { spawn, exec as syncExec } from "node:child_process";
 import { promisify, format } from "node:util";
 import { env } from "../utils/env.js";
 import { ENV_KEYS, YT_HLS_INGEST_URL } from "../const.js";
-import { log } from "./log.js";
 
 const exec = promisify(syncExec);
 
@@ -10,10 +9,10 @@ export const ffmpeg = {
   async printVersion() {
     const { stderr, stdout } = await exec("ffmpeg -version");
     if (stderr) {
-      log.error(stderr);
+      console.error(stderr);
       return;
     }
-    log.log(stdout);
+    console.log(stdout);
   },
 
   restreamToTY: (
@@ -22,17 +21,15 @@ export const ffmpeg = {
     ytStreamKey = env(ENV_KEYS.YT_STREAM_KEY)
   ) => {
     const ingestUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
-    const child = spawn("./scripts/restream.sh", [ingestUrl, m3u8PlaylistUrl], {
-      shell: true,
-    });
+    const child = spawn("./scripts/restream.sh", [ingestUrl, m3u8PlaylistUrl]);
 
     if (shouldLog) {
       child.stdout.on("data", (data) => {
-        log.log(data.toString());
+        console.log(data.toString());
       });
 
       child.stderr.on("data", (data) => {
-        log.error(data.toString());
+        console.error(data.toString());
       });
     }
 

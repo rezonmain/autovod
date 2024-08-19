@@ -30,7 +30,9 @@ export const twitchNotifier = {
    */
   handleStreamOnlineEvent: async (notification) => {
     Restreamer.getInstance().start(
-      Restreamer.getM3u8UrlFromLogin(notification.event.broadcaster_user_login)
+      await Restreamer.getM3u8UrlFromLogin(
+        notification.event.broadcaster_user_login
+      )
     );
 
     const telegram = new Telegram();
