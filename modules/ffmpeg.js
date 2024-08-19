@@ -2,6 +2,7 @@ import { spawn, exec as syncExec } from "node:child_process";
 import { promisify, format } from "node:util";
 import { env } from "../utils/env.js";
 import { ENV_KEYS, YT_HLS_INGEST_URL } from "../const.js";
+import { log } from "./log.js";
 
 const exec = promisify(syncExec);
 
@@ -9,10 +10,10 @@ export const ffmpeg = {
   async printVersion() {
     const { stderr, stdout } = await exec("ffmpeg -version");
     if (stderr) {
-      console.error(stderr);
+      log.error(stderr);
       return;
     }
-    console.log(stdout);
+    log.log(stdout);
   },
 
   restreamToTY: (
@@ -25,11 +26,11 @@ export const ffmpeg = {
 
     if (log) {
       child.stdout.on("data", (data) => {
-        console.log(data.toString());
+        log.log(data.toString());
       });
 
       child.stderr.on("data", (data) => {
-        console.error(data.toString());
+        log.error(data.toString());
       });
     }
 

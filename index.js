@@ -1,5 +1,5 @@
 import { server } from "./modules/server.js";
-import { SingletonRestreamWorker } from "./modules/singleton-restream-worker.js";
+import { Restreamer } from "./modules/restreamer.js";
 
-SingletonRestreamWorker.getInstance().init();
+Restreamer.getInstance().init();
 server.start();

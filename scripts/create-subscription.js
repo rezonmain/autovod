@@ -1,21 +1,22 @@
 import { TwitchApi } from "../modules/twitch-api.js";
 import { twitchAuth } from "../modules/twitch-auth.js";
 import { empty } from "../utils/utils.js";
+import { log } from "../modules/log.js";
 
 const SUPPORTED = ["stream.online", "stream.offline"];
 const printUsage = () =>
-  console.log("Usage: SCRIPT <subscriptionType> <channelId>");
+  log.log("Usage: SCRIPT <subscriptionType> <channelId>");
 
 const [, , subscriptionType, channelId] = process.argv;
 
 if (SUPPORTED.indexOf(subscriptionType) === -1) {
-  console.error("Subscription type must be one of", SUPPORTED.join(", "));
+  log.error("Subscription type must be one of", SUPPORTED.join(", "));
   printUsage();
   process.exit(1);
 }
 
 if (empty(channelId)) {
-  console.error("No channel ID provided");
+  log.error("No channel ID provided");
   printUsage();
   process.exit(1);
 }
@@ -23,7 +24,7 @@ if (empty(channelId)) {
 const [accessError, accessToken] = await twitchAuth.getAccessToken();
 
 if (accessError) {
-  console.error("Error getting Twitch access token", accessError);
+  log.error("Error getting Twitch access token", accessError);
   process.exit(1);
 }
 
@@ -35,7 +36,7 @@ switch (subscriptionType) {
       channelId
     );
     if (onlineError) {
-      console.error("Error creating stream.online subscription", onlineError);
+      log.error("Error creating stream.online subscription", onlineError);
       process.exit(1);
     }
     break;
@@ -45,12 +46,12 @@ switch (subscriptionType) {
       channelId
     );
     if (offlineError) {
-      console.error("Error creating stream.offline subscription", offlineError);
+      log.error("Error creating stream.offline subscription", offlineError);
       process.exit(1);
     }
     break;
   }
   default:
-    console.error("Unsupported subscription type", subscriptionType);
+    log.error("Unsupported subscription type", subscriptionType);
     process.exit(1);
 }

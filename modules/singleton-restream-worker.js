@@ -1,5 +1,6 @@
 import { Worker } from "node:worker_threads";
 import path from "node:path";
+import { log } from "./log.js";
 
 const DIRNAME = process.cwd();
 const WORKER_SCRIPT_PATH = path.resolve(DIRNAME, "workers/restream.js");
@@ -25,15 +26,15 @@ export class SingletonRestreamWorker {
 
   #registerEvents() {
     this.worker.on("message", (data) => {
-      console.log(data);
+      log.log(data);
     });
 
     this.worker.on("error", (error) => {
-      console.error(error);
+      log.error(error);
     });
 
     this.worker.on("exit", (code) => {
-      console.log(`Worker stopped with exit code ${code}`);
+      log.log(`Worker stopped with exit code ${code}`);
     });
   }
 

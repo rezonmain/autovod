@@ -3,6 +3,7 @@ import { callbackTwitchController } from "../controllers/callback-twitch.control
 import { pingController } from "../controllers/ping.controller.js";
 import { env } from "../utils/env.js";
 import { ENV_KEYS } from "../const.js";
+import { log } from "./log.js";
 
 const expressServer = express();
 
@@ -14,7 +15,7 @@ const domainBaseUrl = env(ENV_KEYS.DOMAIN_BASE_URL);
 
 function start() {
   expressServer.listen(port, () => {
-    console.log(`Server listening on ${domainBaseUrl}:${port}`);
+    log.log(`Server listening on ${domainBaseUrl}:${port}`);
   });
 }
 

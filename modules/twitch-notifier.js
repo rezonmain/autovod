@@ -2,6 +2,7 @@
 import { TWITCH_EVENTSUB_TYPES } from "../const.js";
 import { SingletonRestreamWorker } from "./singleton-restream-worker.js";
 import { Telegram } from "./telegram.js";
+import { log } from "./log.js";
 
 export const twitchNotifier = {
   /**
@@ -18,7 +19,7 @@ export const twitchNotifier = {
         await twitchNotifier.handleStreamOfflineEvent(notification);
         return;
       default:
-        return console.log(
+        return log.log(
           `[twitchNotifier.handleNotification] Unknown notification type: ${notificationType}`
         );
     }

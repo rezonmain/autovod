@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "node:path";
 import crypto from "crypto";
 import { empty } from "../utils/utils.js";
+import { log } from "./log.js";
 const SEPARATOR = "";
 const EXTENSION = "che";
 
@@ -30,16 +31,16 @@ export const fileCache = {
     const encodedData = fileCache._read(hash);
 
     if (empty(encodedData)) {
-      console.log(`[Cache MISS] NO_DATA | key: ${key} | hash: ${hash}`);
+      log.info(`[Cache MISS] NO_DATA | key: ${key} | hash: ${hash}`);
       return null;
     }
     const [ttl, ...parsedData] = encodedData.split(SEPARATOR);
     if (ttl < new Date()) {
-      console.log(`[Cache MISS] EXPIRED | key: ${key} | hash: ${hash}`);
+      log.info(`[Cache MISS] EXPIRED | key: ${key} | hash: ${hash}`);
       fileCache._delete(hash);
       return null;
     }
-    console.log(`[Cache HIT] key: ${key} | hash: ${hash}`);
+    log.info(`[Cache HIT] key: ${key} | hash: ${hash}`);
     return parsedData;
   },
 

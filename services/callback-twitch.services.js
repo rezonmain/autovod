@@ -8,6 +8,7 @@ import {
 } from "../const.js";
 import { twitchNotifier } from "../modules/twitch-notifier.js";
 import { env } from "../utils/env.js";
+import { log } from "./log.js";
 
 /**
  * https://dev.twitch.tv/docs/eventsub/handling-webhook-events/#processing-an-event
@@ -27,7 +28,7 @@ async function handleEventSub(req, res) {
   try {
     notification = JSON.parse(req.rawBody);
   } catch (error) {
-    console.log(
+    log.log(
       "[twitchNotifier.handleEventSub] Error parsing notification",
       error
     );
@@ -41,29 +42,27 @@ async function handleEventSub(req, res) {
         .set("Content-Type", "text/plain")
         .status(200)
         .send(notification.challenge);
-      console.log(
+      log.log(
         `[twitchNotifier.handleEventSub] Verification challenge: ${notification.challenge}`
       );
       return;
     case TWITCH_EVENT_MESSAGE_TYPE.NOTIFICATION:
       res.sendStatus(204);
-      console.log(
-        `[${new Date().toISOString()}][twitchNotifier.handleEventSub] Notification | ${
-          notification.event.broadcaster_user_name
-        } | ${notification.event.type}`
+      log.log(
+        `[twitchNotifier.handleEventSub] Notification | ${notification.event.broadcaster_user_name} | ${notification.event.type}`
       );
       await twitchNotifier.handleNotification(notification);
       return;
     case TWITCH_EVENT_MESSAGE_TYPE.REVOCATION:
       res.sendStatus(204);
-      console.log(
+      log.log(
         `[twitchNotifier.handleEventSub] ${notification.subscription.type} notifications revoked!`
       );
-      console.log(`reason: ${notification.subscription.status}`);
+      log.log(`reason: ${notification.subscription.status}`);
       return;
     default:
       res.sendStatus(204);
-      console.log("[twitchNotifier.handleEventSub] Unknown message type");
+      log.log("[twitchNotifier.handleEventSub] Unknown message type");
       return;
   }
 }
@@ -91,10 +90,7 @@ function verifyMessage(req) {
       Buffer.from(req.headers[TWITCH_WEBHOOK_HEADERS.MESSAGE_SIGNATURE])
     );
   } catch (error) {
-    console.log(
-      "[twitchNotifier.verifyMessage] Error verifying message",
-      error
-    );
+    log.log("[twitchNotifier.verifyMessage] Error verifying message", error);
     return false;
   }
 }
