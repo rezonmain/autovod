@@ -18,7 +18,7 @@ export const ffmpeg = {
 
   restreamToTY: (
     m3u8PlaylistUrl,
-    log = false,
+    shouldLog = false,
     ytStreamKey = env(ENV_KEYS.YT_STREAM_KEY)
   ) => {
     const ingestUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
@@ -26,7 +26,7 @@ export const ffmpeg = {
       shell: true,
     });
 
-    if (log) {
+    if (shouldLog) {
       child.stdout.on("data", (data) => {
         log.log(data.toString());
       });
