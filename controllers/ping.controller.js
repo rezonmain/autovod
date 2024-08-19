@@ -1,4 +1,5 @@
 import express from "express";
+import { log } from "../modules/log.js";
 
 export const pingController = express.Router();
 
@@ -9,4 +10,5 @@ pingController.get("/", (_, res) => {
     message: "pong",
   };
   res.send(JSON.stringify(response));
+  log.log(`[pingController] ${JSON.stringify(response)}`);
 });

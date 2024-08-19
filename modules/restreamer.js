@@ -50,7 +50,14 @@ export class Restreamer {
    * @returns {Restreamer}
    */
   async start(m3u8PlaylistUrl) {
-    this.process = ffmpeg.restreamToTY(m3u8PlaylistUrl);
+    if (!empty(this.process) && !this.process.killed) {
+      log.log(
+        `[RestreamWorker.start] Tried to start Restream but ffmpeg process is already running`
+      );
+      return;
+    }
+    log.log(`[RestreamWorker.start] Starting restream`);
+    this.process = ffmpeg.restreamToTY(m3u8PlaylistUrl, true);
   }
 
   stop() {

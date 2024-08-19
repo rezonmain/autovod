@@ -22,7 +22,9 @@ export const ffmpeg = {
     ytStreamKey = env(ENV_KEYS.YT_STREAM_KEY)
   ) => {
     const ingestUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
-    const child = spawn("./scripts/restream.sh", [ingestUrl, m3u8PlaylistUrl]);
+    const child = spawn("./scripts/restream.sh", [ingestUrl, m3u8PlaylistUrl], {
+      shell: true,
+    });
 
     if (log) {
       child.stdout.on("data", (data) => {
