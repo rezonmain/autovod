@@ -4,12 +4,16 @@ import path from "node:path";
 const DIRNAME = process.cwd();
 const WORKER_SCRIPT_PATH = path.resolve(DIRNAME, "workers/restream.js");
 
-class SingletonRestreamWorker {
+export class SingletonRestreamWorker {
+  /**
+   * @type {SingletonRestreamWorker}
+   */
+  static _instance;
+
   /**
    * @type {Worker}
    */
   worker = null;
-  isStreaming = false;
   /**
    * @param {string} path
    * @param {any} initialData
@@ -32,9 +36,17 @@ class SingletonRestreamWorker {
       console.log(`Worker stopped with exit code ${code}`);
     });
   }
-}
 
-export const restreamWorker = new SingletonRestreamWorker(
-  WORKER_SCRIPT_PATH,
-  null
-);
+  init() {
+    this.worker.postMessage("INIT");
+  }
+
+  static getInstance() {
+    if (this._instance) {
+      return this._instance;
+    }
+
+    this._instance = new SingletonRestreamWorker(WORKER_SCRIPT_PATH, null);
+    return this._instance;
+  }
+}

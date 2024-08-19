@@ -19,6 +19,7 @@ export const TWITCH_API_URLS = {
   SEARCH_CHANNELS: "https://api.twitch.tv/helix/search/channels",
   EVENTSUB: "https://api.twitch.tv/helix/eventsub/subscriptions",
   USERS: "https://api.twitch.tv/helix/users",
+  STREAMS: "https://api.twitch.tv/helix/streams",
 };
 export const TWITCH_EVENTSUB_TYPES = {
   STREAM_ONLINE: { type: "stream.online", version: "1" },
