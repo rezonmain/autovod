@@ -63,12 +63,12 @@ export class Restreamer {
   stop() {
     if (nil(this.process) || this.process.killed) {
       log.log(
-        `[RestreamWorker.stop] Tried to stop Restream but ffmpeg process is not running`
+        `[Restreamer.stop] Tried to stop Restream but ffmpeg process is not running`
       );
       this.process = null;
       return;
     }
-    log.log(`[RestreamWorker.stop] Stopping restream`);
+    log.log(`[Restreamer.stop] Stopping restream`);
     this.process.kill("SIGINT");
     this.process = null;
   }
