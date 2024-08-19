@@ -8,7 +8,7 @@ import {
 } from "../const.js";
 import { twitchNotifier } from "../modules/twitch-notifier.js";
 import { env } from "../utils/env.js";
-import { log } from "./log.js";
+import { log } from "../modules/log.js";
 
 /**
  * https://dev.twitch.tv/docs/eventsub/handling-webhook-events/#processing-an-event

@@ -16,7 +16,7 @@ export const log = {
   },
 
   log: (message) => {
-    log.log(`[${new Date().toISOString()}] ${message}`);
+    console.log(`[${new Date().toISOString()}] ${message}`);
   },
 
   debug: (message) => {
