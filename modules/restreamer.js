@@ -5,6 +5,8 @@ import { twitchPlaylist } from "./twitch-playlist.js";
 import { TwitchApi } from "./twitch-api.js";
 import { empty, nil } from "../utils/utils.js";
 import { log } from "./log.js";
+import { env } from "../utils/env.js";
+import { ENV_KEYS } from "../const.js";
 
 export class Restreamer {
   /**
@@ -31,7 +33,8 @@ export class Restreamer {
    */
   static async getM3u8UrlFromLogin(login) {
     const [accessError, access] = await twitchPlaylist.getPlaybackAccessToken(
-      login
+      login,
+      env(ENV_KEYS.TWITCH_PERSONAL_OAUTH_TOKEN)
     );
 
     if (accessError) {
