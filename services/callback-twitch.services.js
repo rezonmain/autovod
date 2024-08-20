@@ -19,6 +19,7 @@ async function handleEventSub(req, res) {
   const verified = verifyMessage(req);
 
   if (!verified) {
+    log.log("[twitchNotifier.handleEventSub] Message verification failed");
     res.sendStatus(403);
     return;
   }

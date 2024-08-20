@@ -53,24 +53,25 @@ export class Restreamer {
    * @returns {Restreamer}
    */
   async start(m3u8PlaylistUrl) {
-    if (!empty(this.process) && !this.process.killed) {
-      log.log(
-        `[Restreamer.start] Tried to start Restream but ffmpeg process is already running`
-      );
+    if (this.process) {
+      log.log(`[Restreamer.start] Restream already running, stopping first`);
+      this.stop();
       return;
     }
     log.log(`[Restreamer.start] Starting restream`);
+
+    // process should exit gracefully when input stops sending data
     this.process = ffmpeg.restreamToTY(m3u8PlaylistUrl, true);
+
+    this.process.on("exit", (code) => {
+      log.log(
+        `[Restreamer.start] Restream process automatically exited with code ${code}`
+      );
+      this.process = null;
+    });
   }
 
   stop() {
-    if (nil(this.process) || this.process.killed) {
-      log.log(
-        `[Restreamer.stop] Tried to stop Restream but ffmpeg process is not running`
-      );
-      this.process = null;
-      return;
-    }
     log.log(`[Restreamer.stop] Stopping restream`);
     this.process.kill("SIGINT");
     this.process = null;
