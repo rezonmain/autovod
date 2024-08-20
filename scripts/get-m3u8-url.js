@@ -1,4 +1,6 @@
+import { ENV_KEYS } from "../const.js";
 import { twitchPlaylist } from "../modules/twitch-playlist.js";
+import { env } from "../utils/env.js";
 import { empty } from "../utils/utils.js";
 
 const [, , login] = process.argv;
@@ -10,7 +12,8 @@ if (empty(login)) {
 }
 
 const [accessError, accessToken] = await twitchPlaylist.getPlaybackAccessToken(
-  login
+  login,
+  env(ENV_KEYS.TWITCH_PERSONAL_OAUTH_TOKEN)
 );
 
 if (accessError) {
