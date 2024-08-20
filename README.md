@@ -72,3 +72,9 @@ Skip ('#EXT-X-TWITCH-INFO:NODE="video-edge-ee538e.iad05",MANIFEST-[...]
 For when I forget how to do stuff
 
 - [How to authenticate requests to Google API's](https://developers.google.com/identity/protocols/oauth2/service-account#httprest)
+
+# Authenticating twitch stream
+
+- Personal OAuth token can be read from the `auth-token` cookie saved on storage from https://twitch.tv
+- Personal OAuth token is sent on the first GQL POST request the client makes (to fetch the playback access token) in the `Authorization` header prefixed by `OAuth`
+- This token seems to expire, if this is the case, the mentioned request will return 401 for an invalid token, removing the token (writing `Authorization: undefined` in the headers) should work, but stream won't be authorized
