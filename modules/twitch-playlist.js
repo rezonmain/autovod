@@ -3,6 +3,7 @@ import {
   TWITCH_M3U8_URL,
   TWITCH_PUBLIC_CLIENT_ID,
 } from "../const.js";
+import { nil } from "../utils/utils.js";
 /**
  * @typedef {Object} PlaybackAccessToken
  * @property {string} value
@@ -13,9 +14,10 @@ export const twitchPlaylist = {
   /**
    *
    * @param {string} login
+   * @param {string} [personalOAuthToken]
    * @return {Promise<[Error, PlaybackAccessToken>]}
    */
-  getPlaybackAccessToken: async (login) => {
+  getPlaybackAccessToken: async (login, personalOAuthToken = null) => {
     const url = new URL(TWITCH_GQL_URL);
     const requestBody = {
       operationName: "PlaybackAccessToken",
@@ -34,13 +36,19 @@ export const twitchPlaylist = {
         },
       },
     };
+    const headers = {
+      "Client-Id": TWITCH_PUBLIC_CLIENT_ID,
+      "Content-Type": "application/json",
+    };
+
+    if (!nil(personalOAuthToken)) {
+      headers["Authorization"] = `OAuth ${personalOAuthToken}`;
+    }
+
     try {
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Client-Id": TWITCH_PUBLIC_CLIENT_ID,
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(requestBody),
       });
 
