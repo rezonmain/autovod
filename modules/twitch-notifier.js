@@ -47,8 +47,6 @@ export const twitchNotifier = {
    * @param {TwitchWebhookNotification} notification
    */
   handleStreamOfflineEvent: async (notification) => {
-    Restreamer.getInstance().stop();
-
     const telegram = new Telegram();
     telegram.start();
     await telegram.sendMessage(

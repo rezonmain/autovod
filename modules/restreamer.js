@@ -53,11 +53,10 @@ export class Restreamer {
    * @returns {Restreamer}
    */
   async start(m3u8PlaylistUrl) {
-    if (nil(this.process) || !this.process.killed) {
-      log.log(
-        `[Restreamer.start] Tried to start Restream but ffmpeg process is already running, killing it`
-      );
+    if (this.process) {
+      log.log(`[Restreamer.start] Restream already running, stopping first`);
       this.stop();
+      return;
     }
     log.log(`[Restreamer.start] Starting restream`);
 
@@ -73,13 +72,6 @@ export class Restreamer {
   }
 
   stop() {
-    if (nil(this.process) || this.process.killed) {
-      log.log(
-        `[Restreamer.stop] Tried to stop Restream but ffmpeg process is not running`
-      );
-      this.process = null;
-      return;
-    }
     log.log(`[Restreamer.stop] Stopping restream`);
     this.process.kill("SIGINT");
     this.process = null;
