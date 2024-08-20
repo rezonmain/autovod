@@ -21,9 +21,9 @@ export class Restreamer {
 
   constructor() {}
 
-  static getInstance(m3u8PlaylistUrl) {
+  static getInstance() {
     if (nil(this._instance)) {
-      this._instance = new Restreamer(m3u8PlaylistUrl);
+      this._instance = new Restreamer();
     }
     return this._instance;
   }
