@@ -18,7 +18,7 @@ export const ffmpeg = {
   restreamToTY: (
     m3u8PlaylistUrl,
     shouldLog = false,
-    ytStreamKey = env(ENV_KEYS.YT_STREAM_KEY)
+    ytStreamKey = env(ENV_KEYS.DEFAULT_YT_STREAM_KEY)
   ) => {
     const ingestUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
     const child = spawn("./scripts/restream.sh", [ingestUrl, m3u8PlaylistUrl]);

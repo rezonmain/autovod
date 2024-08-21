@@ -4,11 +4,17 @@ import { twitchPlaylist } from "../modules/twitch-playlist.js";
 import { env } from "../utils/env.js";
 import { empty } from "../utils/utils.js";
 
-const [, , login] = process.argv;
+const [, , login, streamKey] = process.argv;
 
 if (empty(login)) {
   console.log("login not provided");
-  console.error("Usage: SCRIPT <login>");
+  console.error("Usage: SCRIPT <login> <streamKey>");
+  process.exit(1);
+}
+
+if (empty(streamKey)) {
+  console.log("streamKey not provided");
+  console.error("Usage: SCRIPT <login> <streamKey>");
   process.exit(1);
 }
 
@@ -24,4 +30,4 @@ if (accessError) {
 
 const m3u8Url = twitchPlaylist.buildM3u8Url(login, accessToken);
 
-ffmpeg.restreamToTY(m3u8Url, true);
+ffmpeg.restreamToTY(m3u8Url, true, streamKey);
