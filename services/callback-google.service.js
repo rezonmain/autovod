@@ -65,8 +65,8 @@ async function handleTokenPayload(req, res) {
 
   eventBus.publish(
     APPLICATION_EVENT_TYPES.GOOGLE_AUTH_REDIRECT,
-    access_token,
-    Date.now() + expires_in * 1000
+    Date.now() + expires_in * 1000,
+    access_token
   );
   res.send("Authenticated with Google.\n You can close this tab now");
 }

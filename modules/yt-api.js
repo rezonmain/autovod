@@ -1,31 +1,11 @@
 import { YT_API_URLS } from "../const.js";
 import { empty } from "../utils/utils.js";
-import { ytAuth } from "./yt-auth.js";
 
-export class YtApi {
-  /**
-   * @type {() => [Error, string]}
-   */
-  accessTokenResolver;
-  isWaitingForAuthorization = false;
-
-  /**
-   *
-   * @param {() => [Error, string]} accessTokenResolver
-   */
-  constructor(accessTokenResolver) {
-    this.accessTokenResolver = accessTokenResolver;
-  }
-
-  authorize = () => {
-    this.isWaitingForAuthorization = true;
-    ytAuth.authorize();
-  };
-
+export const ytApi = {
   /**
    * @returns {Promise<[Error, string]>}
    */
-  getBroadcastId = async () => {
+  getBroadcastId: async (accessToken) => {
     const url = new URL(YT_API_URLS.BROADCAST);
     const queryParams = new URLSearchParams({
       part: "id",
@@ -37,7 +17,7 @@ export class YtApi {
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${this.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           Accept: "application/json",
         },
       });
@@ -56,14 +36,14 @@ export class YtApi {
     } catch (error) {
       return [error, null];
     }
-  };
+  },
 
   /**
    * @param {string} broadcastId
    * @param {string} title
    * @return Promise<Error | null>
    */
-  updateBroadcastTitle = async (broadcastId, title) => {
+  updateBroadcastTitle: async (accessToken, broadcastId, title) => {
     const url = new URL(YT_API_URLS.BROADCAST);
     const queryParams = new URLSearchParams({
       part: "snippet",
@@ -81,7 +61,7 @@ export class YtApi {
       const response = await fetch(url, {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${this.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           Accept: "application/json",
           "Content-Type": "application/json",
         },
@@ -95,5 +75,5 @@ export class YtApi {
     } catch (error) {
       return error;
     }
-  };
-}
+  },
+};
