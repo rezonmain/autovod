@@ -1,5 +1,5 @@
 /** @import { ApplicationEventType } from '../jsdoc.types' */
-
+import crypto from "node:crypto";
 import { empty } from "../utils/utils.js";
 
 const subscriptions = {};
@@ -12,7 +12,10 @@ export const eventBus = {
    * @returns {() => void} unsubscribe
    */
   subscribe(eventType, callback) {
-    const id = Symbol();
+    const id = crypto
+      .createHash("sha1")
+      .update(crypto.randomBytes(4))
+      .digest("hex");
 
     if (empty(subscriptions[eventType])) {
       subscriptions[eventType] = {};
@@ -35,10 +38,12 @@ export const eventBus = {
    * @returns
    */
   publish(eventType, ...args) {
-    if (!subscriptions[eventType]) return;
+    if (empty(subscriptions[eventType])) {
+      return;
+    }
 
-    Object.keys(subscriptions[eventType]).forEach((key) =>
-      subscriptions[eventType][key](...args)
-    );
+    Object.values(subscriptions[eventType]).forEach((callback) => {
+      callback(...args);
+    });
   },
 };

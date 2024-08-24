@@ -21,9 +21,9 @@ export const ytAuth = {
       `Open the following URL in your browser and grant access to YouTube:\n\n${url}\n`
     );
 
-    const callback = async (token, ttl) => {
-      log.log("Successfully authenticated with YouTube");
+    const callback = (token, ttl) => {
       fileCache.set(CACHE_KEYS.YT_ACCESS, ttl, token);
+      log.info("Successfully authenticated with Google");
     };
 
     eventBus.subscribe(APPLICATION_EVENT_TYPES.GOOGLE_AUTH_REDIRECT, callback);

@@ -1,35 +1,29 @@
 /** @import { Request as ExpressRequest, Response as ExpressResponse} from "express" */
+import path from "node:path";
 import { store } from "../modules/store.js";
 import { eventBus } from "../modules/event-bus.js";
 import { log } from "../modules/log.js";
 import { empty } from "../utils/utils.js";
-import { APPLICATION_EVENT_TYPES, APPLICATION_STORE_KEYS } from "../const.js";
+import {
+  APPLICATION_EVENT_TYPES,
+  APPLICATION_STORE_KEYS,
+  DOCUMENTS,
+} from "../const.js";
+
+const DIRNAME = process.cwd();
+const ASSETS_PATH = path.resolve(DIRNAME, "assets");
 
 /**
  * @param {ExpressRequest} req
  * @param {ExpressResponse} res
  */
-async function handleAuthRedirect(req, res) {
+async function handleAuthRedirect(_, res) {
   // serve small payload to get the parameters in the fragment
-  res.send(
-    `
-    <html>
-      <head>Authenticating with Google...</head>
-      <body>
-        <script>
-          const params = new URLSearchParams(window.location.hash.substring(1));
-          const json = JSON.stringify(Object.fromEntries(params));
-          fetch("/callback/google/auth", {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: json,
-          });
-        </script>
-    </html>
-    `
+  const documentPath = path.resolve(
+    ASSETS_PATH,
+    DOCUMENTS.CALLBACK_GOOGLE_REDIRECT
   );
+  res.sendFile(documentPath);
 }
 
 /**
@@ -74,7 +68,6 @@ async function handleTokenPayload(req, res) {
     Date.now() + expires_in * 1000
   );
   res.send("Authenticated with Google.\n You can close this tab now");
-  log.info("[handleAuthRedirect] Successfully authenticated with Google");
 }
 
 export const callbackGoogleService = {

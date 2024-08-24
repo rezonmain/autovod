@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authenticating with google...</title>
+</head>
+<body>
+  <p id="state">
+    Authenticating with google...
+  </p>
+  <script>
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const json = JSON.stringify(Object.fromEntries(params));
+    (async () => {
+      const response = await fetch("/callback/google/auth", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: json,
+    });
+    const messageNode = document.getElementById("state");
+
+    if (response.ok) {
+      const messageNode = document.getElementById("state");
+      const message = await response.text();
+      messageNode.textContent = message;
+    } else {
+      messageNode.textContent = "Failed to authenticate with google";
+    }
+    })();
+  </script>
+</body>
+</html>
