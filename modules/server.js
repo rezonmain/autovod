@@ -17,7 +17,7 @@ const domainBaseUrl = env(ENV_KEYS.DOMAIN_BASE_URL);
 
 function start() {
   expressServer.listen(port, () => {
-    log.log(`Server listening on ${domainBaseUrl}:${port}`);
+    log.info(`Server listening on ${domainBaseUrl}:${port}`);
   });
 }
 
