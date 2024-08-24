@@ -1,47 +1,32 @@
-import jwt from "jsonwebtoken";
-import { CACHE_KEYS, ENV_KEYS, SECRETS, YT_TOKEN_URL } from "../const.js";
-import { readPrivateKey } from "../utils/secrets.js";
-import { env } from "../utils/env.js";
+import {
+  APPLICATION_EVENT_TYPES,
+  APPLICATION_STORE_KEYS,
+  CACHE_KEYS,
+  GOOGLE_API_SCOPES,
+} from "../const.js";
+import { googleAuth } from "./google-auth.js";
 import { fileCache } from "./file-cache.js";
+import { log } from "./log.js";
+import { eventBus } from "./event-bus.js";
+import { store } from "./store.js";
 
 export const ytAuth = {
-  /**
-   * @returns {Promise<[Error, string]>}
-   */
-  buildJWT: async () => {
-    const jwtHeader = {
-      alg: "RS256",
-      typ: "JWT",
+  authorize: async () => {
+    const state = googleAuth.generateStateToken();
+    const scopes = [GOOGLE_API_SCOPES.YT];
+    const url = googleAuth.buildAuthorizationURL(scopes, state);
+    store.set(APPLICATION_STORE_KEYS.GOOGLE_AUTH_STATE, state);
+
+    log.log(
+      `Open the following URL in your browser and grant access to YouTube:\n\n${url}\n`
+    );
+
+    const callback = async (token, ttl) => {
+      log.log("Successfully authenticated with YouTube");
+      fileCache.set(CACHE_KEYS.YT_ACCESS, ttl, token);
     };
 
-    const scopes = ["https://www.googleapis.com/auth/youtube"];
-
-    const jwtClaim = {
-      iss: env(ENV_KEYS.YT_SERVICE_ACCOUNT_EMAIL),
-      scope: scopes.join(" "),
-      aud: "https://oauth2.googleapis.com/token",
-      exp: Math.floor(Date.now() / 1000) + 3600,
-      iat: Math.floor(Date.now() / 1000),
-    };
-
-    try {
-      const [keyError, key] = await readPrivateKey(
-        SECRETS.GOOGLE_SERVICE_ACCOUNT_KEY,
-        false
-      );
-      if (keyError) {
-        return [keyError, null];
-      }
-
-      return [
-        null,
-        jwt.sign(jwtClaim, key, {
-          header: jwtHeader,
-        }),
-      ];
-    } catch (error) {
-      return [error, null];
-    }
+    eventBus.subscribe(APPLICATION_EVENT_TYPES.GOOGLE_AUTH_REDIRECT, callback);
   },
 
   /**
@@ -54,36 +39,8 @@ export const ytAuth = {
       return [null, cachedToken];
     }
 
-    const [error, jwt] = await ytAuth.buildJWT();
-    if (error) {
-      return [error, null];
-    }
-    const url = new URL(YT_TOKEN_URL);
-    const body = new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion: jwt,
-    });
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: body.toString(),
-      });
-
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
-
-      const responseJson = await response.json();
-      const expiresAt = Date.now() + responseJson.expires_in * 1000;
-      fileCache.set(CACHE_KEYS.YT_ACCESS, expiresAt, responseJson.access_token);
-
-      return [null, responseJson.access_token];
-    } catch (error) {
-      return [error, null];
-    }
+    log.error(
+      "YT access token not found in cache, please authorize this app first"
+    );
   },
 };

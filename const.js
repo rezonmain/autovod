@@ -36,8 +36,9 @@ export const ENV_KEYS = {
   TELEGRAM_TOKEN: "TELEGRAM_TOKEN",
   TELEGRAM_CHAT_ID: "TELEGRAM_CHAT_ID",
   DEFAULT_YT_STREAM_KEY: "DEFAULT_YT_STREAM_KEY",
-  YT_SERVICE_ACCOUNT_KEY_ID: "YT_SERVICE_ACCOUNT_KEY_ID",
-  YT_SERVICE_ACCOUNT_EMAIL: "YT_SERVICE_ACCOUNT_EMAIL",
+  GOOGLE_AUTH_CLIENT_ID: "GOOGLE_AUTH_CLIENT_ID",
+  GOOGLE_AUTH_REDIRECT_URI: "GOOGLE_AUTH_REDIRECT_URI",
+  _GOOGLE_AUTH_HINT: "_GOOGLE_AUTH_HINT",
 };
 export const SECRETS = {
   GOOGLE_SERVICE_ACCOUNT_KEY: "google-service-account-key.secret",
@@ -47,8 +48,18 @@ export const TWITCH_GQL_URL = "https://gql.twitch.tv/gql";
 export const TWITCH_M3U8_URL = "https://usher.ttvnw.net/api/channel/hls";
 export const YT_HLS_INGEST_URL =
   "https://a.upload.youtube.com/http_upload_hls?cid=%s&copy=0&file=stream.m3u8";
-export const YT_TOKEN_URL = "https://oauth2.googleapis.com/token";
+export const YT_OAUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 export const YT_API_URLS = {
   BROADCAST: "https://www.googleapis.com/youtube/v3/liveBroadcasts",
   STREAM: "https://www.googleapis.com/youtube/v3/liveStreams",
+};
+export const GOOGLE_API_SCOPES = {
+  YT: "https://www.googleapis.com/auth/youtube",
+  YT_FORCE_SSL: "https://www.googleapis.com/auth/youtube.force-ssl",
+};
+export const APPLICATION_EVENT_TYPES = {
+  GOOGLE_AUTH_REDIRECT: "google-auth-redirect",
+};
+export const APPLICATION_STORE_KEYS = {
+  GOOGLE_AUTH_STATE: "google-auth-state",
 };

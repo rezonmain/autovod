@@ -63,4 +63,12 @@
  * @property {boolean} is_mature
  */
 
+/**
+ * @typedef {'google-auth-redirect'} ApplicationEventType
+ */
+
+/**
+ * @typedef {'google-auth-state'} ApplicationStoreKey
+ */
+
 export {};

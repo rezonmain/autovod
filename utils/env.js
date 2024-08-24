@@ -7,6 +7,11 @@ import { empty } from "./utils.js";
  */
 export function env(key) {
   const value = process.env[key];
+
+  if (empty(value) && key.startsWith("_")) {
+    return "";
+  }
+
   if (empty(value)) {
     throw new Error(`Environment variable ${key} is not set`);
   }

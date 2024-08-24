@@ -1,5 +1,5 @@
 import { server } from "./modules/server.js";
-import { Restreamer } from "./modules/restreamer.js";
+import { ytAuth } from "./modules/yt-auth.js";
 
-Restreamer.getInstance().init();
 server.start();
+ytAuth.authorize();
