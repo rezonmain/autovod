@@ -1,11 +1,26 @@
 import { YT_API_URLS } from "../const.js";
 import { empty } from "../utils/utils.js";
+import { ytAuth } from "./yt-auth.js";
 
 export class YtApi {
-  accessToken;
-  constructor(accessToken) {
-    this.accessToken = accessToken;
+  /**
+   * @type {() => [Error, string]}
+   */
+  accessTokenResolver;
+  isWaitingForAuthorization = false;
+
+  /**
+   *
+   * @param {() => [Error, string]} accessTokenResolver
+   */
+  constructor(accessTokenResolver) {
+    this.accessTokenResolver = accessTokenResolver;
   }
+
+  authorize = () => {
+    this.isWaitingForAuthorization = true;
+    ytAuth.authorize();
+  };
 
   /**
    * @returns {Promise<[Error, string]>}

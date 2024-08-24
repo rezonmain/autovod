@@ -26,10 +26,11 @@ class Telegram {
 
   /**
    * @param {string} message
+   * @param {string} parse_mode
    */
-  async sendMessage(message) {
+  async sendMessage(message, parse_mode = "MarkdownV2") {
     await this.bot.api.sendMessage(this.chatId, message, {
-      parse_mode: "MarkdownV2",
+      parse_mode,
     });
   }
 }

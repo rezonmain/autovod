@@ -39,6 +39,7 @@ export const ENV_KEYS = {
   GOOGLE_AUTH_CLIENT_ID: "GOOGLE_AUTH_CLIENT_ID",
   GOOGLE_AUTH_REDIRECT_URI: "GOOGLE_AUTH_REDIRECT_URI",
   _GOOGLE_AUTH_HINT: "_GOOGLE_AUTH_HINT",
+  NODE_ENV: "NODE_ENV",
 };
 export const SECRETS = {
   GOOGLE_SERVICE_ACCOUNT_KEY: "google-service-account-key.secret",
@@ -65,4 +66,8 @@ export const APPLICATION_STORE_KEYS = {
 };
 export const DOCUMENTS = {
   CALLBACK_GOOGLE_REDIRECT: "callback-google-redirect.html",
+};
+export const APP_ENV = {
+  DEV: "dev",
+  PROD: "prod",
 };

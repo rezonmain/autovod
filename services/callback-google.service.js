@@ -60,6 +60,7 @@ async function handleTokenPayload(req, res) {
     return;
   }
 
+  // delete the generate state after use, avoids replay attacks
   store.delete(APPLICATION_STORE_KEYS.GOOGLE_AUTH_STATE);
 
   eventBus.publish(
