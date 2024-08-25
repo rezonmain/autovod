@@ -78,3 +78,12 @@ For when I forget how to do stuff
 - Personal OAuth token can be read from the `auth-token` cookie saved on storage from https://twitch.tv
 - Personal OAuth token is sent on the first GQL POST request the client makes (to fetch the playback access token) in the `Authorization` header prefixed by `OAuth`
 - This token seems to expire, if this is the case, the mentioned request will return 401 for an invalid token, removing the token (writing `Authorization: undefined` in the headers) should work, but stream won't be authorized
+
+# Authenticating with google
+
+- Create project on [google's developer console](https://console.cloud.google.com)
+- Enable the [youtube data api](https://console.cloud.google.com/apis/api/youtube.googleapis.com) for the project
+- Head on to [credentials](https://console.cloud.google.com/apis/credentials) and create a new OAuth2 credential for a web application
+- Add the redirect URLs
+- Complete the OAuth concent screen setup
+- Add testing user, should be the owner of the channel you'll be live streaming to
