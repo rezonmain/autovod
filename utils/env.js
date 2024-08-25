@@ -1,3 +1,4 @@
+import { log } from "../modules/log.js";
 import { empty } from "./utils.js";
 
 /**
@@ -8,12 +9,9 @@ import { empty } from "./utils.js";
 export function env(key) {
   const value = process.env[key];
 
-  if (empty(value) && key.startsWith("_")) {
-    return "";
-  }
-
   if (empty(value)) {
-    throw new Error(`Environment variable ${key} is not set`);
+    log.error(`Environment variable ${key} is not set`);
+    process.exit(1);
   }
   return value;
 }
