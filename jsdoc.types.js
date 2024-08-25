@@ -137,7 +137,7 @@
 
 /**
  * @typedef {Object} YTTransitionBroadcastOptions
- * @property {("snippet" | "contentDetails" | "status", "id")[]} part
+ * @property {("snippet" | "contentDetails" | "status" | "id")[]} part
  * @property {"complete" | "live" | "testing"} broadcastStatus
  * @property {string} id
  */
