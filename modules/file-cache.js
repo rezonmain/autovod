@@ -19,7 +19,7 @@ export const fileCache = {
     const hash = fileCache._hash(key);
     const encodedData = `${ttl}${SEPARATOR}${data.join(SEPARATOR)}`;
     fileCache._write(hash, encodedData);
-    return log.info(`[Cache SET] key: ${key} | hash: ${hash}`);
+    return log.info(`[Cache SET] key: ${key} | hash: ${hash} | data: ${data}`);
   },
 
   /**
