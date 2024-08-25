@@ -16,10 +16,6 @@ export const fileCache = {
    * @param {string[]} data - data to store, store multiple values passing them as additional arguments
    */
   set: (key, ttl, ...data) => {
-    log.debug(`[Cache SET] key: ${key} | ttl: ${ttl} | data: ${data}`);
-    if (empty(data)) {
-      return log.info(`[Cache SET] NO_DATA to store | key: ${key}`);
-    }
     const hash = fileCache._hash(key);
     const encodedData = `${ttl}${SEPARATOR}${data.join(SEPARATOR)}`;
     fileCache._write(hash, encodedData);
