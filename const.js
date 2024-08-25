@@ -2,6 +2,7 @@ export const TWITCH_TOKEN_URL = "https://id.twitch.tv/oauth2/token";
 export const CACHE_KEYS = {
   TWITCH_ACCESS: "@twitch-access",
   YT_ACCESS: "@yt-access",
+  YT_REFRESH: "@yt-refresh",
 };
 export const TWITCH_WEBHOOK_HEADERS = {
   MESSAGE_ID: "Twitch-Eventsub-Message-Id".toLowerCase(),
@@ -38,7 +39,6 @@ export const ENV_KEYS = {
   GOOGLE_AUTH_CLIENT_ID: "GOOGLE_AUTH_CLIENT_ID",
   GOOGLE_AUTH_REDIRECT_URI: "GOOGLE_AUTH_REDIRECT_URI",
   _GOOGLE_AUTH_HINT: "_GOOGLE_AUTH_HINT",
-  NODE_ENV: "NODE_ENV",
 };
 export const SECRETS = {
   GOOGLE_SERVICE_ACCOUNT_KEY: "google-service-account-key.secret",
