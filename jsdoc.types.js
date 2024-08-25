@@ -92,8 +92,36 @@
  * @property {string} etag
  * @property {string} id
  * @property {Object} snippet
+ * @property {string} snippet.publishedAt
+ * @property {string} snippet.channelId
+ * @property {string} snippet.title
+ * @property {string} snippet.description
+ * @property {string} snippet.scheduledStartTime
+ * @property {string} snippet.scheduledEndTime
+ * @property {string} snippet.actualEndTime
+ * @property {string} snippet.isDefaultBroadcast
+ * @property {Object} snippet.liveChatId
  * @property {Object} status
+ * @property {string} status.lifeCycleStatus
+ * @property {string} status.privacyStatus
+ * @property {string} status.recordingStatus
+ * @property {string} status.selfDeclaredMadeForKids
+ * @property {string} status.madeForKids
  * @property {Object} contentDetails
+ * @property {string} contentDetails.boundStreamId
+ * @property {string} contentDetails.boundStreamLastUpdateTimeMs
+ * @property {Object} contentDetails.monitorStream
+ * @property {string} contentDetails.monitorStream.embedHtml
+ * @property {string} contentDetails.monitorStream.enableMonitorStream
+ * @property {string} contentDetails.monitorStream.broadcastStreamDelayMs
+ * @property {boolean} contentDetails.enableEmbed
+ * @property {boolean} contentDetails.enableDvr
+ * @property {boolean} contentDetails.recordFromStart
+ * @property {boolean} contentDetails.enableClosedCaptions
+ * @property {string} contentDetails.closedCaptionsType
+ * @property {string} contentDetails.projection
+ * @property {string} contentDetails.enableAutoStart
+ * @property {string} contentDetails.enableAutoStart
  */
 
 /**

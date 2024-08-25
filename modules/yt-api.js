@@ -95,7 +95,7 @@ export const ytApi = {
   async bindBroadcast(accessToken, options) {
     const url = new URL(YT_API_URLS.BROADCAST_BIND);
     const queryParams = new URLSearchParams({
-      part: "snippet",
+      part: "id,snippet",
       ...options,
     });
     url.search = queryParams.toString();
