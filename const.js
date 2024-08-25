@@ -36,8 +36,9 @@ export const ENV_KEYS = {
   HOST_PORT: "HOST_PORT",
   TELEGRAM_TOKEN: "TELEGRAM_TOKEN",
   TELEGRAM_CHAT_ID: "TELEGRAM_CHAT_ID",
-  GOOGLE_AUTH_CLIENT_ID: "GOOGLE_AUTH_CLIENT_ID",
-  GOOGLE_AUTH_REDIRECT_URI: "GOOGLE_AUTH_REDIRECT_URI",
+  GOOGLE_CLIENT_ID: "GOOGLE_CLIENT_ID",
+  GOOGLE_REDIRECT_URI: "GOOGLE_REDIRECT_URI",
+  GOOGLE_SECRET: "GOOGLE_SECRET",
   _GOOGLE_AUTH_HINT: "_GOOGLE_AUTH_HINT",
 };
 export const SECRETS = {
@@ -49,6 +50,7 @@ export const TWITCH_M3U8_URL = "https://usher.ttvnw.net/api/channel/hls";
 export const YT_HLS_INGEST_URL =
   "https://a.upload.youtube.com/http_upload_hls?cid=%s&copy=0&file=stream.m3u8";
 export const YT_OAUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
+export const YT_ACCESS_TOKEN_URL = "https://oauth2.googleapis.com/token";
 export const YT_API_URLS = {
   BROADCAST: "https://www.googleapis.com/youtube/v3/liveBroadcasts",
   BROADCAST_BIND: "https://www.googleapis.com/youtube/v3/liveBroadcasts/bind",
