@@ -67,12 +67,6 @@ $ npm run restream h3h3productions
 Skip ('#EXT-X-TWITCH-INFO:NODE="video-edge-ee538e.iad05",MANIFEST-[...]
 ```
 
-# Bookmarks
-
-For when I forget how to do stuff
-
-- [How to authenticate requests to Google API's](https://developers.google.com/identity/protocols/oauth2/service-account#httprest)
-
 # Authenticating twitch stream
 
 - Personal OAuth token can be read from the `auth-token` cookie saved on storage from https://twitch.tv
@@ -80,6 +74,8 @@ For when I forget how to do stuff
 - This token seems to expire, if this is the case, the mentioned request will return 401 for an invalid token, removing the token (writing `Authorization: undefined` in the headers) should work, but stream won't be authorized
 
 # Authenticating with google
+
+[Source](https://developers.google.com/identity/protocols/oauth2/web-server)
 
 - Create project on [google's developer console](https://console.cloud.google.com)
 - Enable the [youtube data api](https://console.cloud.google.com/apis/api/youtube.googleapis.com) for the project
