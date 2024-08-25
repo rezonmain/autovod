@@ -18,7 +18,7 @@ export const ffmpeg = {
    * @param {Object} options
    * @param {string} options.sourceUrl
    * @param {string} options.destinationUrl
-   * @param {(code: number) => void} options.onExit
+   * @param {(code: number) => Promise<void>} options.onExit
    * @param {boolean} shouldLog
    * @returns
    */
@@ -42,8 +42,8 @@ export const ffmpeg = {
     }
 
     // ffmpeg will exit when the source stream ends
-    childProcess.on("exit", (code) => {
-      onExit(code);
+    childProcess.on("exit", async (code) => {
+      await onExit(code);
     });
 
     return childProcess;
