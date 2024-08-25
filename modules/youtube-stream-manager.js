@@ -82,7 +82,12 @@ export class YTStreamManager {
         this.streams.add(`${stream.id}${stream.cdn.ingestionInfo.streamName}`);
       }
     });
-    log.debug(`Loaded ${this.streams} available streams`);
+    log.debug(
+      `[YTStreamManager.loadAvailableStreams] Loaded available streams:`
+    );
+    for (const stream of this.streams) {
+      log.debug(`\t${stream}`);
+    }
   }
 
   /**
@@ -175,7 +180,7 @@ export class YTStreamManager {
     this.logins.add(login);
 
     log.info(
-      `[YTStreamManager.restreamToYt] Starting restream for login: ${login} to youtube using streamKey: ${ytStreamKey}`
+      `[YTStreamManager.restreamToYt] Starting restream for ${login} using streamKey: ${ytStreamKey}`
     );
 
     return ffmpeg.passthroughHLS({
@@ -183,7 +188,7 @@ export class YTStreamManager {
       destinationUrl,
       onExit: async (code) => {
         log.info(
-          `[YTStreamManager.restreamToYt] for login ${login} ended with code: ${code}`
+          `[YTStreamManager.restreamToYt] Restream for ${login} ended with code: ${code}`
         );
         this.handleStreamEnd(stream, login);
       },
@@ -219,7 +224,7 @@ export class YTStreamManager {
 
     this.scheduledBroadcasts.delete(stream);
     // revalidate available streams after we ended a broadcast
-    this.loadAvailableStreams();
+    await this.loadAvailableStreams();
 
     // TODO: decide if we should make broadcast public ???
   }
