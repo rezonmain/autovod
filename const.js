@@ -84,3 +84,6 @@ export const BROADCAST_DEFAULT_BODY = {
     recordFromStart: true,
   },
 };
+export const SCRIPTS = {
+  PASSTHROUGH_HLS: "passthrough-hsl.sh",
+};

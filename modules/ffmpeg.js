@@ -1,7 +1,12 @@
 import { spawn, exec as syncExec } from "node:child_process";
 import { promisify } from "node:util";
+import path from "node:path";
+import { SCRIPTS } from "../const";
 
 const exec = promisify(syncExec);
+
+const DIRNAME = process.cwd();
+const SCRIPTS_PATH = path.resolve(DIRNAME, "script");
 
 export const ffmpeg = {
   async printVersion() {
@@ -26,10 +31,10 @@ export const ffmpeg = {
     { sourceUrl, destinationUrl, onExit },
     shouldLog = false
   ) => {
-    const childProcess = spawn("./scripts/restream.sh", [
-      destinationUrl,
-      sourceUrl,
-    ]);
+    const childProcess = spawn(
+      path.join(SCRIPTS_PATH, SCRIPTS.PASSTHROUGH_HLS),
+      [destinationUrl, sourceUrl]
+    );
 
     if (shouldLog) {
       childProcess.stdout.on("data", (data) => {

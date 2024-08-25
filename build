@@ -2,5 +2,5 @@
 
 node_version=$(<.nvmrc)
 node_version=${node_version//v/}
-echo node_version=$node_version
+
 docker build --build-arg node_version=$node_version -t autovod .
