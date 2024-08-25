@@ -190,7 +190,7 @@ export class YTStreamManager {
         log.info(
           `[YTStreamManager.restreamToYt] Restream for ${login} ended with code: ${code}`
         );
-        this.handleStreamEnd(stream, login);
+        await this.handleStreamEnd(stream, login);
       },
     });
   }
