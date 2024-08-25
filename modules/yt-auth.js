@@ -112,7 +112,6 @@ export const ytAuth = {
   },
 
   /**
-   *
    * @param {string} refreshToken
    * @returns {Promise<[Error, {access_token: string, expires_in: number}]>}
    */
@@ -140,7 +139,6 @@ export const ytAuth = {
     }
   },
 
-  // TODO: this is not working???
   sendTelegramMessage: async (url) => {
     try {
       const telegram = Telegram.getInstance();
