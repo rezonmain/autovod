@@ -1,5 +1,4 @@
 /** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream, YTTransitionBroadcastOptions } from '../jsdoc.types.js' */
-
 import { BROADCAST_DEFAULT_BODY, YT_API_URLS } from "../const.js";
 import { empty } from "../utils/utils.js";
 
@@ -146,11 +145,7 @@ export const ytApi = {
       });
 
       if (!response.ok) {
-        console.log("status", response.status);
-        console.log("status text", response.statusText);
-        console.log("response body", response.body);
         const responseBody = await response.json();
-        console.log("body json", responseBody);
         throw new Error(JSON.stringify(responseBody));
       }
 

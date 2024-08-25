@@ -88,7 +88,7 @@ export class YTStreamManager {
       `[YTStreamManager.loadAvailableStreams] Loaded available streams:`
     );
     for (const stream of this.streams) {
-      log.debug(`\t${stream}`);
+      log.debug(`- ${stream}`);
     }
   }
 
@@ -192,7 +192,6 @@ export class YTStreamManager {
         log.info(
           `[YTStreamManager.restreamToYt] Restream for ${login} ended with code: ${code}`
         );
-        console.log("-1");
         const streamEndError = await this.handleStreamEnd(stream, login);
         if (streamEndError) {
           log.error(
@@ -200,7 +199,6 @@ export class YTStreamManager {
             streamEndError
           );
         }
-        console.log("10");
       },
     });
   }
