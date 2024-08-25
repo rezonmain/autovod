@@ -1,7 +1,7 @@
 import { spawn, exec as syncExec } from "node:child_process";
 import { promisify } from "node:util";
 import path from "node:path";
-import { SCRIPTS } from "../const";
+import { SCRIPTS } from "../const.js";
 
 const exec = promisify(syncExec);
 
