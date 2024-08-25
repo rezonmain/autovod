@@ -1,8 +1,9 @@
 /** @import { TwitchWebhookNotification } from "../jsdoc.types.js" */
 import { TWITCH_EVENTSUB_TYPES } from "../const.js";
-import { Restreamer } from "./restreamer.js";
 import { Telegram } from "./telegram.js";
 import { log } from "./log.js";
+import { YoutubeStreamManager } from "./youtube-stream-manager.js";
+import { twitchPlaylist } from "./twitch-playlist.js";
 
 export const twitchNotifier = {
   /**
@@ -29,17 +30,42 @@ export const twitchNotifier = {
    * @param {TwitchWebhookNotification} notification
    */
   handleStreamOnlineEvent: async (notification) => {
-    Restreamer.getInstance().start(
-      await Restreamer.getM3u8UrlFromLogin(
-        notification.event.broadcaster_user_login
-      )
-    );
+    const login = notification.event.broadcaster_user_login;
+
+    const streamManager = YoutubeStreamManager.getInstance();
+
+    const [broadcastScheduleError, { stream, broadcast }] =
+      await streamManager.scheduleBroadcast(login);
+
+    if (broadcastScheduleError) {
+      log.error(
+        `[twitchNotifier.handleStreamOnlineEvent] Error scheduling broadcast: ${broadcastScheduleError}`
+      );
+      return;
+    }
+
+    const [playbackTokenError, playbackToken] =
+      await twitchPlaylist.getPlaybackAccessToken(login);
+
+    if (playbackTokenError) {
+      log.error(
+        `[twitchNotifier.handleStreamOnlineEvent] Error getting playback token: ${playbackTokenError}`
+      );
+      return;
+    }
+
+    const m3u8Url = twitchPlaylist.buildM3u8Url(login, playbackToken);
+
+    streamManager.restreamToYT(m3u8Url, stream, login);
+
+    const embedHTML = broadcast.contentDetails.monitorStream.embedHtml;
 
     const telegram = new Telegram();
     telegram.start();
     await telegram.sendMessage(
-      `*${notification.event.broadcaster_user_name}* is live NOW\\!`
+      `${notification.event.broadcaster_user_name}* is live NOW\\!`
     );
+    await telegram.sendMessage(embedHTML, "HTML");
     await telegram.stop();
   },
 

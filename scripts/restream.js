@@ -1,8 +1,7 @@
 import express from "express";
 import { ENV_KEYS } from "../const.js";
-import { twitchPlaylist } from "../modules/twitch-playlist.js";
 import { TwitchApi } from "../modules/twitch-api.js";
-import { YoutubeStreamManager } from "../modules/youtube-stream-manager.js";
+import { YTStreamManager } from "../modules/youtube-stream-manager.js";
 import { twitchAuth } from "../modules/twitch-auth.js";
 import { env } from "../utils/env.js";
 import { empty } from "../utils/utils.js";
@@ -44,7 +43,7 @@ app.use("/callback/google", callbackGoogleController);
 // boot up server to listen for the google auth redirect
 const server = app.listen(env(ENV_KEYS.APPLICATION_PORT));
 
-const streamManager = YoutubeStreamManager.getInstance();
+const streamManager = YTStreamManager.getInstance();
 const initError = await streamManager.init();
 
 if (initError) {
@@ -52,7 +51,9 @@ if (initError) {
   process.exit(1);
 }
 
-const [scheduleError, streamKey] = await streamManager.scheduleBroadcast(login);
+const [scheduleError, { stream }] = await streamManager.scheduleBroadcast(
+  login
+);
 
 if (scheduleError) {
   console.error(scheduleError);
@@ -61,17 +62,4 @@ if (scheduleError) {
 
 server.close();
 
-const [playbackTokenError, playbackToken] =
-  await twitchPlaylist.getPlaybackAccessToken(
-    login,
-    env(ENV_KEYS.TWITCH_PERSONAL_OAUTH_TOKEN)
-  );
-
-if (playbackTokenError) {
-  console.error(playbackTokenError);
-  process.exit(1);
-}
-
-const m3u8Url = twitchPlaylist.buildM3u8Url(login, playbackToken);
-
-streamManager.restreamToYT(m3u8Url, streamKey, login);
+streamManager.restreamToYT(stream, login);

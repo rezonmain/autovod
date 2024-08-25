@@ -1,15 +1,18 @@
+/** @import { YTBroadcast } from '../jsdoc.types.js'*/
+/** @import { ChildProcess } from 'node:child_process' */
 import { format } from "node:util";
-import { BROADCAST_DEFAULT_BODY } from "../const.js";
+import { BROADCAST_DEFAULT_BODY, YT_HLS_INGEST_URL } from "../const.js";
 import { ffmpeg } from "./ffmpeg.js";
 import { nil } from "../utils/utils.js";
 import { ytApi } from "./yt-api.js";
 import { ytAuth } from "./yt-auth.js";
 import { getDateForSteamTitle } from "../utils/dates.js";
 import { log } from "./log.js";
+import { twitchPlaylist } from "./twitch-playlist.js";
 
 const SEPARATOR = "";
 
-export class YoutubeStreamManager {
+export class YTStreamManager {
   /**
    * @type {Set<string>} - streamIdstreamKey
    */
@@ -21,12 +24,12 @@ export class YoutubeStreamManager {
   scheduledBroadcasts;
 
   /**
-   * @type {Set<string>} - twitch logins we are currently streaming to youtube
+   * @type {Set<string>} - twitch logins we are currently streaming to YT
    */
   logins;
 
   /**
-   * @type {YoutubeStreamManager}
+   * @type {YTStreamManager}
    */
   _instance = null;
 
@@ -38,11 +41,11 @@ export class YoutubeStreamManager {
 
   /**
    *
-   * @returns {YoutubeStreamManager}
+   * @returns {YTStreamManager}
    */
   static getInstance() {
     if (nil(this._instance)) {
-      this._instance = new YoutubeStreamManager();
+      this._instance = new YTStreamManager();
     }
     return this._instance;
   }
@@ -79,18 +82,16 @@ export class YoutubeStreamManager {
         this.streams.add(`${stream.id}${stream.cdn.ingestionInfo.streamName}`);
       }
     });
-    log.debug(`[YoutubeStreamManager.loadAvailableStreams] available streams:`);
-    streams.forEach((stream) => {
-      log.debug(`- ${stream.id} ${stream.cdn.ingestionInfo.streamName}`);
-    });
   }
 
   /**
    * @param {string} login - twitch login
-   * @returns {Promise<[Error, string]>} - streamIdstreamKey
+   * @returns {Promise<[Error, {stream: string, broadcast: YTBroadcast}]>} - streamIdstreamKey
    */
-  async scheduleBroadcast(login = "🤔") {
-    // this only works if the scheduledBroadcasts map keys are the same as the streams set values
+  async scheduleBroadcast(login) {
+    // the following only works if scheduledBroadcasts's Map keys, are the same as streams Set values
+
+    /** @type {Set<string>} */
     const availableStreams = this.streams.difference(this.scheduledBroadcasts);
 
     if (availableStreams.size === 0) {
@@ -124,11 +125,11 @@ export class YoutubeStreamManager {
         contentDetails: BROADCAST_DEFAULT_BODY.contentDetails,
       }
     );
-
     if (insertError) {
       return [insertError, null];
     }
 
+    /** @type {string} */
     const stream = availableStreams.values().next().value;
     const [streamId] = stream.split(SEPARATOR);
 
@@ -136,34 +137,53 @@ export class YoutubeStreamManager {
       id: insertedBroadcast.id,
       streamId,
     });
-
     if (bindError) {
       return [bindError, null];
     }
 
     this.scheduledBroadcasts.set(stream, boundBroadcast.id);
-    return [null, stream];
+    return [null, { stream, broadcast: boundBroadcast }];
   }
 
   /**
-   *
-   * @param {string} m3u8PlaylistUrl
    * @param {string} stream - streamIdstreamKey
    * @param {string} login - twitch login
-   * @returns
+   * @returns {Promise<Error | ChildProcess>}
    */
-  restreamToYT(m3u8PlaylistUrl, stream, login) {
+  async restreamToYT(stream, login) {
     if (this.logins.has(login)) {
+      log.info(
+        `[YTStreamManager.restreamToYt] Already streaming login: ${login}`
+      );
       return;
     }
 
+    const [playbackTokenError, playbackToken] =
+      await twitchPlaylist.getPlaybackAccessToken(login);
+
+    if (playbackTokenError) {
+      return playbackTokenError;
+    }
+
+    const sourceUrl = twitchPlaylist.buildM3u8Url(login, playbackToken);
+
     const [, ytStreamKey] = stream.split(SEPARATOR);
 
-    return ffmpeg.restreamToYT({
-      m3u8PlaylistUrl,
-      ytStreamKey,
-      login,
-      onExit: async () => {
+    const destinationUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
+
+    this.logins.add(login);
+
+    log.info(
+      `[YTStreamManager.restreamToYt] Starting restream for login: ${login} to youtube using streamKey: ${ytStreamKey}`
+    );
+
+    return ffmpeg.passthroughHLS({
+      sourceUrl,
+      destinationUrl,
+      onExit: async (code) => {
+        log.info(
+          `[YTStreamManager.restreamToYt] for login ${login} ended with code: ${code}`
+        );
         this.handleStreamEnd(stream, login);
       },
     });
@@ -190,15 +210,16 @@ export class YoutubeStreamManager {
       part: ["status"],
       broadcastStatus: "complete",
     });
-
     if (transitionError) {
       return transitionError;
     }
 
-    log.info(`Transitioned broadcast for login ${login} to complete`);
+    log.info(`Transitioned broadcast for login ${login} to Complete`);
 
     this.scheduledBroadcasts.delete(stream);
     // revalidate available streams after we ended a broadcast
     this.loadAvailableStreams();
+
+    // TODO: decide if we should make broadcast public ???
   }
 }

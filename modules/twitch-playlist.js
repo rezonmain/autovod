@@ -1,8 +1,10 @@
 import {
+  ENV_KEYS,
   TWITCH_GQL_URL,
   TWITCH_M3U8_URL,
   TWITCH_PUBLIC_CLIENT_ID,
 } from "../const.js";
+import { env } from "../utils/env.js";
 import { nil } from "../utils/utils.js";
 /**
  * @typedef {Object} PlaybackAccessToken
@@ -17,7 +19,10 @@ export const twitchPlaylist = {
    * @param {string} [personalOAuthToken]
    * @return {Promise<[Error, PlaybackAccessToken>]}
    */
-  getPlaybackAccessToken: async (login, personalOAuthToken = null) => {
+  getPlaybackAccessToken: async (
+    login,
+    personalOAuthToken = env(ENV_KEYS.TWITCH_PERSONAL_OAUTH_TOKEN)
+  ) => {
     const url = new URL(TWITCH_GQL_URL);
     const requestBody = {
       operationName: "PlaybackAccessToken",

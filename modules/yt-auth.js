@@ -78,12 +78,13 @@ export const ytAuth = {
     try {
       const telegram = new Telegram();
       await telegram.start();
+
       const htmlMessage = `
         <b>autovod</b> needs your permission to manage live streams on your behalf.
         Please click on the following link to do so:
-        </br/>
-        <a href="${url}">Authenticate with Google</a>
-        `;
+
+        <a href="${url}">Authenticate with Google</a>`;
+
       await telegram.sendMessage(htmlMessage, "HTML");
       await telegram.stop();
     } catch (error) {
