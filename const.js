@@ -68,10 +68,6 @@ export const APPLICATION_STORE_KEYS = {
 export const DOCUMENTS = {
   CALLBACK_GOOGLE_REDIRECT: "callback-google-redirect.html",
 };
-export const APP_ENV = {
-  DEV: "dev",
-  PROD: "prod",
-};
 export const BROADCAST_DEFAULT_BODY = {
   snippet: {
     title: "%s autovod | %s",
