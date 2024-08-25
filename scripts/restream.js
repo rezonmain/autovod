@@ -1,10 +1,13 @@
+import express from "express";
 import { ENV_KEYS } from "../const.js";
 import { ffmpeg } from "../modules/ffmpeg.js";
 import { twitchPlaylist } from "../modules/twitch-playlist.js";
+import { YoutubeStreamManager } from "../modules/youtube-stream-manager.js";
 import { env } from "../utils/env.js";
 import { empty } from "../utils/utils.js";
+import { callbackGoogleController } from "../controllers/callback-google.controller.js";
 
-const [, , login, streamKey] = process.argv;
+const [, , login] = process.argv;
 
 if (empty(login)) {
   console.log("login not provided");
@@ -12,11 +15,28 @@ if (empty(login)) {
   process.exit(1);
 }
 
-if (empty(streamKey)) {
-  console.log("streamKey not provided");
-  console.error("Usage: SCRIPT <login> <streamKey>");
+const app = express();
+app.use("/callback/google", callbackGoogleController);
+
+// boot up server to listen for the google auth redirect
+const server = app.listen(env(ENV_KEYS.APPLICATION_PORT));
+
+const streamManager = YoutubeStreamManager.getInstance();
+const initError = await streamManager.init();
+
+if (initError) {
+  console.error("Error initializing YoutubeStreamManager", initError);
   process.exit(1);
 }
+
+const [scheduleError, streamKey] = await streamManager.scheduleBroadcast(login);
+
+if (scheduleError) {
+  console.error(scheduleError);
+  process.exit(1);
+}
+
+server.close();
 
 const [accessError, accessToken] = await twitchPlaylist.getPlaybackAccessToken(
   login,

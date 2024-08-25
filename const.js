@@ -35,7 +35,6 @@ export const ENV_KEYS = {
   HOST_PORT: "HOST_PORT",
   TELEGRAM_TOKEN: "TELEGRAM_TOKEN",
   TELEGRAM_CHAT_ID: "TELEGRAM_CHAT_ID",
-  DEFAULT_YT_STREAM_KEY: "DEFAULT_YT_STREAM_KEY",
   GOOGLE_AUTH_CLIENT_ID: "GOOGLE_AUTH_CLIENT_ID",
   GOOGLE_AUTH_REDIRECT_URI: "GOOGLE_AUTH_REDIRECT_URI",
   _GOOGLE_AUTH_HINT: "_GOOGLE_AUTH_HINT",
@@ -52,6 +51,7 @@ export const YT_HLS_INGEST_URL =
 export const YT_OAUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 export const YT_API_URLS = {
   BROADCAST: "https://www.googleapis.com/youtube/v3/liveBroadcasts",
+  BROADCAST_BIND: "https://www.googleapis.com/youtube/v3/liveBroadcasts/bind",
   STREAM: "https://www.googleapis.com/youtube/v3/liveStreams",
 };
 export const GOOGLE_API_SCOPES = {
@@ -70,4 +70,20 @@ export const DOCUMENTS = {
 export const APP_ENV = {
   DEV: "dev",
   PROD: "prod",
+};
+export const BROADCAST_DEFAULT_BODY = {
+  snippet: {
+    title: "%s autovod | %s",
+    description: `don't panic! this is an automated vod channel ran by robo-cats that are still on BETA.\n\nThis channel is not affiliated with the featured creators: twitch.tv/%s`,
+  },
+  status: {
+    privacyStatus: "unlisted",
+    selfDeclaredMadeForKids: false,
+  },
+  contentDetails: {
+    enableAutoStart: true,
+    enableAutoStop: true,
+    enableDvr: true,
+    recordFromStart: true,
+  },
 };

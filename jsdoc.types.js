@@ -64,6 +64,64 @@
  */
 
 /**
+ * @typedef {Object} YTStream
+ * @property {string} kind
+ * @property {string} etag
+ * @property {string} id
+ * @property {Object} snippet
+ * @property {string} snippet.publishedAt
+ * @property {string} snippet.channelId
+ * @property {string} snippet.title
+ * @property {string} snippet.description
+ * @property {string} snippet.isDefaultStream
+ * @property {Object} cdn
+ * @property {string} cdn.ingestionType
+ * @property {Object} cdn.ingestionInfo
+ * @property {string} cdn.ingestionInfo.streamName
+ * @property {string} cdn.ingestionInfo.ingestionAddress
+ * @property {string} cdn.ingestionInfo.backupIngestionAddress
+ * @property {string} cdn.resolution
+ * @property {string} cdn.frameRate
+ * @property {Object} status
+ * @property {"active" | "inactive"} status.streamStatus
+ */
+
+/**
+ * @typedef {Object} YTBroadcast
+ * @property {string} kind
+ * @property {string} etag
+ * @property {string} id
+ * @property {Object} snippet
+ * @property {Object} status
+ * @property {Object} contentDetails
+ */
+
+/**
+ * @typedef {Object} YTGetStreamsOptions
+ * @property {("snippet" | "cdn" | "contentDetails" | "status")[]} part
+ * @property {boolean} mine
+ */
+
+/**
+ * @typedef {Object} YTInsertBroadcastOptions
+ * @property {("snippet" | "contentDetails" | "status")[]} part
+ */
+/**
+ * @typedef {Object} YTInsertBroadcastBody
+ * @property {Object} snippet
+ * @property {string} snippet.title
+ * @property {string} snippet.scheduledStartTime
+ * @property {Object} status
+ * @property {string} status.privacyStatus
+ * @property {boolean} status.selfDeclaredMadeForKids
+ * @property {Object} contentDetails
+ * @property {string} contentDetails.enableAutoStart
+ * @property {string} contentDetails.enableAutoStop
+ * @property {string} contentDetails.enableDvr
+ * @property {string} contentDetails.recordFromStart
+ */
+
+/**
  * @typedef {'google-auth-redirect'} ApplicationEventType
  */
 
