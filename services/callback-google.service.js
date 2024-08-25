@@ -20,7 +20,7 @@ async function handleAuthRedirect(req, res) {
 
   if (!empty(error)) {
     log.error(`[handleAuthRedirect] Google OAuth error: ${error}`);
-    res.sendStatus(204);
+    res.send("Google OAuth error").status(204);
     return;
   }
 
@@ -44,7 +44,9 @@ async function handleAuthRedirect(req, res) {
     return;
   }
 
-  res.sendStatus(200);
+  res
+    .send("Authorization with google successful.\nYou can close this tab")
+    .status(200);
 
   try {
     const url = new URL(YT_ACCESS_TOKEN_URL);
