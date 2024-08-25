@@ -220,7 +220,9 @@ export class YTStreamManager {
       return transitionError;
     }
 
-    log.info(`Transitioned broadcast for login ${login} to Complete`);
+    log.info(
+      `[YTStreamManager.handleStreamEnd] Transitioned broadcast for ${login} to Complete`
+    );
 
     this.scheduledBroadcasts.delete(stream);
     // revalidate available streams after we ended a broadcast
