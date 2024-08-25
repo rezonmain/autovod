@@ -1,9 +1,7 @@
 import {
-  APP_ENV,
   APPLICATION_EVENT_TYPES,
   APPLICATION_STORE_KEYS,
   CACHE_KEYS,
-  ENV_KEYS,
   GOOGLE_API_SCOPES,
 } from "../const.js";
 import { googleAuth } from "./google-auth.js";
@@ -11,7 +9,6 @@ import { log } from "./log.js";
 import { eventBus } from "./event-bus.js";
 import { store } from "./store.js";
 import { Telegram } from "./telegram.js";
-import { env } from "../utils/env.js";
 import { fileCache } from "./file-cache.js";
 import { empty } from "../utils/utils.js";
 
@@ -71,21 +68,11 @@ export const ytAuth = {
 
   // TODO: this is not working???
   sendTelegramMessage: async (url) => {
-    if (env(ENV_KEYS.NODE_ENV) === APP_ENV.PROD) {
-      return;
-    }
-    log.info("Sending auth URL as a message to Telegram");
     try {
       const telegram = new Telegram();
       await telegram.start();
-
-      const htmlMessage = `
-        <b>autovod</b> needs your permission to manage live streams on your behalf.
-        Please click on the following link to do so:
-
-        <a href="${url}">Authenticate with Google</a>`;
-
-      await telegram.sendMessage(htmlMessage, "HTML");
+      const message = `🔐 *autovod* needs your permission to manage live streams on your behalf\\. Please [click on this link to do so](${url})`;
+      await telegram.sendMessage(message);
       await telegram.stop();
     } catch (error) {
       log.error(
