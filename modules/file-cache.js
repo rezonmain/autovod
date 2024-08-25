@@ -14,12 +14,12 @@ export const fileCache = {
    * @param {string} key - the unique key used to retrieve the value
    * @param {number} ttl - timestamp when the data will expire Ex. `Date.now() + 1000` this will expire in 1 second
    * @param {string[]} data - data to store, store multiple values passing them as additional arguments
-   * @returns {boolean}
    */
   set: (key, ttl, ...data) => {
     const hash = fileCache._hash(key);
     const encodedData = `${ttl}${SEPARATOR}${data.join(SEPARATOR)}`;
-    return fileCache._write(hash, encodedData);
+    fileCache._write(hash, encodedData);
+    return log.info(`[Cache SET] key: ${key} | hash: ${hash}`);
   },
 
   /**
