@@ -6,7 +6,7 @@ import { SCRIPTS } from "../const.js";
 const exec = promisify(syncExec);
 
 const DIRNAME = process.cwd();
-const SCRIPTS_PATH = path.resolve(DIRNAME, "script");
+const SCRIPTS_PATH = path.resolve(DIRNAME, "scripts");
 
 export const ffmpeg = {
   async printVersion() {

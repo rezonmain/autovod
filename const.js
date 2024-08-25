@@ -85,5 +85,5 @@ export const BROADCAST_DEFAULT_BODY = {
   },
 };
 export const SCRIPTS = {
-  PASSTHROUGH_HLS: "passthrough-hsl.sh",
+  PASSTHROUGH_HLS: "passthrough-hls.sh",
 };
