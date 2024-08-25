@@ -17,6 +17,7 @@ export const googleAuth = {
     url.searchParams.append("scope", scopes.join(" "));
     url.searchParams.append("access_type", "offline");
     url.searchParams.append("state", state);
+    url.searchParams.append("login_hint", env(ENV_KEYS._GOOGLE_AUTH_HINT));
     return url.toString();
   },
 

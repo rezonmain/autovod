@@ -24,7 +24,7 @@ export const fileCache = {
 
   /**
    * @param {string} key - the unique key used to retrieve the value
-   * @returns {string[] | null}
+   * @returns {["NO_DATA" | "EXPIRED" | null, string[]]}  - the stored data or null if not found and reason
    */
   get: (key) => {
     const hash = fileCache._hash(key);
@@ -32,16 +32,16 @@ export const fileCache = {
 
     if (empty(encodedData)) {
       log.info(`[Cache MISS] NO_DATA | key: ${key} | hash: ${hash}`);
-      return null;
+      return ["NO_DATA", null];
     }
     const [ttl, ...parsedData] = encodedData.split(SEPARATOR);
     if (ttl < new Date()) {
       log.info(`[Cache MISS] EXPIRED | key: ${key} | hash: ${hash}`);
       fileCache._delete(hash);
-      return null;
+      return ["EXPIRED", null];
     }
     log.info(`[Cache HIT] key: ${key} | hash: ${hash}`);
-    return parsedData;
+    return [null, parsedData];
   },
 
   /**
@@ -50,7 +50,7 @@ export const fileCache = {
    * @returns {string | null} the first value stored
    */
   getOne: (key) => {
-    const data = fileCache.get(key);
+    const [, data] = fileCache.get(key);
     return data ? data[0] : null;
   },
 

@@ -3,6 +3,8 @@ import {
   APPLICATION_STORE_KEYS,
   CACHE_KEYS,
   GOOGLE_API_SCOPES,
+  ENV_KEYS,
+  YT_ACCESS_TOKEN_URL,
 } from "../const.js";
 import { googleAuth } from "./google-auth.js";
 import { log } from "./log.js";
@@ -11,6 +13,7 @@ import { store } from "./store.js";
 import { Telegram } from "./telegram.js";
 import { fileCache } from "./file-cache.js";
 import { empty } from "../utils/utils.js";
+import { env } from "../utils/env.js";
 
 export const ytAuth = {
   /**
@@ -31,8 +34,9 @@ export const ytAuth = {
     return new Promise((resolve, reject) => {
       eventBus.subscribe(
         APPLICATION_EVENT_TYPES.GOOGLE_AUTH_REDIRECT,
-        (ttl, accessToken) => {
+        (ttl, accessToken, refreshToken) => {
           ytAuth._setAccessToken(ttl, accessToken);
+          ytAuth._setRefreshToken(refreshToken);
           resolve(accessToken);
         }
       );
@@ -48,22 +52,92 @@ export const ytAuth = {
    * @returns {Promise<[Error, string]>}
    */
   getAccessToken: async () => {
-    const token = fileCache.getOne(CACHE_KEYS.YT_ACCESS);
+    const [accessTokenErrorReason, token] = fileCache.get(CACHE_KEYS.YT_ACCESS);
 
-    if (!empty(token)) {
-      return [null, token];
+    if (empty(accessTokenErrorReason)) {
+      // cache hit, return the access token
+      return [null, token[0]];
     }
 
-    try {
-      const accessToken = await ytAuth.promptUserForAuthorization();
-      return [null, accessToken];
-    } catch (error) {
-      return [error, null];
+    if (accessTokenErrorReason === "NO_DATA") {
+      // no data in cache, prompt user for authorization
+      try {
+        const accessToken = await ytAuth.promptUserForAuthorization();
+        return [null, accessToken];
+      } catch (error) {
+        return [error, null];
+      }
     }
+
+    // -> access token has expired
+
+    const [refreshTokenErrorReason, refreshToken] = fileCache.get(
+      CACHE_KEYS.YT_REFRESH
+    );
+
+    if (!empty(refreshTokenErrorReason)) {
+      // no refresh token, prompt user for authorization
+      try {
+        const accessToken = await ytAuth.promptUserForAuthorization();
+        return [null, accessToken];
+      } catch (error) {
+        return [error, null];
+      }
+    }
+
+    // -> refresh token is available, get new access token with it
+
+    const [refreshTokenError, payload] = await ytAuth.refreshAccessToken(
+      refreshToken[0]
+    );
+    if (refreshTokenError) {
+      return [refreshTokenError, null];
+    }
+
+    log.info("[ytAuth.getAccessToken] Refreshed access token");
+
+    const ttl = Date.now() + payload.expires_in * 1000;
+    ytAuth._setAccessToken(ttl, payload.access_token);
+
+    return [null, payload.access_token];
   },
 
   _setAccessToken: (ttl, accessToken) => {
     return fileCache.set(CACHE_KEYS.YT_ACCESS, ttl, accessToken);
+  },
+
+  _setRefreshToken: (refreshToken) => {
+    const ttl = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+    return fileCache.set(CACHE_KEYS.YT_REFRESH, ttl, refreshToken);
+  },
+
+  /**
+   *
+   * @param {string} refreshToken
+   * @returns {Promise<[Error, {access_token: string, expires_in: number}]>}
+   */
+  async refreshAccessToken(refreshToken) {
+    const url = new URL(YT_ACCESS_TOKEN_URL);
+    url.searchParams.append("client_id", env(ENV_KEYS.GOOGLE_CLIENT_ID));
+    url.searchParams.append("client_secret", env(ENV_KEYS.GOOGLE_SECRET));
+    url.searchParams.append("grant_type", "refresh_token");
+    url.searchParams.append("refresh_token", refreshToken);
+
+    try {
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        "Content-Type": "application/x-www-form-urlencoded",
+      });
+
+      if (!response.ok) {
+        const json = await response.json();
+        throw new Error(json);
+      }
+
+      return [null, await response.json()];
+    } catch (error) {
+      return [error, null];
+    }
   },
 
   // TODO: this is not working???

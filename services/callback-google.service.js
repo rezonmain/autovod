@@ -65,6 +65,7 @@ async function handleAuthRedirect(req, res) {
     }
 
     const { access_token, expires_in, refresh_token } = await response.json();
+
     eventBus.publish(
       APPLICATION_EVENT_TYPES.GOOGLE_AUTH_REDIRECT,
       Date.now() + expires_in * 1000,
