@@ -1,8 +1,9 @@
 import express from "express";
 import { ENV_KEYS } from "../const.js";
-import { ffmpeg } from "../modules/ffmpeg.js";
 import { twitchPlaylist } from "../modules/twitch-playlist.js";
+import { TwitchApi } from "../modules/twitch-api.js";
 import { YoutubeStreamManager } from "../modules/youtube-stream-manager.js";
+import { twitchAuth } from "../modules/twitch-auth.js";
 import { env } from "../utils/env.js";
 import { empty } from "../utils/utils.js";
 import { callbackGoogleController } from "../controllers/callback-google.controller.js";
@@ -12,6 +13,28 @@ const [, , login] = process.argv;
 if (empty(login)) {
   console.log("login not provided");
   console.error("Usage: SCRIPT <login> <streamKey>");
+  process.exit(1);
+}
+
+const [twitchAccessTokenError, twitchAccessToken] =
+  await twitchAuth.getAccessToken();
+
+if (twitchAccessTokenError) {
+  console.error(twitchAccessTokenError);
+  process.exit(1);
+}
+
+const twitchApi = new TwitchApi(twitchAccessToken);
+
+const [channelError, channel] = await twitchApi.getChannel(login);
+
+if (channelError) {
+  console.error(channelError);
+  process.exit(1);
+}
+
+if (!channel.isLive) {
+  console.log("Channel is not live");
   process.exit(1);
 }
 
@@ -38,16 +61,17 @@ if (scheduleError) {
 
 server.close();
 
-const [accessError, accessToken] = await twitchPlaylist.getPlaybackAccessToken(
-  login,
-  env(ENV_KEYS.TWITCH_PERSONAL_OAUTH_TOKEN)
-);
+const [playbackTokenError, playbackToken] =
+  await twitchPlaylist.getPlaybackAccessToken(
+    login,
+    env(ENV_KEYS.TWITCH_PERSONAL_OAUTH_TOKEN)
+  );
 
-if (accessError) {
-  console.error(accessError);
+if (playbackTokenError) {
+  console.error(playbackTokenError);
   process.exit(1);
 }
 
-const m3u8Url = twitchPlaylist.buildM3u8Url(login, accessToken);
+const m3u8Url = twitchPlaylist.buildM3u8Url(login, playbackToken);
 
-ffmpeg.restreamToTY(m3u8Url, true, streamKey);
+streamManager.restreamToYT(m3u8Url, streamKey, login);

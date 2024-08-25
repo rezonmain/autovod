@@ -1,4 +1,4 @@
-/** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream } from '../jsdoc.types.js' */
+/** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream, YTTransitionBroadcastOptions } from '../jsdoc.types.js' */
 
 import { BROADCAST_DEFAULT_BODY, YT_API_URLS } from "../const.js";
 import { empty } from "../utils/utils.js";
@@ -122,77 +122,37 @@ export const ytApi = {
   },
 
   /**
-   * @returns {Promise<[Error, string]>}
+   *
+   * @param {string} accessToken
+   * @param {YTTransitionBroadcastOptions} options
+   * @returns {Promise<[Error, YTBroadcast]>}
    */
-  getBroadcastId: async (accessToken) => {
-    const url = new URL(YT_API_URLS.BROADCAST);
+  async transitionBroadcast(accessToken, options) {
+    const url = new URL(YT_API_URLS.TRANSITION);
     const queryParams = new URLSearchParams({
-      part: "id",
-      mine: true,
-      maxResults: 1,
+      ...options,
+      part: options.part.join(","),
     });
     url.search = queryParams.toString();
 
     try {
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-
-      const data = await response.json();
-
-      if (empty(data?.items?.[0]?.id)) {
-        throw new Error("No broadcast found");
-      }
-
-      return [null, data.items[0].id];
-    } catch (error) {
-      return [error, null];
-    }
-  },
-
-  /**
-   * @param {string} broadcastId
-   * @param {string} title
-   * @return Promise<Error | null>
-   */
-  updateBroadcastTitle: async (accessToken, broadcastId, title) => {
-    const url = new URL(YT_API_URLS.BROADCAST);
-    const queryParams = new URLSearchParams({
-      part: "snippet",
-    });
-    url.search = queryParams.toString();
-    const body = {
-      id: broadcastId,
-      snippet: {
-        title,
-        scheduledStartTime: "",
-      },
-    };
-
-    try {
-      const response = await fetch(url, {
-        method: "PUT",
+        method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
-        throw new Error(response.statusText);
+        const responseBody = await response.json();
+        throw new Error(JSON.stringify(responseBody));
       }
-      return null;
+
+      return [null, await response.json()];
     } catch (error) {
-      return error;
+      return [error, null];
     }
   },
 };

@@ -106,6 +106,14 @@
  * @typedef {Object} YTInsertBroadcastOptions
  * @property {("snippet" | "contentDetails" | "status")[]} part
  */
+
+/**
+ * @typedef {Object} YTTransitionBroadcastOptions
+ * @property {("snippet" | "contentDetails" | "status", "id")[]} part
+ * @property {"complete" | "live" | "testing"} broadcastStatus
+ * @property {string} id
+ */
+
 /**
  * @typedef {Object} YTInsertBroadcastBody
  * @property {Object} snippet
