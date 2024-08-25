@@ -84,12 +84,6 @@ export class YTStreamManager {
         this.streams.add(`${stream.id}${stream.cdn.ingestionInfo.streamName}`);
       }
     });
-    log.debug(
-      `[YTStreamManager.loadAvailableStreams] Loaded available streams:`
-    );
-    for (const stream of this.streams) {
-      log.debug(`- ${stream}`);
-    }
   }
 
   /**
