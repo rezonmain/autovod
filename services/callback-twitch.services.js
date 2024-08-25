@@ -121,9 +121,8 @@ async function handleNotification(notification) {
  */
 async function handleStreamOnlineEvent(notification) {
   const login = notification.event.broadcaster_user_login;
-  const telegram = new Telegram();
+  const telegram = Telegram.getInstance();
   try {
-    await telegram.start();
     await telegram.sendMessage(
       `🟣 *${notification.event.broadcaster_user_name}* is now live on [twitch](https://twitch.tv/${login})\\. 🟣`
     );
@@ -149,7 +148,6 @@ async function handleStreamOnlineEvent(notification) {
     await telegram.sendMessage(
       `🔴 Restream has started for ${notification.event.broadcaster_user_name} on [youtube](https://youtube.com/watch?v=${broadcast.id})\\. 🔴`
     );
-    await telegram.stop();
   } catch (error) {
     log.error(
       `[handleStreamOnlineEvent] Error sending message to telegram ${error}`
@@ -161,13 +159,11 @@ async function handleStreamOnlineEvent(notification) {
  * @param {TwitchWebhookNotification} notification
  */
 async function handleStreamOfflineEvent(notification) {
-  const telegram = new Telegram();
+  const telegram = Telegram.getInstance();
   try {
-    await telegram.start();
     await telegram.sendMessage(
       `⬇️ *${notification.event.broadcaster_user_name}*'s stream has ended\\. ⬇️`
     );
-    await telegram.stop();
   } catch (error) {
     log.info(
       `[handleStreamOnlineEvent] Error sending message to telegram ${error}`

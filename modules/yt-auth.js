@@ -69,11 +69,9 @@ export const ytAuth = {
   // TODO: this is not working???
   sendTelegramMessage: async (url) => {
     try {
-      const telegram = new Telegram();
-      await telegram.start();
+      const telegram = Telegram.getInstance();
       const message = `🔐 *autovod* needs your permission to manage live streams on your behalf\\. Please [click on this link to do so](${url})`;
       await telegram.sendMessage(message);
-      await telegram.stop();
     } catch (error) {
       log.error(
         "[ytAuth.sendTelegramMessage] Error sending auth URL to Telegram",
