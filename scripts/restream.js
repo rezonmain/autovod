@@ -62,4 +62,14 @@ if (scheduleError) {
 
 server.close();
 
-streamManager.restreamToYT(stream, login);
+const childProcess = await streamManager.restreamToYT(stream, login);
+
+if (childProcess instanceof Error) {
+  console.error(childProcess);
+  process.exit(1);
+}
+
+// TODO: allow for graceful shutdown
+process.once("SIGINT", () => {
+  childProcess.kill("SIGINT");
+});
