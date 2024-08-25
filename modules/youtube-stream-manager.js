@@ -55,12 +55,15 @@ export class YTStreamManager {
    * @returns {Promise<Error | void>}
    */
   async init() {
-    await this.loadAvailableStreams();
+    const availableStreamsError = await this.loadAvailableStreams();
+    if (availableStreamsError) {
+      return availableStreamsError;
+    }
   }
 
   /**
    *
-   * @returns {Promise<void>}
+   * @returns {Promise<Error | void>}
    */
   async loadAvailableStreams() {
     const [accessError, accessToken] = await ytAuth.getAccessToken();
@@ -72,7 +75,6 @@ export class YTStreamManager {
       part: ["snippet", "cdn", "status"],
       mine: true,
     });
-
     if (streamsError) {
       return streamsError;
     }
@@ -190,7 +192,15 @@ export class YTStreamManager {
         log.info(
           `[YTStreamManager.restreamToYt] Restream for ${login} ended with code: ${code}`
         );
-        await this.handleStreamEnd(stream, login);
+        console.log("-1");
+        const streamEndError = await this.handleStreamEnd(stream, login);
+        if (streamEndError) {
+          log.error(
+            "[YTStreamManager.restreamToYt.OnExit] Error handling stream end",
+            streamEndError
+          );
+        }
+        console.log("10");
       },
     });
   }
@@ -204,29 +214,45 @@ export class YTStreamManager {
   async handleStreamEnd(stream, login) {
     this.logins.delete(login);
 
+    console.log("0");
+
     const [accessError, accessToken] = await ytAuth.getAccessToken();
+    console.log("1");
     if (accessError) {
-      return [accessError, null];
+      return accessError;
     }
+    console.log("3");
 
     const [streamId] = stream.split(SEPARATOR);
+    console.log("4");
 
     const [transitionError] = await ytApi.transitionBroadcast(accessToken, {
       id: streamId,
       part: ["status"],
       broadcastStatus: "complete",
     });
+    console.log("5");
     if (transitionError) {
       return transitionError;
     }
 
+    console.log("6");
+
     log.info(
       `[YTStreamManager.handleStreamEnd] Transitioned broadcast for ${login} to Complete`
     );
+    console.log("7");
 
     this.scheduledBroadcasts.delete(stream);
+
+    console.log("8");
     // revalidate available streams after we ended a broadcast
-    await this.loadAvailableStreams();
+    const loadStreamsError = await this.loadAvailableStreams();
+    if (loadStreamsError) {
+      return loadStreamsError;
+    }
+
+    console.log("9");
 
     // TODO: decide if we should make broadcast public ???
   }
