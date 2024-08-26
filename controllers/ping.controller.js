@@ -1,14 +1,11 @@
 import express from "express";
 import { log } from "../modules/log.js";
+import { getDateForSteamTitle } from "../utils/dates.js";
 
 export const pingController = express.Router();
 
 pingController.get("/", (_, res) => {
-  res.set("Content-Type", "application/json");
-  const response = {
-    ts: Date.now(),
-    message: "pong",
-  };
-  res.send(JSON.stringify(response));
-  log.log(`[pingController] ${JSON.stringify(response)}`);
+  const date = getDateForSteamTitle();
+  res.send(date);
+  log.log(`[pingController] ${date}`);
 });
