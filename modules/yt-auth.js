@@ -107,7 +107,7 @@ export const ytAuth = {
   },
 
   _setRefreshToken: (refreshToken) => {
-    const ttl = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+    const ttl = Date.now() + 10 * 356 * 24 * 60 * 60 * 1000; // 10 years
     return fileCache.set(CACHE_KEYS.YT_REFRESH, ttl, refreshToken);
   },
 

@@ -83,3 +83,4 @@ Skip ('#EXT-X-TWITCH-INFO:NODE="video-edge-ee538e.iad05",MANIFEST-[...]
 - Add the redirect URLs
 - Complete the OAuth concent screen setup
 - Add testing user, should be the owner of the channel you'll be live streaming to
+- _IMPORTANT:_ google will only send the refresh token during auth if is the first time the user has authorized your application, to make sure you save the refresh token to the cache, revoke access to the autovod application in you [google account settings](https://myaccount.google.com/connections?continue=https%3A%2F%2Fmyaccount.google.com%2F%3Fauthuser%3D0&authuser=0)
