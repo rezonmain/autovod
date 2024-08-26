@@ -67,9 +67,6 @@ export const APPLICATION_EVENT_TYPES = {
 export const APPLICATION_STORE_KEYS = {
   GOOGLE_AUTH_STATE: "google-auth-state",
 };
-export const DOCUMENTS = {
-  CALLBACK_GOOGLE_REDIRECT: "callback-google-redirect.html",
-};
 export const BROADCAST_DEFAULT_BODY = {
   snippet: {
     title: "%s autovod | %s",
