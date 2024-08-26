@@ -1,9 +1,12 @@
 import { spawn, exec as syncExec } from "node:child_process";
-import { promisify, format } from "node:util";
-import { env } from "../utils/env.js";
-import { ENV_KEYS, YT_HLS_INGEST_URL } from "../const.js";
+import { promisify } from "node:util";
+import path from "node:path";
+import { SCRIPTS } from "../const.js";
 
 const exec = promisify(syncExec);
+
+const DIRNAME = process.cwd();
+const SCRIPTS_PATH = path.resolve(DIRNAME, "scripts");
 
 export const ffmpeg = {
   async printVersion() {
@@ -15,24 +18,39 @@ export const ffmpeg = {
     console.log(stdout);
   },
 
-  restreamToTY: (
-    m3u8PlaylistUrl,
-    shouldLog = false,
-    ytStreamKey = env(ENV_KEYS.DEFAULT_YT_STREAM_KEY)
+  /**
+   *
+   * @param {Object} options
+   * @param {string} options.sourceUrl
+   * @param {string} options.destinationUrl
+   * @param {(code: number) => Promise<void>} options.onExit
+   * @param {boolean} shouldLog
+   * @returns
+   */
+  passthroughHLS: (
+    { sourceUrl, destinationUrl, onExit },
+    shouldLog = false
   ) => {
-    const ingestUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
-    const child = spawn("./scripts/restream.sh", [ingestUrl, m3u8PlaylistUrl]);
+    const childProcess = spawn(
+      path.join(SCRIPTS_PATH, SCRIPTS.PASSTHROUGH_HLS),
+      [destinationUrl, sourceUrl]
+    );
 
     if (shouldLog) {
-      child.stdout.on("data", (data) => {
+      childProcess.stdout.on("data", (data) => {
         console.log(data.toString());
       });
 
-      child.stderr.on("data", (data) => {
+      childProcess.stderr.on("data", (data) => {
         console.error(data.toString());
       });
     }
 
-    return child;
+    // ffmpeg will exit when the source stream ends
+    childProcess.on("exit", async (code) => {
+      await onExit(code);
+    });
+
+    return childProcess;
   },
 };

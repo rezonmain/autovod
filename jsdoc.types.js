@@ -63,4 +63,106 @@
  * @property {boolean} is_mature
  */
 
+/**
+ * @typedef {Object} YTStream
+ * @property {string} kind
+ * @property {string} etag
+ * @property {string} id
+ * @property {Object} snippet
+ * @property {string} snippet.publishedAt
+ * @property {string} snippet.channelId
+ * @property {string} snippet.title
+ * @property {string} snippet.description
+ * @property {string} snippet.isDefaultStream
+ * @property {Object} cdn
+ * @property {string} cdn.ingestionType
+ * @property {Object} cdn.ingestionInfo
+ * @property {string} cdn.ingestionInfo.streamName
+ * @property {string} cdn.ingestionInfo.ingestionAddress
+ * @property {string} cdn.ingestionInfo.backupIngestionAddress
+ * @property {string} cdn.resolution
+ * @property {string} cdn.frameRate
+ * @property {Object} status
+ * @property {"active" | "inactive"} status.streamStatus
+ */
+
+/**
+ * @typedef {Object} YTBroadcast
+ * @property {string} kind
+ * @property {string} etag
+ * @property {string} id
+ * @property {Object} snippet
+ * @property {string} snippet.publishedAt
+ * @property {string} snippet.channelId
+ * @property {string} snippet.title
+ * @property {string} snippet.description
+ * @property {string} snippet.scheduledStartTime
+ * @property {string} snippet.scheduledEndTime
+ * @property {string} snippet.actualEndTime
+ * @property {string} snippet.isDefaultBroadcast
+ * @property {Object} snippet.liveChatId
+ * @property {Object} status
+ * @property {string} status.lifeCycleStatus
+ * @property {string} status.privacyStatus
+ * @property {string} status.recordingStatus
+ * @property {string} status.selfDeclaredMadeForKids
+ * @property {string} status.madeForKids
+ * @property {Object} contentDetails
+ * @property {string} contentDetails.boundStreamId
+ * @property {string} contentDetails.boundStreamLastUpdateTimeMs
+ * @property {Object} contentDetails.monitorStream
+ * @property {string} contentDetails.monitorStream.embedHtml
+ * @property {string} contentDetails.monitorStream.enableMonitorStream
+ * @property {string} contentDetails.monitorStream.broadcastStreamDelayMs
+ * @property {boolean} contentDetails.enableEmbed
+ * @property {boolean} contentDetails.enableDvr
+ * @property {boolean} contentDetails.recordFromStart
+ * @property {boolean} contentDetails.enableClosedCaptions
+ * @property {string} contentDetails.closedCaptionsType
+ * @property {string} contentDetails.projection
+ * @property {string} contentDetails.enableAutoStart
+ * @property {string} contentDetails.enableAutoStart
+ */
+
+/**
+ * @typedef {Object} YTGetStreamsOptions
+ * @property {("snippet" | "cdn" | "contentDetails" | "status")[]} part
+ * @property {boolean} mine
+ */
+
+/**
+ * @typedef {Object} YTInsertBroadcastOptions
+ * @property {("snippet" | "contentDetails" | "status")[]} part
+ */
+
+/**
+ * @typedef {Object} YTTransitionBroadcastOptions
+ * @property {("snippet" | "contentDetails" | "status" | "id")[]} part
+ * @property {"complete" | "live" | "testing"} broadcastStatus
+ * @property {string} id
+ */
+
+/**
+ * @typedef {Object} YTInsertBroadcastBody
+ * @property {Object} snippet
+ * @property {string} snippet.title
+ * @property {string} snippet.scheduledStartTime
+ * @property {Object} status
+ * @property {string} status.privacyStatus
+ * @property {boolean} status.selfDeclaredMadeForKids
+ * @property {Object} contentDetails
+ * @property {string} contentDetails.enableAutoStart
+ * @property {string} contentDetails.enableAutoStop
+ * @property {string} contentDetails.enableDvr
+ * @property {string} contentDetails.recordFromStart
+ */
+
+/**
+ * @typedef {'google-auth-redirect'} ApplicationEventType
+ */
+
+/**
+ * @typedef {'google-auth-state'} ApplicationStoreKey
+ */
+
 export {};

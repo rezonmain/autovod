@@ -2,6 +2,7 @@ export const TWITCH_TOKEN_URL = "https://id.twitch.tv/oauth2/token";
 export const CACHE_KEYS = {
   TWITCH_ACCESS: "@twitch-access",
   YT_ACCESS: "@yt-access",
+  YT_REFRESH: "@yt-refresh",
 };
 export const TWITCH_WEBHOOK_HEADERS = {
   MESSAGE_ID: "Twitch-Eventsub-Message-Id".toLowerCase(),
@@ -35,9 +36,10 @@ export const ENV_KEYS = {
   HOST_PORT: "HOST_PORT",
   TELEGRAM_TOKEN: "TELEGRAM_TOKEN",
   TELEGRAM_CHAT_ID: "TELEGRAM_CHAT_ID",
-  DEFAULT_YT_STREAM_KEY: "DEFAULT_YT_STREAM_KEY",
-  YT_SERVICE_ACCOUNT_KEY_ID: "YT_SERVICE_ACCOUNT_KEY_ID",
-  YT_SERVICE_ACCOUNT_EMAIL: "YT_SERVICE_ACCOUNT_EMAIL",
+  GOOGLE_CLIENT_ID: "GOOGLE_CLIENT_ID",
+  GOOGLE_REDIRECT_URI: "GOOGLE_REDIRECT_URI",
+  GOOGLE_SECRET: "GOOGLE_SECRET",
+  GOOGLE_AUTH_HINT: "GOOGLE_AUTH_HINT",
 };
 export const SECRETS = {
   GOOGLE_SERVICE_ACCOUNT_KEY: "google-service-account-key.secret",
@@ -47,8 +49,40 @@ export const TWITCH_GQL_URL = "https://gql.twitch.tv/gql";
 export const TWITCH_M3U8_URL = "https://usher.ttvnw.net/api/channel/hls";
 export const YT_HLS_INGEST_URL =
   "https://a.upload.youtube.com/http_upload_hls?cid=%s&copy=0&file=stream.m3u8";
-export const YT_TOKEN_URL = "https://oauth2.googleapis.com/token";
+export const YT_OAUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
+export const YT_ACCESS_TOKEN_URL = "https://oauth2.googleapis.com/token";
 export const YT_API_URLS = {
   BROADCAST: "https://www.googleapis.com/youtube/v3/liveBroadcasts",
+  BROADCAST_BIND: "https://www.googleapis.com/youtube/v3/liveBroadcasts/bind",
   STREAM: "https://www.googleapis.com/youtube/v3/liveStreams",
+  TRANSITION: "https://www.googleapis.com/youtube/v3/liveBroadcasts/transition",
+};
+export const GOOGLE_API_SCOPES = {
+  YT: "https://www.googleapis.com/auth/youtube",
+  YT_FORCE_SSL: "https://www.googleapis.com/auth/youtube.force-ssl",
+};
+export const APPLICATION_EVENT_TYPES = {
+  GOOGLE_AUTH_REDIRECT: "google-auth-redirect",
+};
+export const APPLICATION_STORE_KEYS = {
+  GOOGLE_AUTH_STATE: "google-auth-state",
+};
+export const BROADCAST_DEFAULT_BODY = {
+  snippet: {
+    title: "%s autovod | %s",
+    description: `don't panic! this is an automated vod channel ran by robo-cats that are still on BETA.\n\nThis channel is not affiliated with the featured creators: twitch.tv/%s`,
+  },
+  status: {
+    privacyStatus: "unlisted",
+    selfDeclaredMadeForKids: false,
+  },
+  contentDetails: {
+    enableAutoStart: true,
+    enableAutoStop: true,
+    enableDvr: true,
+    recordFromStart: true,
+  },
+};
+export const SCRIPTS = {
+  PASSTHROUGH_HLS: "passthrough-hls.sh",
 };

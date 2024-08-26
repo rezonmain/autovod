@@ -12,19 +12,19 @@ const CACHE_PATH = path.resolve(DIRNAME, "cache");
 export const fileCache = {
   /**
    * @param {string} key - the unique key used to retrieve the value
-   * @param {number} ttl - timestamp when the data will expire Ex. `Date.now() + 1000`
+   * @param {number} ttl - timestamp when the data will expire Ex. `Date.now() + 1000` this will expire in 1 second
    * @param {string[]} data - data to store, store multiple values passing them as additional arguments
-   * @returns {boolean}
    */
   set: (key, ttl, ...data) => {
     const hash = fileCache._hash(key);
     const encodedData = `${ttl}${SEPARATOR}${data.join(SEPARATOR)}`;
-    return fileCache._write(hash, encodedData);
+    fileCache._write(hash, encodedData);
+    return log.info(`[Cache SET] key: ${key} | hash: ${hash} | data: ${data}`);
   },
 
   /**
    * @param {string} key - the unique key used to retrieve the value
-   * @returns {string[] | null}
+   * @returns {["NO_DATA" | "EXPIRED" | null, string[]]}  - the stored data or null if not found and reason
    */
   get: (key) => {
     const hash = fileCache._hash(key);
@@ -32,16 +32,16 @@ export const fileCache = {
 
     if (empty(encodedData)) {
       log.info(`[Cache MISS] NO_DATA | key: ${key} | hash: ${hash}`);
-      return null;
+      return ["NO_DATA", null];
     }
     const [ttl, ...parsedData] = encodedData.split(SEPARATOR);
     if (ttl < new Date()) {
       log.info(`[Cache MISS] EXPIRED | key: ${key} | hash: ${hash}`);
       fileCache._delete(hash);
-      return null;
+      return ["EXPIRED", null];
     }
     log.info(`[Cache HIT] key: ${key} | hash: ${hash}`);
-    return parsedData;
+    return [null, parsedData];
   },
 
   /**
@@ -50,7 +50,7 @@ export const fileCache = {
    * @returns {string | null} the first value stored
    */
   getOne: (key) => {
-    const data = fileCache.get(key);
+    const [, data] = fileCache.get(key);
     return data ? data[0] : null;
   },
 

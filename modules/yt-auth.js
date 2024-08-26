@@ -1,89 +1,154 @@
-import jwt from "jsonwebtoken";
-import { CACHE_KEYS, ENV_KEYS, SECRETS, YT_TOKEN_URL } from "../const.js";
-import { readPrivateKey } from "../utils/secrets.js";
-import { env } from "../utils/env.js";
+import {
+  APPLICATION_EVENT_TYPES,
+  APPLICATION_STORE_KEYS,
+  CACHE_KEYS,
+  GOOGLE_API_SCOPES,
+  ENV_KEYS,
+  YT_ACCESS_TOKEN_URL,
+} from "../const.js";
+import { googleAuth } from "./google-auth.js";
+import { log } from "./log.js";
+import { eventBus } from "./event-bus.js";
+import { store } from "./store.js";
+import { Telegram } from "./telegram.js";
 import { fileCache } from "./file-cache.js";
+import { empty } from "../utils/utils.js";
+import { env } from "../utils/env.js";
 
 export const ytAuth = {
   /**
-   * @returns {Promise<[Error, string]>}
+   * @param {(ttl, token) => void} callback
+   * @returns {Promise<string>}
    */
-  buildJWT: async () => {
-    const jwtHeader = {
-      alg: "RS256",
-      typ: "JWT",
-    };
+  promptUserForAuthorization: () => {
+    const state = googleAuth.generateStateToken();
+    const scopes = [GOOGLE_API_SCOPES.YT];
+    const url = googleAuth.buildAuthorizationURL(scopes, state);
+    store.set(APPLICATION_STORE_KEYS.GOOGLE_AUTH_STATE, state);
 
-    const scopes = ["https://www.googleapis.com/auth/youtube"];
+    log.log(
+      `Open the following URL in your browser and grant access to YouTube:\n\n${url}\n`
+    );
+    ytAuth.sendTelegramMessage(url);
 
-    const jwtClaim = {
-      iss: env(ENV_KEYS.YT_SERVICE_ACCOUNT_EMAIL),
-      scope: scopes.join(" "),
-      aud: "https://oauth2.googleapis.com/token",
-      exp: Math.floor(Date.now() / 1000) + 3600,
-      iat: Math.floor(Date.now() / 1000),
-    };
-
-    try {
-      const [keyError, key] = await readPrivateKey(
-        SECRETS.GOOGLE_SERVICE_ACCOUNT_KEY,
-        false
+    return new Promise((resolve, reject) => {
+      eventBus.subscribe(
+        APPLICATION_EVENT_TYPES.GOOGLE_AUTH_REDIRECT,
+        (ttl, accessToken, refreshToken) => {
+          ytAuth._setAccessToken(ttl, accessToken);
+          ytAuth._setRefreshToken(refreshToken);
+          resolve(accessToken);
+        }
       );
-      if (keyError) {
-        return [keyError, null];
-      }
 
-      return [
-        null,
-        jwt.sign(jwtClaim, key, {
-          header: jwtHeader,
-        }),
-      ];
-    } catch (error) {
-      return [error, null];
-    }
+      // reject after 5 minutes
+      setTimeout(() => {
+        reject("Authorization with google timed out");
+      }, 5 * 60 * 1000);
+    });
   },
 
   /**
    * @returns {Promise<[Error, string]>}
    */
   getAccessToken: async () => {
-    const cachedToken = fileCache.getOne(CACHE_KEYS.YT_ACCESS);
+    const [accessTokenErrorReason, token] = fileCache.get(CACHE_KEYS.YT_ACCESS);
 
-    if (cachedToken) {
-      return [null, cachedToken];
+    if (empty(accessTokenErrorReason)) {
+      // cache hit, return the access token
+      return [null, token[0]];
     }
 
-    const [error, jwt] = await ytAuth.buildJWT();
-    if (error) {
-      return [error, null];
+    if (accessTokenErrorReason === "NO_DATA") {
+      // no data in cache, prompt user for authorization
+      try {
+        const accessToken = await ytAuth.promptUserForAuthorization();
+        return [null, accessToken];
+      } catch (error) {
+        return [error, null];
+      }
     }
-    const url = new URL(YT_TOKEN_URL);
-    const body = new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion: jwt,
-    });
+
+    // -> access token has expired
+
+    const [refreshTokenErrorReason, refreshToken] = fileCache.get(
+      CACHE_KEYS.YT_REFRESH
+    );
+
+    if (!empty(refreshTokenErrorReason)) {
+      // no refresh token, prompt user for authorization
+      try {
+        const accessToken = await ytAuth.promptUserForAuthorization();
+        return [null, accessToken];
+      } catch (error) {
+        return [error, null];
+      }
+    }
+
+    // -> refresh token is available, get new access token with it
+
+    const [refreshTokenError, payload] = await ytAuth.refreshAccessToken(
+      refreshToken[0]
+    );
+    if (refreshTokenError) {
+      return [refreshTokenError, null];
+    }
+
+    log.info("[ytAuth.getAccessToken] Refreshed access token");
+
+    const ttl = Date.now() + payload.expires_in * 1000;
+    ytAuth._setAccessToken(ttl, payload.access_token);
+
+    return [null, payload.access_token];
+  },
+
+  _setAccessToken: (ttl, accessToken) => {
+    return fileCache.set(CACHE_KEYS.YT_ACCESS, ttl, accessToken);
+  },
+
+  _setRefreshToken: (refreshToken) => {
+    const ttl = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+    return fileCache.set(CACHE_KEYS.YT_REFRESH, ttl, refreshToken);
+  },
+
+  /**
+   * @param {string} refreshToken
+   * @returns {Promise<[Error, {access_token: string, expires_in: number}]>}
+   */
+  async refreshAccessToken(refreshToken) {
+    const url = new URL(YT_ACCESS_TOKEN_URL);
+    url.searchParams.append("client_id", env(ENV_KEYS.GOOGLE_CLIENT_ID));
+    url.searchParams.append("client_secret", env(ENV_KEYS.GOOGLE_SECRET));
+    url.searchParams.append("grant_type", "refresh_token");
+    url.searchParams.append("refresh_token", refreshToken);
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(url.toString(), {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: body.toString(),
+        "Content-Type": "application/x-www-form-urlencoded",
       });
 
       if (!response.ok) {
-        throw new Error(await response.text());
+        const json = await response.json();
+        throw new Error(json);
       }
 
-      const responseJson = await response.json();
-      const expiresAt = Date.now() + responseJson.expires_in * 1000;
-      fileCache.set(CACHE_KEYS.YT_ACCESS, expiresAt, responseJson.access_token);
-
-      return [null, responseJson.access_token];
+      return [null, await response.json()];
     } catch (error) {
       return [error, null];
+    }
+  },
+
+  sendTelegramMessage: async (url) => {
+    try {
+      const telegram = Telegram.getInstance();
+      const message = `🔐 *autovod* needs your permission to manage live streams on your behalf\\. Please [click on this link to do so](${url})`;
+      await telegram.sendMessage(message);
+    } catch (error) {
+      log.error(
+        "[ytAuth.sendTelegramMessage] Error sending auth URL to Telegram",
+        error
+      );
     }
   },
 };

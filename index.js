@@ -1,5 +1,7 @@
 import { server } from "./modules/server.js";
-import { Restreamer } from "./modules/restreamer.js";
+import { Telegram } from "./modules/telegram.js";
+import { YTStreamManager } from "./modules/youtube-stream-manager.js";
 
-Restreamer.getInstance().init();
 server.start();
+YTStreamManager.getInstance().init();
+Telegram.getInstance().init();
