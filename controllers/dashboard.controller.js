@@ -1,10 +1,11 @@
 import express from "express";
 import { dashboardService } from "../services/dashboard.service.js";
 import cookieParser from "cookie-parser";
+import { withAuth } from "../middleware/withAuth.js";
 
 export const dashboardController = express.Router();
 
-dashboardController.get("/", async (req, res) =>
+dashboardController.get("/", cookieParser(), withAuth, async (req, res) =>
   dashboardService.handleGetHome(req, res)
 );
 

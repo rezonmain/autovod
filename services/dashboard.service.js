@@ -19,10 +19,10 @@ export const dashboardService = {
    * @param {ExpressRequest} req
    * @param {ExpressResponse} res
    */
-  handleGetAuth(req, res) {
+  async handleGetAuth(req, res) {
     const authToken = req.cookies?.[APP_COOKIES.CLIENT_AUTH_TOKEN] ?? "";
 
-    if (googleAuth.verifyToken(authToken)) {
+    if (await googleAuth.verifyToken(authToken)) {
       return res.redirect("/dashboard");
     }
 
