@@ -3,6 +3,7 @@ export const CACHE_KEYS = {
   TWITCH_ACCESS: "@twitch-access",
   YT_ACCESS: "@yt-access",
   YT_REFRESH: "@yt-refresh",
+  GOOGLE_CERTS: "@google-certs",
 };
 export const TWITCH_WEBHOOK_HEADERS = {
   MESSAGE_ID: "Twitch-Eventsub-Message-Id".toLowerCase(),
@@ -38,6 +39,7 @@ export const ENV_KEYS = {
   TELEGRAM_CHAT_ID: "TELEGRAM_CHAT_ID",
   GOOGLE_CLIENT_ID: "GOOGLE_CLIENT_ID",
   GOOGLE_REDIRECT_URI: "GOOGLE_REDIRECT_URI",
+  GOOGLE_CLIENT_REDIRECT_URI: "GOOGLE_CLIENT_REDIRECT_URI",
   GOOGLE_SECRET: "GOOGLE_SECRET",
   GOOGLE_AUTH_HINT: "GOOGLE_AUTH_HINT",
 };
@@ -60,12 +62,15 @@ export const YT_API_URLS = {
 export const GOOGLE_API_SCOPES = {
   YT: "https://www.googleapis.com/auth/youtube",
   YT_FORCE_SSL: "https://www.googleapis.com/auth/youtube.force-ssl",
+  USER_INFO_EMAIL: "https://www.googleapis.com/auth/userinfo.email",
+  USER_INFO_PROFILE: "https://www.googleapis.com/auth/userinfo.profile",
 };
 export const APPLICATION_EVENT_TYPES = {
   GOOGLE_AUTH_REDIRECT: "google-auth-redirect",
 };
 export const APPLICATION_STORE_KEYS = {
   GOOGLE_AUTH_STATE: "google-auth-state",
+  GOOGLE_CLIENT_AUTH_STATE: "google-client-auth-state",
 };
 export const BROADCAST_DEFAULT_BODY = {
   snippet: {
@@ -86,3 +91,13 @@ export const BROADCAST_DEFAULT_BODY = {
 export const SCRIPTS = {
   PASSTHROUGH_HLS: "passthrough-hls.sh",
 };
+export const APP_COOKIES = {
+  CLIENT_AUTH_STATE: "client-auth-state",
+  CLIENT_AUTH: "client-auth",
+};
+export const DOCUMENTS = {
+  DASHBOARD_AUTH_REDIRECT: "dashboard-auth-redirect.html",
+};
+export const GOOGLE_DISCOVERY_DOC_URL =
+  "https://accounts.google.com/.well-known/openid-configuration";
+export const JWKS_URI_KEY = "jwks_uri";
