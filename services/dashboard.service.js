@@ -3,6 +3,7 @@ import { googleAuth } from "../modules/google-auth.js";
 import jwt from "jsonwebtoken";
 import { APP_COOKIES, ENV_KEYS, YT_ACCESS_TOKEN_URL } from "../const.js";
 import { eventsRepository } from "../repositories/events.repository.js";
+import { eventLog } from "../modules/event-log.js";
 import { log } from "../modules/log.js";
 import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
@@ -115,6 +116,16 @@ export const dashboardService = {
 
       if (!response.ok) {
         const json = await response.json();
+        eventLog.log(
+          "[dashboardService.handleAuthRedirect] Failed to exchange authorization code for tokens",
+          "error",
+          {
+            responseJson: JSON.stringify(json),
+            responseCode: response.status,
+            responseText: response.statusText,
+            queryParams: url.searchParams.toString(),
+          }
+        );
         throw new Error(json);
       }
 
