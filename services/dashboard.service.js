@@ -21,7 +21,7 @@ export const dashboardService = {
       res.send(`
         <html>
           <head>
-            <title>autovod | login</title>
+            <title>autovod | events</title>
           </head>
           <body style='width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif;'>
             <h1>Events</h1>
