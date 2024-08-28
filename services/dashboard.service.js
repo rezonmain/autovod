@@ -2,6 +2,7 @@
 import { googleAuth } from "../modules/google-auth.js";
 import jwt from "jsonwebtoken";
 import { APP_COOKIES, ENV_KEYS, YT_ACCESS_TOKEN_URL } from "../const.js";
+import { Database } from "../modules/database.js";
 import { log } from "../modules/log.js";
 import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
@@ -12,7 +13,28 @@ export const dashboardService = {
    * @param {ExpressResponse} res
    */
   handleGetHome(req, res) {
-    res.send("Hello World");
+    try {
+      const db = Database.getInstance();
+
+      const query = db.prepare("SELECT * FROM events");
+      const rows = query.all();
+      res.send(`
+        <html>
+          <head>
+            <title>autovod | login</title>
+          </head>
+          <body style='width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif;'>
+            <h1>Events</h1>
+            <ul>
+              ${rows.map((row) => `<li>${row.title}</li>`).join("")}
+            </ul>
+          </body>
+        </html>
+        `);
+    } catch (error) {
+      log.error(`[dashboardService.handleGetHome] Error: ${error}`);
+      res.sendStatus(500);
+    }
   },
 
   /**

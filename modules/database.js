@@ -19,6 +19,9 @@ export class Database {
 
   constructor() {}
 
+  /**
+   * @returns {Database}
+   */
   static getInstance() {
     if (nil(this._instance)) {
       this._instance = new Database();

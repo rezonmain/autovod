@@ -4,7 +4,6 @@ import { empty } from "../utils/utils.js";
 
 export async function withAuth(req, res, next) {
   const authToken = req.cookies?.[APP_COOKIES.CLIENT_AUTH_TOKEN] ?? "";
-  console.log("middleware", authToken);
 
   if (empty(authToken)) {
     return res.redirect("/dashboard/auth");
