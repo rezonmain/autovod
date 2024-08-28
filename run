@@ -2,4 +2,4 @@
 
 export $(grep -v '^#' .env | xargs)
 
-docker run -d -p $HOST_PORT:$APPLICATION_PORT --mount source=autovod_vol,target=/app/cache autovod
+docker run -d -p $HOST_PORT:$APPLICATION_PORT --mount source=autovod_vol,target=/app/cache,/app/data autovod
