@@ -4,5 +4,7 @@ export const eventLog = {
    * @param {"info" | "error"} type
    * @param {Record<string, any>} metadata
    */
-  log: async (message, type, metadata = {}) => {},
+  log: async (message, type, metadata = {}) => {
+    console.log(metadata);
+  },
 };

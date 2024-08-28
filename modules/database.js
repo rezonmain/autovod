@@ -1,7 +1,7 @@
 /** @import { StatementSync } from '../jsdoc.types'; */
 import { DatabaseSync } from "node:sqlite";
 import path from "node:path";
-import { nil } from "../utils/utils";
+import { nil } from "../utils/utils.js";
 
 const DIRNAME = process.cwd();
 const DB_PATH = path.resolve(DIRNAME, path.join("data", "db.sqlite"));
