@@ -165,4 +165,12 @@
  * @typedef {'google-auth-state'} ApplicationStoreKey
  */
 
+/**
+ * @typedef {Object} StatementSync
+ * @property {() => Array<Record<string, unknown>>} all - This method executes a prepared statement and returns all results as an array of objects. If the prepared statement does not return any results, this method returns an empty array. The prepared statement parameters are bound using the values in namedParameters and anonymousParameters.
+ * @property {() => string} expandedSQL - This method returns the source SQL of the prepared statement with parameter placeholders replaced by values. This method is a wrapper around sqlite3_expanded_sql().
+ * @property {() => Record<string, unknown> | undefined} get - This method executes a prepared statement and returns the first result as an object. If the prepared statement does not return any results, this method returns undefined. The prepared statement parameters are bound using the values in namedParameters and anonymousParameters.
+ * @property {() => {changes: number, lastInsertRowid: number}} run - This method executes a prepared statement and returns an object summarizing the resulting changes. The prepared statement parameters are bound using the values in namedParameters and anonymousParameters.
+ * @property {() => string} sourceSQL This method returns the source SQL of the prepared statement. This method is a wrapper around sqlite3_sql().
+ */
 export {};

@@ -6,3 +6,4 @@
 *.che
 node_modules
 *.secret
+*.sqlite

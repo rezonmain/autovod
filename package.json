@@ -3,7 +3,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env index.js",
+    "start": "node --env-file=.env --experimental-sqlite index.js",
     "dev": "nodemon --env-file=.env index.js",
     "lint": "eslint .",
     "random32": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
