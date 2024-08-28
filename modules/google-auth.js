@@ -122,6 +122,10 @@ export const googleAuth = {
    * @returns {Promise<boolean>}
    */
   async verifyToken(token) {
+    if (empty(token)) {
+      return false;
+    }
+
     const [error, certs] = await googleAuth.getCerts();
 
     if (error) {

@@ -20,6 +20,12 @@ export const dashboardService = {
    * @param {ExpressResponse} res
    */
   handleGetAuth(req, res) {
+    const authToken = req.cookies?.[APP_COOKIES.CLIENT_AUTH_TOKEN] ?? "";
+
+    if (googleAuth.verifyToken(authToken)) {
+      return res.redirect("/dashboard");
+    }
+
     const state = googleAuth.generateStateToken();
     const clientAuthUrl = googleAuth.buildClientAuthorizationURL(state);
 
@@ -88,7 +94,12 @@ export const dashboardService = {
         throw new Error(json);
       }
 
-      const { id_token } = await response.json();
+      const { id_token, expires_in } = await response.json();
+
+      if (!googleAuth.verifyToken(id_token)) {
+        log.error(`[dashboardService.handleAuthRedirect] Invalid token`);
+        return res.send(401);
+      }
 
       const payload = jwt.decode(id_token);
 
@@ -101,7 +112,13 @@ export const dashboardService = {
         return res.send(401);
       }
 
-      res.redirect("/");
+      res.clearCookie(APP_COOKIES.CLIENT_AUTH_STATE);
+      res.cookie(APP_COOKIES.CLIENT_AUTH_TOKEN, id_token, {
+        httpOnly: true,
+        maxAge: expires_in * 1000,
+      });
+
+      res.redirect("/dashboard");
     } catch (error) {
       log.error(
         `[dashboardService.handleAuthRedirect] Error getting access token: ${error}`

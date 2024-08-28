@@ -93,7 +93,7 @@ export const SCRIPTS = {
 };
 export const APP_COOKIES = {
   CLIENT_AUTH_STATE: "client-auth-state",
-  CLIENT_AUTH: "client-auth",
+  CLIENT_AUTH_TOKEN: "client-auth-token",
 };
 export const DOCUMENTS = {
   DASHBOARD_AUTH_REDIRECT: "dashboard-auth-redirect.html",
