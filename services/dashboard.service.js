@@ -2,7 +2,7 @@
 import { googleAuth } from "../modules/google-auth.js";
 import jwt from "jsonwebtoken";
 import { APP_COOKIES, ENV_KEYS, YT_ACCESS_TOKEN_URL } from "../const.js";
-import { Database } from "../modules/database.js";
+import { eventsRepository } from "../repositories/events.repository.js";
 import { log } from "../modules/log.js";
 import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
@@ -14,10 +14,7 @@ export const dashboardService = {
    */
   handleGetHome(req, res) {
     try {
-      const db = Database.getInstance();
-
-      const query = db.prepare("SELECT * FROM events");
-      const rows = query.all();
+      const events = eventsRepository.getAllEvents();
       res.send(`
         <html>
           <head>
@@ -26,7 +23,12 @@ export const dashboardService = {
           <body style='width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif;'>
             <h1>Events</h1>
             <ul>
-              ${rows.map((row) => `<li>${row.title}</li>`).join("")}
+              ${events
+                .map(
+                  (row) =>
+                    `<li>[${row.createdAt}] ${row.type} | ${row.message} | ${row.metadata}</li>`
+                )
+                .join("")}
             </ul>
           </body>
         </html>
@@ -120,18 +122,18 @@ export const dashboardService = {
 
       if (!googleAuth.verifyToken(id_token)) {
         log.error(`[dashboardService.handleAuthRedirect] Invalid token`);
-        return res.send(401);
+        return res.sendStatus(401);
       }
 
       const payload = jwt.decode(id_token);
 
       if (empty(payload.email)) {
-        return res.send(401);
+        return res.sendStatus(401);
       }
 
       // Only allow the email specified in the .env file
       if (payload.email !== env(ENV_KEYS.GOOGLE_AUTH_HINT)) {
-        return res.send(401);
+        return res.sendStatus(401);
       }
 
       res.clearCookie(APP_COOKIES.CLIENT_AUTH_STATE);
