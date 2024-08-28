@@ -7,6 +7,5 @@ jsdoc.types.js
 README.md
 run
 build
-data
 *.che
 *.sqlite
