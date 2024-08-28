@@ -5,7 +5,7 @@ import fs from "node:fs";
 import { nil } from "../utils/utils.js";
 
 const DIRNAME = process.cwd();
-const DB_PATH = path.resolve(DIRNAME, path.join("data", "db.sqlite"));
+const DB_PATH = path.resolve(DIRNAME, path.join("data", "db", "db.sqlite"));
 
 export class Database {
   /**
