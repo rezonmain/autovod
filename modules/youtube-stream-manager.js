@@ -80,7 +80,7 @@ export class YTStreamManager {
     }
 
     streams.forEach((stream) => {
-      if (stream.status.streamStatus == "inactive") {
+      if (["ready", "inactive"].includes(stream.status.streamStatus)) {
         this.streams.add(`${stream.id}${stream.cdn.ingestionInfo.streamName}`);
       }
     });
