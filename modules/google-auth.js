@@ -1,3 +1,4 @@
+/** @import { GoogleCert } from '../jsdoc.types.js' */
 import crypto from "node:crypto";
 import { fileCache } from "../modules/file-cache.js";
 import { getPem } from "./rsa-pem.js";
@@ -34,8 +35,8 @@ export const googleAuth = {
   },
 
   /**
-   * https://developers.google.com/identity/openid-connect/openid-connect#sendauthrequest
    * Use for client authorization flow (authenticating requests to autovod)
+   * https://developers.google.com/identity/openid-connect/openid-connect#sendauthrequest
    * @param {string[]} scopes
    * @param {string} state
    * @returns {string}
@@ -65,18 +66,8 @@ export const googleAuth = {
   },
 
   /**
-   * @typedef {Object} GoogleCert
-   * @property {string} kty
-   * @property {string} n
-   * @property {string} alg
-   * @property {string} use
-   * @property {string} e
-   * @property {string} kid
-   */
-
-  /**
    * @param {string} token
-   * @returns {Promise<[Error, GoogleCert[]]}
+   * @returns {Promise<[Error, string]} - Pem key
    */
   async getCertForToken(token) {
     const cachedCert = fileCache.getOne(CACHE_KEYS.GOOGLE_CERTS);

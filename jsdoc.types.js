@@ -173,4 +173,15 @@
  * @property {() => {changes: number, lastInsertRowid: number}} run - This method executes a prepared statement and returns an object summarizing the resulting changes. The prepared statement parameters are bound using the values in namedParameters and anonymousParameters.
  * @property {() => string} sourceSQL This method returns the source SQL of the prepared statement. This method is a wrapper around sqlite3_sql().
  */
+
+/**
+ * @typedef {Object} GoogleCert
+ * @property {string} kty
+ * @property {string} n
+ * @property {string} alg
+ * @property {string} use
+ * @property {string} e
+ * @property {string} kid
+ */
+
 export {};

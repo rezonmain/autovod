@@ -198,7 +198,6 @@ export class YTStreamManager {
   }
 
   /**
-   *
    * @param {string} stream - streamIdstreamKey
    * @param {string} login - twitch login
    * @returns {Promise<Error | void>}
