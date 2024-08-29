@@ -1,0 +1,17 @@
+<div hx-boost="true" class="p-2 bg-neutral-900 shadow-lg border border-neutral-600 flex flex-col">
+  <h1 class="text-2xl pb-3">stop stream</h1>
+  <div class="bg-neutral-800 p-4 space-y-4">
+    <p>Choose one of the following active twitch login re-streams to stop it:</p>
+    <ul>
+      {{#each logins as |login|}}
+      <li class="p-2 bg-neutral-800 shadow-lg border border-neutral-600 ">
+        <form hx-post="/dashboard/action/stop-stream" class="flex flex-row justify-between">
+          <input type="hidden" name="login" value="{{login}}">
+          <p>{{login}}</p>
+          <button class="bg-red-500 text-white px-2 py-1 items-center">stop</button>
+        </form>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

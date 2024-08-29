@@ -41,8 +41,14 @@ export const dashboardService = {
             availableStreams: availableStreams.size,
           });
         }
-        case "stop-stream":
-          return res.send("<h1>Stop Stream</h1>");
+        case "stop-stream": {
+          const streamManager = YTStreamManager.getInstance();
+          const logins = streamManager.logins;
+          return res.render(TEMPLATES.DASHBOARD_STOP_STREAM, {
+            layout: false,
+            logins: logins.keys(),
+          });
+        }
         case "active-streams":
           return res.send("<h1>Active Streams</h1>");
         default:
@@ -170,8 +176,63 @@ export const dashboardService = {
    * @param {ExpressRequest} req
    * @param {ExpressResponse} res
    */
-  async handleGetEventLog(req, res) {
-    const events = eventsRepository.getAllEvents();
-    res.render(TEMPLATES.DASHBOARD_EVENT_LOG, { layout: false, events });
+  async handlePostActionRestream(req, res) {
+    const body = new URLSearchParams(req.rawBody);
+
+    if (!body.has("login")) {
+      return res.sendStatus(400);
+    }
+
+    const login = body.get("login");
+
+    const streamManager = YTStreamManager.getInstance();
+
+    if (streamManager.logins.has(login)) {
+      return res.sendStatus(409);
+    }
+
+    const [error, scheduled] = await streamManager.scheduleBroadcast(login);
+    console.log("restream id", scheduled.broadcast.id);
+    if (error) {
+      log.error(
+        "[dashboardService.handlePostActionRestream] Error scheduling broadcast",
+        error
+      );
+      return res.sendStatus(500);
+    }
+
+    streamManager.restreamToYT(scheduled.stream, login);
+    res.sendStatus(200);
+  },
+
+  /**
+   * @param {ExpressRequest} req
+   * @param {ExpressResponse} res
+   */
+  handlePostActionStopStream(req, res) {
+    const body = new URLSearchParams(req.rawBody);
+
+    if (!body.has("login")) {
+      return res.sendStatus(400);
+    }
+
+    const login = body.get("login");
+
+    const streamManager = YTStreamManager.getInstance();
+
+    if (!streamManager.logins.has(login)) {
+      return res.sendStatus(404);
+    }
+
+    const error = streamManager.stopStream(login);
+    if (error) {
+      log.error(
+        "[dashboardService.handlePostActionStopStream] Error stopping stream",
+        error
+      );
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(200);
   },
 };

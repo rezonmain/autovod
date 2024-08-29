@@ -24,7 +24,7 @@ export class YTStreamManager {
   scheduledBroadcasts;
 
   /**
-   * @type {Set<string>} - twitch logins we are currently streaming to YT
+   * @type {Map<string, ChildProcess} - twitch logins we are currently streaming to YT and their child processes
    */
   logins;
 
@@ -36,7 +36,7 @@ export class YTStreamManager {
   constructor() {
     this.streams = new Set();
     this.scheduledBroadcasts = new Map();
-    this.logins = new Set();
+    this.logins = new Map();
   }
 
   /**
@@ -175,13 +175,11 @@ export class YTStreamManager {
 
     const destinationUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
 
-    this.logins.add(login);
-
     log.info(
       `[YTStreamManager.restreamToYt] Starting restream for ${login} using streamKey: ${ytStreamKey}`
     );
 
-    return ffmpeg.passthroughHLS({
+    const childProcess = ffmpeg.passthroughHLS({
       sourceUrl,
       destinationUrl,
       onExit: async (code) => {
@@ -197,6 +195,8 @@ export class YTStreamManager {
         }
       },
     });
+
+    this.logins.set(login, childProcess);
   }
 
   /**
@@ -205,12 +205,18 @@ export class YTStreamManager {
    * @returns {Promise<Error | void>}
    */
   async handleStreamEnd(stream, login) {
-    this.logins.delete(login);
+    // this.logins.delete(login);
 
     const [accessError, accessToken] = await ytAuth.getAccessToken();
     if (accessError) {
       return accessError;
     }
+
+    console.log({
+      accessError,
+      accessToken,
+      id: this.scheduledBroadcasts.get(stream),
+    });
 
     const [transitionError] = await ytApi.transitionBroadcast(accessToken, {
       id: this.scheduledBroadcasts.get(stream),
@@ -234,5 +240,18 @@ export class YTStreamManager {
     }
 
     // TODO: decide if we should make broadcast public ???
+  }
+
+  /**
+   * @param {string} login - twitch login
+   * @returns {Error | void}
+   */
+  stopStream(login) {
+    if (!this.logins.has(login)) {
+      return new Error(`No stream for login: ${login}`);
+    }
+
+    const childProcess = this.logins.get(login);
+    childProcess.kill();
   }
 }

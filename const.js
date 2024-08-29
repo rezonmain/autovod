@@ -83,9 +83,12 @@ export const BROADCAST_DEFAULT_BODY = {
   },
   contentDetails: {
     enableAutoStart: true,
-    enableAutoStop: true,
+    enableAutoStop: false,
     enableDvr: true,
     recordFromStart: true,
+    monitorStream: {
+      enableMonitorStream: false,
+    },
   },
 };
 export const SCRIPTS = {
@@ -100,6 +103,7 @@ export const TEMPLATES = {
   DASHBOARD_HOME: "dashboard-home.hbs",
   DASHBOARD_EVENT_LOG: "dashboard-event-log.hbs",
   DASHBOARD_RESTREAM: "dashboard-restream.hbs",
+  DASHBOARD_STOP_STREAM: "dashboard-stop-stream.hbs",
 };
 export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";
