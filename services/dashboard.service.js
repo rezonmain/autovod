@@ -19,7 +19,20 @@ export const dashboardService = {
    * @param {ExpressResponse} res
    */
   handleGetHome(req, res) {
-    res.render(TEMPLATES.DASHBOARD_HOME);
+    const { k: action } = req.query;
+
+    switch (action) {
+      case "event-logs":
+        return res.render(TEMPLATES.DASHBOARD_EVENT_LOG, { layout: false });
+      case "restream":
+        return res.send("<h1>Restream</h1>");
+      case "stop-stream":
+        return res.send("<h1>Stop Stream</h1>");
+      case "active-streams":
+        return res.send("<h1>Active Streams</h1>");
+      default:
+        return res.render(TEMPLATES.DASHBOARD_HOME);
+    }
   },
 
   /**

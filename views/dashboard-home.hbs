@@ -5,31 +5,23 @@
     <h2 class='text-2xl pb-0.5'>choose one of the following:</h2>
     <ul class="px-4">
       <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600">
-        <form>
-          <input type="hidden" name="k" value="event-logs" />
-          <button class="text-start inline-block w-full underline hover:no-underline cursor-pointer">see event
-            log</button>
-        </form>
+        <a hx-get="/dashboard?k=event-logs" hx-target="#widget-div" hx-trigger="click"
+          class="inline-block w-full underline hover:no-underline cursor-pointer">see
+          event logs</a>
       </li>
       <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600">
-        <form>
-          <input type="hidden" name="k" value="restream" />
-          <button class="text-start inline-block w-full underline hover:no-underline cursor-pointer">restream</button>
-        </form>
+        <a hx-get="/dashboard?k=restream" hx-target="#widget-div" hx-trigger="click"
+          class="inline-block w-full underline hover:no-underline cursor-pointer">restream</a>
       </li>
       <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600">
-        <form>
-          <input type="hidden" name="k" value="stop-stream" />
-          <button class="text-start inline-block w-full underline hover:no-underline cursor-pointer">stop a
-            stream</button>
-        </form>
+        <a hx-get="/dashboard?k=stop-stream" hx-target="#widget-div" hx-trigger="click"
+          class="inline-block w-full underline hover:no-underline cursor-pointer">stop
+          a stream</a>
       </li>
       <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600">
-        <form>
-          <input type="hidden" name="k" value="active-streams" />
-          <button class="text-start inline-block w-full underline hover:no-underline cursor-pointer">see active
-            streams</button>
-        </form>
+        <a hx-get="/dashboard?k=active-streams" hx-target="#widget-div" hx-trigger="click"
+          class="inline-block w-full underline hover:no-underline cursor-pointer">see
+          active streams</a>
       </li>
     </ul>
   </div>
