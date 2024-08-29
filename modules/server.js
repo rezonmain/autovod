@@ -12,13 +12,13 @@ import { log } from "./log.js";
 const DIRNAME = process.cwd();
 const VIEWS_PATH = path.resolve(DIRNAME, "views");
 
-const expressServer = express();
+const s = express();
 
-expressServer.use("/ping", pingController);
-expressServer.use("/callback/twitch", callbackTwitchController);
-expressServer.use("/callback/google", callbackGoogleController);
-expressServer.use("/dashboard", dashboardController);
-expressServer.use("/public", express.static("./public"));
+s.use("/ping", pingController);
+s.use("/callback/twitch", callbackTwitchController);
+s.use("/callback/google", callbackGoogleController);
+s.use("/dashboard", dashboardController);
+s.use("/public", express.static("./public"));
 
 const hbs = create({
   extname: ".hbs",
@@ -26,17 +26,15 @@ const hbs = create({
   layoutsDir: path.join(VIEWS_PATH, "layouts"),
   partialsDir: path.join(VIEWS_PATH, "partials"),
 });
-
-expressServer.engine(".hbs", hbs.engine);
-
-expressServer.set("view engine", ".hbs");
-expressServer.set("views", VIEWS_PATH);
+s.engine(".hbs", hbs.engine);
+s.set("view engine", ".hbs");
+s.set("views", VIEWS_PATH);
 
 const port = env(ENV_KEYS.APPLICATION_PORT);
 const domainBaseUrl = env(ENV_KEYS.DOMAIN_BASE_URL);
 
 function start() {
-  expressServer.listen(port, () => {
+  s.listen(port, () => {
     log.info(`Server listening on ${domainBaseUrl}:${port}`);
   });
 }
