@@ -3,7 +3,7 @@ export const CACHE_KEYS = {
   TWITCH_ACCESS: "@twitch-access",
   YT_ACCESS: "@yt-access",
   YT_REFRESH: "@yt-refresh",
-  GOOGLE_CERTS: "@google-certs",
+  GOOGLE_CERTS: "@google-certs-v1.1",
 };
 export const TWITCH_WEBHOOK_HEADERS = {
   MESSAGE_ID: "Twitch-Eventsub-Message-Id".toLowerCase(),

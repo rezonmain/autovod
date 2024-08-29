@@ -73,14 +73,16 @@ export const googleAuth = {
    * @property {string} e
    * @property {string} kid
    */
+
   /**
+   * @param {string} token
    * @returns {Promise<[Error, GoogleCert[]]}
    */
-  async getCerts() {
-    const [error, cachedCerts] = fileCache.get(CACHE_KEYS.GOOGLE_CERTS);
+  async getCertForToken(token) {
+    const cachedCert = fileCache.getOne(CACHE_KEYS.GOOGLE_CERTS);
 
-    if (empty(error)) {
-      return [null, cachedCerts.map((cert) => JSON.parse(cert))];
+    if (!empty(cachedCert)) {
+      return [null, cachedCert];
     }
 
     try {
@@ -105,13 +107,25 @@ export const googleAuth = {
       /** @type {GoogleCert[]} */
       const certs = jwksJson.keys;
 
+      const payload = jwt.decode(token, { complete: true });
+
+      const certToUse = certs.find((cert) => cert.kid === payload.header.kid);
+
+      if (empty(certToUse)) {
+        throw new Error(
+          "[googleAuth.getCertForToken] Failed to find cert to use for verification"
+        );
+      }
+
+      const pem = getPem(certToUse.n, certToUse.e);
+
       fileCache.set(
         CACHE_KEYS.GOOGLE_CERTS,
-        Date.now() + 1000 * 60 * 60 * 24 * 30, // 30 days
-        ...certs.map((cert) => JSON.stringify(cert))
+        Date.now() + 1000 * 60 * 60 * 24 * 7, // 7 days
+        pem
       );
 
-      return [null, certs];
+      return [null, pem];
     } catch (error) {
       return [error, null];
     }
@@ -126,31 +140,18 @@ export const googleAuth = {
       return false;
     }
 
-    const [error, certs] = await googleAuth.getCerts();
+    const [error, cert] = await googleAuth.getCertForToken(token);
 
     if (error) {
       log.error(
-        "[googleAuth.verifyToken] Failed to get certs for verification",
+        "[googleAuth.verifyToken] Failed to get cert for verification",
         error
       );
       return false;
     }
 
     try {
-      const payload = jwt.decode(token, { complete: true });
-
-      const certToUse = certs.find((cert) => cert.kid === payload.header.kid);
-
-      if (empty(certToUse)) {
-        log.error(
-          "[googleAuth.verifyToken] Failed to find cert to use for verification"
-        );
-        return false;
-      }
-
-      const pem = getPem(certToUse.n, certToUse.e);
-
-      return !!jwt.verify(token, pem, { algorithms: ["RS256"] });
+      return Boolean(jwt.verify(token, cert, { algorithms: ["RS256"] }));
     } catch (error) {
       log.error("[googleAuth.verifyToken] Failed to verify token", error);
       return false;
