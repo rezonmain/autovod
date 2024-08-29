@@ -96,7 +96,7 @@ export const APP_COOKIES = {
   CLIENT_AUTH_TOKEN: "client-auth-token",
 };
 export const TEMPLATES = {
-  SIGN_IN: "sign-in",
+  SIGN_IN: "sign-in.hbs",
 };
 export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";
