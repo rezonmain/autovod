@@ -95,8 +95,8 @@ export const APP_COOKIES = {
   CLIENT_AUTH_STATE: "client-auth-state",
   CLIENT_AUTH_TOKEN: "client-auth-token",
 };
-export const DOCUMENTS = {
-  DASHBOARD_AUTH_REDIRECT: "dashboard-auth-redirect.html",
+export const TEMPLATES = {
+  SIGN_IN: "sign-in",
 };
 export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";

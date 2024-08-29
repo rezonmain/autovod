@@ -1,7 +1,12 @@
 /** @import { Request as ExpressRequest, Response as ExpressResponse} from "express" */
 import { googleAuth } from "../modules/google-auth.js";
 import jwt from "jsonwebtoken";
-import { APP_COOKIES, ENV_KEYS, YT_ACCESS_TOKEN_URL } from "../const.js";
+import {
+  APP_COOKIES,
+  ENV_KEYS,
+  TEMPLATES,
+  YT_ACCESS_TOKEN_URL,
+} from "../const.js";
 import { eventsRepository } from "../repositories/events.repository.js";
 import { eventLog } from "../modules/event-log.js";
 import { log } from "../modules/log.js";
@@ -59,17 +64,7 @@ export const dashboardService = {
       maxAge: 1000 * 60 * 5, // 5 minutes,
     });
 
-    res.send(`
-      <html>
-        <head>
-          <title>autovod | login</title>
-        </head>
-        <body style='width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif;'>
-          <p>sign in with google</p>
-          <a href=${clientAuthUrl}>sign in</a>
-        </body>
-      </html>
-      `);
+    res.render(TEMPLATES.SIGN_IN, { googleAuthUrl: clientAuthUrl });
   },
 
   /**

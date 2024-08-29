@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env --experimental-sqlite index.js",
-    "dev": "nodemon --env-file=.env index.js",
+    "dev": "nodemon --env-file=.env --experimental-sqlite index.js",
     "lint": "eslint .",
     "random32": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
     "getid": "node --env-file=.env --experimental-sqlite  ./scripts/print-broadcaster-id.js",
@@ -27,6 +27,7 @@
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
+    "express-handlebars": "^8.0.1",
     "grammy": "^1.28.0",
     "jsonwebtoken": "^9.0.2"
   }
