@@ -205,18 +205,11 @@ export class YTStreamManager {
    * @returns {Promise<Error | void>}
    */
   async handleStreamEnd(stream, login) {
-    // this.logins.delete(login);
-
+    this.logins.delete(login);
     const [accessError, accessToken] = await ytAuth.getAccessToken();
     if (accessError) {
       return accessError;
     }
-
-    console.log({
-      accessError,
-      accessToken,
-      id: this.scheduledBroadcasts.get(stream),
-    });
 
     const [transitionError] = await ytApi.transitionBroadcast(accessToken, {
       id: this.scheduledBroadcasts.get(stream),
@@ -227,12 +220,11 @@ export class YTStreamManager {
       return transitionError;
     }
 
+    this.scheduledBroadcasts.delete(stream);
+
     log.info(
       `[YTStreamManager.handleStreamEnd] Transitioned broadcast for ${login} to Complete`
     );
-
-    this.scheduledBroadcasts.delete(stream);
-
     // revalidate available streams after we ended a broadcast
     const [loadStreamsError] = await this.loadAvailableStreams();
     if (loadStreamsError) {
