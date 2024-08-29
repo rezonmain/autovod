@@ -7,7 +7,6 @@ import {
   TEMPLATES,
   YT_ACCESS_TOKEN_URL,
 } from "../const.js";
-import { eventsRepository } from "../repositories/events.repository.js";
 import { eventLog } from "../modules/event-log.js";
 import { log } from "../modules/log.js";
 import { empty } from "../utils/utils.js";
@@ -19,30 +18,7 @@ export const dashboardService = {
    * @param {ExpressResponse} res
    */
   handleGetHome(req, res) {
-    try {
-      const events = eventsRepository.getAllEvents();
-      res.send(`
-        <html>
-          <head>
-            <title>autovod | events</title>
-          </head>
-          <body style='width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif;'>
-            <h1>Events</h1>
-            <ul>
-              ${events
-                .map(
-                  (row) =>
-                    `<li>[${row.createdAt}] ${row.type} | ${row.message} | ${row.metadata}</li>`
-                )
-                .join("")}
-            </ul>
-          </body>
-        </html>
-        `);
-    } catch (error) {
-      log.error(`[dashboardService.handleGetHome] Error: ${error}`);
-      res.sendStatus(500);
-    }
+    res.render(TEMPLATES.DASHBOARD_HOME);
   },
 
   /**
