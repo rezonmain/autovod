@@ -15,7 +15,8 @@
     "restream": "node --env-file=.env --experimental-sqlite  ./scripts/restream.js",
     "authorize": "node --env-file=.env --experimental-sqlite  ./scripts/authorize-yt.js",
     "getstreams": "node --env-file=.env --experimental-sqlite  ./scripts/get-streams.js",
-    "migrate": "node --env-file=.env --experimental-sqlite ./scripts/migrate.js"
+    "migrate": "node --env-file=.env --experimental-sqlite ./scripts/migrate.js",
+    "sendmessage": "node --env-file=.env --experimental-sqlite ./scripts/send-message.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
