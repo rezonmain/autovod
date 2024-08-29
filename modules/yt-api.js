@@ -1,5 +1,6 @@
 /** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream, YTTransitionBroadcastOptions } from '../jsdoc.types.js' */
 import { BROADCAST_DEFAULT_BODY, YT_API_URLS } from "../const.js";
+import { eventLog } from "./event-log.js";
 import { empty } from "../utils/utils.js";
 
 export const ytApi = {
@@ -26,6 +27,12 @@ export const ytApi = {
 
       if (!response.ok) {
         const responseBody = await response.json();
+        eventLog.log("[ytApi.getStreams] Failed to get streams", "error", {
+          responseJson: JSON.stringify(responseBody),
+          responseCode: response.status,
+          responseText: response.statusText,
+          queryParams: queryParams.toString(),
+        });
         throw new Error(JSON.stringify(responseBody));
       }
 
@@ -74,6 +81,17 @@ export const ytApi = {
 
       if (!response.ok) {
         const responseBody = await response.json();
+        eventLog.log(
+          "[ytApi.insertBroadcast] Failed to insert broadcast",
+          "error",
+          {
+            responseJson: JSON.stringify(responseBody),
+            responseCode: response.status,
+            responseText: response.statusText,
+            requestBody: JSON.stringify(body),
+            queryParams: queryParams.toString(),
+          }
+        );
         throw new Error(JSON.stringify(responseBody));
       }
 
@@ -111,6 +129,17 @@ export const ytApi = {
 
       if (!response.ok) {
         const responseBody = await response.json();
+        eventLog.log(
+          "[ytApi.bindBroadcast] Failed to bind broadcast",
+          "error",
+          {
+            responseJson: JSON.stringify(responseBody),
+            responseCode: response.status,
+            responseText: response.statusText,
+            queryParams: queryParams.toString(),
+            options: JSON.stringify(options),
+          }
+        );
         throw new Error(JSON.stringify(responseBody));
       }
 
@@ -146,6 +175,17 @@ export const ytApi = {
 
       if (!response.ok) {
         const responseBody = await response.json();
+        eventLog.log(
+          "[ytApi.transitionBroadcast] Failed to transition broadcast",
+          "error",
+          {
+            responseJson: JSON.stringify(responseBody),
+            responseCode: response.status,
+            responseText: response.statusText,
+            queryParams: queryParams.toString(),
+            options: JSON.stringify(options),
+          }
+        );
         throw new Error(JSON.stringify(responseBody));
       }
 

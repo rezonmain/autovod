@@ -3,18 +3,20 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env index.js",
+    "start": "node --env-file=.env --experimental-sqlite index.js",
     "dev": "nodemon --env-file=.env index.js",
     "lint": "eslint .",
     "random32": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
-    "getid": "node --env-file=.env ./scripts/print-broadcaster-id.js",
-    "listsubs": "node --env-file=.env ./scripts/print-subscriptions.js",
-    "deletesub": "node --env-file=.env ./scripts/delete-subscription.js",
-    "createsub": "node --env-file=.env ./scripts/create-subscription.js",
-    "m3u8url": "node --env-file=.env ./scripts/get-m3u8-url.js",
-    "restream": "node --env-file=.env ./scripts/restream.js",
-    "authorize": "node --env-file=.env ./scripts/authorize-yt.js",
-    "getstreams": "node --env-file=.env ./scripts/get-streams.js"
+    "getid": "node --env-file=.env --experimental-sqlite  ./scripts/print-broadcaster-id.js",
+    "listsubs": "node --env-file=.env --experimental-sqlite  ./scripts/print-subscriptions.js",
+    "deletesub": "node --env-file=.env --experimental-sqlite  ./scripts/delete-subscription.js",
+    "createsub": "node --env-file=.env --experimental-sqlite  ./scripts/create-subscription.js",
+    "m3u8url": "node --env-file=.env --experimental-sqlite  ./scripts/get-m3u8-url.js",
+    "restream": "node --env-file=.env --experimental-sqlite  ./scripts/restream.js",
+    "authorize": "node --env-file=.env --experimental-sqlite  ./scripts/authorize-yt.js",
+    "getstreams": "node --env-file=.env --experimental-sqlite  ./scripts/get-streams.js",
+    "migrate": "node --env-file=.env --experimental-sqlite ./scripts/migrate.js",
+    "sendmessage": "node --env-file=.env --experimental-sqlite ./scripts/send-message.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
@@ -23,6 +25,7 @@
     "nodemon": "^3.1.4"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
     "grammy": "^1.28.0",
     "jsonwebtoken": "^9.0.2"

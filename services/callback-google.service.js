@@ -10,6 +10,7 @@ import {
   YT_ACCESS_TOKEN_URL,
 } from "../const.js";
 import { env } from "../utils/env.js";
+import { eventLog } from "../modules/event-log.js";
 
 /**
  * @param {ExpressRequest} req
@@ -63,6 +64,16 @@ async function handleAuthRedirect(req, res) {
 
     if (!response.ok) {
       const json = await response.json();
+      eventLog.log(
+        "[callbackGoogleService.handleAuthRedirect] Failed to exchange authorization code for tokens",
+        "error",
+        {
+          responseJson: JSON.stringify(json),
+          responseCode: response.status,
+          responseText: response.statusText,
+          queryParams: url.searchParams.toString(),
+        }
+      );
       throw new Error(json);
     }
 

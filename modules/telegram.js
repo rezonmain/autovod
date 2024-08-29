@@ -2,6 +2,8 @@ import { Bot } from "grammy";
 import { ENV_KEYS } from "../const.js";
 import { env } from "../utils/env.js";
 import { nil } from "../utils/utils.js";
+import { log } from "./log.js";
+import { eventLog } from "./event-log.js";
 
 class Telegram {
   /**
@@ -49,7 +51,12 @@ class Telegram {
   }
 
   init() {
-    return this.bot.start();
+    try {
+      return this.bot.start();
+    } catch (error) {
+      log.error("[Telegram]", error);
+      eventLog.log("[Telegram] Bot failed", "error", error);
+    }
   }
 
   stop() {
