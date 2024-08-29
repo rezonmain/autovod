@@ -1,4 +1,4 @@
-/** @import { YTBroadcast } from '../jsdoc.types.js'*/
+/** @import { YTBroadcast, YTStream } from '../jsdoc.types.js'*/
 /** @import { ChildProcess } from 'node:child_process' */
 import { format } from "node:util";
 import { BROADCAST_DEFAULT_BODY, YT_HLS_INGEST_URL } from "../const.js";
@@ -55,7 +55,7 @@ export class YTStreamManager {
    * @returns {Promise<Error | void>}
    */
   async init() {
-    const availableStreamsError = await this.loadAvailableStreams();
+    const [availableStreamsError] = await this.loadAvailableStreams();
     if (availableStreamsError) {
       return availableStreamsError;
     }
@@ -63,12 +63,12 @@ export class YTStreamManager {
 
   /**
    *
-   * @returns {Promise<Error | void>}
+   * @returns {Promise<[Error, YTStream[]]>}
    */
   async loadAvailableStreams() {
     const [accessError, accessToken] = await ytAuth.getAccessToken();
     if (accessError) {
-      return accessError;
+      return [accessError, null];
     }
 
     const [streamsError, streams] = await ytApi.getStreams(accessToken, {
@@ -76,7 +76,7 @@ export class YTStreamManager {
       mine: true,
     });
     if (streamsError) {
-      return streamsError;
+      return [streamsError, null];
     }
 
     streams.forEach((stream) => {
@@ -84,6 +84,8 @@ export class YTStreamManager {
         this.streams.add(`${stream.id}${stream.cdn.ingestionInfo.streamName}`);
       }
     });
+
+    return [null, streams];
   }
 
   /**
@@ -226,7 +228,7 @@ export class YTStreamManager {
     this.scheduledBroadcasts.delete(stream);
 
     // revalidate available streams after we ended a broadcast
-    const loadStreamsError = await this.loadAvailableStreams();
+    const [loadStreamsError] = await this.loadAvailableStreams();
     if (loadStreamsError) {
       return loadStreamsError;
     }

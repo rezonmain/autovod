@@ -99,6 +99,7 @@ export const TEMPLATES = {
   SIGN_IN: "sign-in.hbs",
   DASHBOARD_HOME: "dashboard-home.hbs",
   DASHBOARD_EVENT_LOG: "dashboard-event-log.hbs",
+  DASHBOARD_RESTREAM: "dashboard-restream.hbs",
 };
 export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";

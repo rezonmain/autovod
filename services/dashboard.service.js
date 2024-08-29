@@ -12,26 +12,45 @@ import { log } from "../modules/log.js";
 import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
 import { eventsRepository } from "../repositories/events.repository.js";
+import { YTStreamManager } from "../modules/youtube-stream-manager.js";
 
 export const dashboardService = {
   /**
    * @param {ExpressRequest} req
    * @param {ExpressResponse} res
    */
-  handleGetHome(req, res) {
+  async handleGetHome(req, res) {
     const { k: action } = req.query;
 
-    switch (action) {
-      case "event-logs":
-        return res.render(TEMPLATES.DASHBOARD_EVENT_LOG, { layout: false });
-      case "restream":
-        return res.send("<h1>Restream</h1>");
-      case "stop-stream":
-        return res.send("<h1>Stop Stream</h1>");
-      case "active-streams":
-        return res.send("<h1>Active Streams</h1>");
-      default:
-        return res.render(TEMPLATES.DASHBOARD_HOME);
+    try {
+      switch (action) {
+        case "event-logs": {
+          const events = eventsRepository.getAllEvents();
+          return res.render(TEMPLATES.DASHBOARD_EVENT_LOG, {
+            layout: false,
+            events,
+          });
+        }
+        case "restream": {
+          const streamManager = YTStreamManager.getInstance();
+          const availableStreams = streamManager.streams.difference(
+            streamManager.scheduledBroadcasts
+          );
+          return res.render(TEMPLATES.DASHBOARD_RESTREAM, {
+            layout: false,
+            availableStreams: availableStreams.size,
+          });
+        }
+        case "stop-stream":
+          return res.send("<h1>Stop Stream</h1>");
+        case "active-streams":
+          return res.send("<h1>Active Streams</h1>");
+        default:
+          return res.render(TEMPLATES.DASHBOARD_HOME);
+      }
+    } catch (error) {
+      log.error(`[dashboardService.handleGetHome] Error: ${error}`);
+      return res.sendStatus(500);
     }
   },
 
