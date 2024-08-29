@@ -11,6 +11,7 @@ import { eventLog } from "../modules/event-log.js";
 import { log } from "../modules/log.js";
 import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
+import { eventsRepository } from "../repositories/events.repository.js";
 
 export const dashboardService = {
   /**
@@ -131,5 +132,14 @@ export const dashboardService = {
       );
       res.sendStatus(500);
     }
+  },
+
+  /**
+   * @param {ExpressRequest} req
+   * @param {ExpressResponse} res
+   */
+  async handleGetEventLog(req, res) {
+    const events = eventsRepository.getAllEvents();
+    res.render(TEMPLATES.DASHBOARD_EVENT_LOG, { layout: false, events });
   },
 };

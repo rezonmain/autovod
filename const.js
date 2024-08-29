@@ -98,6 +98,7 @@ export const APP_COOKIES = {
 export const TEMPLATES = {
   SIGN_IN: "sign-in.hbs",
   DASHBOARD_HOME: "dashboard-home.hbs",
+  DASHBOARD_EVENT_LOG: "dashboard-event-log.hbs",
 };
 export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";
