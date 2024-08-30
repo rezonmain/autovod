@@ -67,13 +67,26 @@ export const googleAuth = {
 
   /**
    * @param {string} token
-   * @returns {Promise<[Error, string]} - Pem key
+   * @returns {Promise<[Error, GoogleCert]} - cert with Kid matching the token
    */
   async getCertForToken(token) {
-    const cachedCert = fileCache.getOne(CACHE_KEYS.GOOGLE_CERTS);
+    const [certsError, cachedCerts] = fileCache.get(CACHE_KEYS.GOOGLE_CERTS);
+    const payload = jwt.decode(token, { complete: true });
 
-    if (!empty(cachedCert)) {
-      return [null, cachedCert];
+    if (empty(certsError)) {
+      /** @type {GoogleCert[]} */
+      const certs = cachedCerts.map((cert) => JSON.parse(cert));
+      const certToUse = certs.find((cert) => cert.kid === payload.header.kid);
+      if (empty(certToUse)) {
+        return [
+          new Error(
+            "[googleAuth.getCertForToken] Failed to find cert to use for verification"
+          ),
+          null,
+        ];
+      }
+
+      return [null, certToUse];
     }
 
     try {
@@ -98,8 +111,6 @@ export const googleAuth = {
       /** @type {GoogleCert[]} */
       const certs = jwksJson.keys;
 
-      const payload = jwt.decode(token, { complete: true });
-
       const certToUse = certs.find((cert) => cert.kid === payload.header.kid);
 
       if (empty(certToUse)) {
@@ -108,15 +119,13 @@ export const googleAuth = {
         );
       }
 
-      const pem = getPem(certToUse.n, certToUse.e);
-
       fileCache.set(
         CACHE_KEYS.GOOGLE_CERTS,
         Date.now() + 1000 * 60 * 60 * 24 * 7, // 7 days
-        pem
+        ...certs.map((cert) => JSON.stringify(cert))
       );
 
-      return [null, pem];
+      return [null, certToUse];
     } catch (error) {
       return [error, null];
     }
@@ -142,7 +151,8 @@ export const googleAuth = {
     }
 
     try {
-      return Boolean(jwt.verify(token, cert, { algorithms: ["RS256"] }));
+      const pem = getPem(cert.n, cert.e);
+      return Boolean(jwt.verify(token, pem, { algorithms: ["RS256"] }));
     } catch (error) {
       log.error("[googleAuth.verifyToken] Failed to verify token", error);
       return false;
