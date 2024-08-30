@@ -192,7 +192,6 @@ export const dashboardService = {
     }
 
     const [error, scheduled] = await streamManager.scheduleBroadcast(login);
-    console.log("restream id", scheduled.broadcast.id);
     if (error) {
       log.error(
         "[dashboardService.handlePostActionRestream] Error scheduling broadcast",
