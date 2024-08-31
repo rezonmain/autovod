@@ -39,6 +39,10 @@ export class RingBuffer {
     return this._buffer[index];
   }
 
+  get buffer() {
+    return Array.from(this._buffer);
+  }
+
   /**
    *
    * @param {(value: any, index: number) => void} callback

@@ -4,7 +4,7 @@ import { log as appLogger } from "./log.js";
 export const eventLog = {
   /**
    * @param {string} message
-   * @param {"info" | "error"} type
+   * @param {"info" | "error" | "debug"} type
    * @param {Record<string, any>} metadata
    */
   log(message, type, metadata = {}) {

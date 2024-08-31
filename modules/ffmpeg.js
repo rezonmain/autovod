@@ -2,6 +2,8 @@ import { spawn, exec as syncExec } from "node:child_process";
 import { promisify } from "node:util";
 import path from "node:path";
 import { SCRIPTS } from "../const.js";
+import { RingBuffer } from "./ring-buffer.js";
+import { eventLog } from "./event-log.js";
 
 const exec = promisify(syncExec);
 
@@ -24,31 +26,32 @@ export const ffmpeg = {
    * @param {string} options.sourceUrl
    * @param {string} options.destinationUrl
    * @param {(code: number) => Promise<void>} options.onExit
-   * @param {boolean} shouldLog
    * @returns
    */
-  passthroughHLS: (
-    { sourceUrl, destinationUrl, onExit },
-    shouldLog = false
-  ) => {
+  passthroughHLS: ({ sourceUrl, destinationUrl, onExit }) => {
+    const logBuffer = new RingBuffer(20);
+
     const childProcess = spawn(
       path.join(SCRIPTS_PATH, SCRIPTS.PASSTHROUGH_HLS),
       [destinationUrl, sourceUrl]
     );
 
-    if (shouldLog) {
-      childProcess.stdout.on("data", (data) => {
-        console.log(data.toString());
-      });
+    childProcess.stdout.on("data", (data) => {
+      logBuffer.push(`[${Date.now().toString()}] ${data.toString()}`);
+    });
 
-      childProcess.stderr.on("data", (data) => {
-        console.error(data.toString());
-      });
-    }
+    childProcess.stderr.on("data", (data) => {
+      logBuffer.push(`[${Date.now().toString()}] ${data.toString()}`);
+    });
 
     // ffmpeg will exit when the source stream ends
     childProcess.on("exit", async (code) => {
       await onExit(code);
+
+      eventLog.log("[ffmpeg] Exited", "debug", {
+        code,
+        logs: logBuffer.buffer,
+      });
     });
 
     return childProcess;

@@ -1,6 +1,5 @@
 #!/bin/sh
 ffmpeg -hide_banner \
-      -loglevel quiet \
       -re \
       -i "$2" \
       -map 0:v:0 -map 0:a:0 \

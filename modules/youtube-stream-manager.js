@@ -244,6 +244,6 @@ export class YTStreamManager {
     }
 
     const childProcess = this.logins.get(login);
-    childProcess.kill();
+    childProcess.kill("SIGHUP");
   }
 }
