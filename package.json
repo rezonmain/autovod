@@ -6,6 +6,7 @@
     "start": "node --env-file=.env --experimental-sqlite index.js",
     "dev": "nodemon --env-file=.env --experimental-sqlite index.js",
     "lint": "eslint .",
+    "test": "node --test \"**/*.test.js\"",
     "random32": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
     "getid": "node --env-file=.env --experimental-sqlite  ./scripts/print-broadcaster-id.js",
     "listsubs": "node --env-file=.env --experimental-sqlite  ./scripts/print-subscriptions.js",
