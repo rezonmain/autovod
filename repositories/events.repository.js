@@ -29,7 +29,8 @@ export const eventsRepository = {
    * @param {number} offset
    * @returns {Paginated<Event>}
    */
-  getPaginatedEvents(limit = 10, offset = 0) {
+  getPaginatedEvents(limit = 10, page = 1) {
+    const offset = (page - 1) * limit;
     const query = db.prepare("SELECT * FROM events LIMIT ? OFFSET ?");
     const data = query.all(limit, offset);
     const { total = 0 } = db
@@ -38,7 +39,7 @@ export const eventsRepository = {
 
     return {
       limit,
-      offset,
+      page,
       total,
       data,
     };

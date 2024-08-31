@@ -26,18 +26,25 @@ export const dashboardService = {
       switch (action) {
         case "event-logs": {
           const {
-            offset,
+            page,
             total,
             data: events,
-          } = eventsRepository.getPaginatedEvents(10, eventsPage);
+          } = eventsRepository.getPaginatedEvents(5, parseInt(eventsPage));
+
+          const lastPage = Math.ceil(total / 5);
+          const nextPage = page < lastPage ? page + 1 : lastPage;
+          const previousPage = page > 1 ? page - 1 : 1;
+
           return res.render(TEMPLATES.DASHBOARD_EVENT_LOG, {
             layout: false,
             events: events.map((event) => ({
               ...event,
               metadata: JSON.stringify(JSON.parse(event.metadata), null, 2),
             })),
-            total,
-            offset,
+            page,
+            lastPage,
+            nextPage,
+            previousPage,
           });
         }
         case "restream": {

@@ -188,7 +188,7 @@
  * @template T
  * @typedef {Object} Paginated
  * @property {number} limit
- * @property {number} offset
+ * @property {number} page
  * @property {number} total
  * @property {T[]} data
  */
