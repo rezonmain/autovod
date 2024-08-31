@@ -4,11 +4,15 @@
     <ul class="flex flex-row flex-wrap gap-4">
       {{#each broadcasts as |broadcast|}}
       <li
-        class="p-2 bg-neutral-800 shadow-xl  border-2 rounded-lg border-neutral-600 flex flex-col justify-center items-center gap-2 hover:opacity-65">
+        class="p-2 bg-neutral-800 shadow-xl  border-2 rounded-lg border-neutral-600 flex flex-col justify-center items-center gap-2">
         <a href="https://youtube.com/watch?v={{broadcast.id}}" target=" _blank" rel="noopener noreferrer">
           <img class=" rounded-lg w-full" src={{broadcast.snippet.thumbnails.medium.url}}
             height={{broadcast.snippet.thumbnails.medium.height}} width={{broadcast.snippet.thumbnails.medium.width}} />
           <p>{{broadcast.snippet.title}}</p>
+        </a>
+        <a class="underline hover:no-underline" href="https://studio.youtube.com/video/{{broadcast.id}}/livestreaming"
+          target=" _blank" rel="noopener noreferrer">
+          edit in studio
         </a>
       </li>
       {{/each}}
