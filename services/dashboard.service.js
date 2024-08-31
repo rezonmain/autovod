@@ -20,15 +20,24 @@ export const dashboardService = {
    * @param {ExpressResponse} res
    */
   async handleGetHome(req, res) {
-    const { k: action } = req.query;
+    const { k: action, eventsPage = 0 } = req.query;
 
     try {
       switch (action) {
         case "event-logs": {
-          const events = eventsRepository.getAllEvents();
+          const {
+            offset,
+            total,
+            data: events,
+          } = eventsRepository.getPaginatedEvents(10, eventsPage);
           return res.render(TEMPLATES.DASHBOARD_EVENT_LOG, {
             layout: false,
-            events,
+            events: events.map((event) => ({
+              ...event,
+              metadata: JSON.stringify(JSON.parse(event.metadata), null, 2),
+            })),
+            total,
+            offset,
           });
         }
         case "restream": {

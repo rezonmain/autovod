@@ -12,7 +12,7 @@ export const eventLog = {
       eventsRepository.createEvent({
         type,
         message,
-        metadata,
+        metadata: JSON.stringify(metadata),
       });
     } catch (error) {
       appLogger.error(`[EventLog] Unable to insert event log ${error.message}`);
