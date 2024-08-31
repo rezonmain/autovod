@@ -1,3 +1,13 @@
 [un-cloak] {
   display: none;
 }
+
+.loading-indicator{
+  visibility: collapse;
+}
+.htmx-request .loading-indicator{
+  visibility: inherit;
+}
+.htmx-request.loading-indicator{
+  visibility: inherit;
+}
