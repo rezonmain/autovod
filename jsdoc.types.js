@@ -131,6 +131,14 @@
  */
 
 /**
+ * @typedef {Object} YTListBroadcastsOptions
+ * @property {("id" | "snippet" | "contentDetails" | "monetizationDetails" | "status")[]} part
+ * @property {"completed" | "all" | "active" | "upcoming"} broadcastStatus
+ * @property {string} id
+ * @property {boolean} mine
+ */
+
+/**
  * @typedef {Object} YTInsertBroadcastOptions
  * @property {("snippet" | "contentDetails" | "status")[]} part
  */

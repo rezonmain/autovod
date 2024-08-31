@@ -13,6 +13,8 @@ import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
 import { eventsRepository } from "../repositories/events.repository.js";
 import { YTStreamManager } from "../modules/youtube-stream-manager.js";
+import { ytApi } from "../modules/yt-api.js";
+import { ytAuth } from "../modules/yt-auth.js";
 
 export const dashboardService = {
   /**
@@ -65,8 +67,28 @@ export const dashboardService = {
             logins: logins.keys(),
           });
         }
-        case "active-streams":
-          return res.send("<h1>Active Streams</h1>");
+        case "active-streams": {
+          const [accessError, accessToken] = await ytAuth.getAccessToken();
+          if (accessError) {
+            return res.sendStatus(500);
+          }
+
+          const [broadcastError, broadcasts] = await ytApi.listBroadcasts(
+            accessToken,
+            {
+              part: ["snippet", "id"],
+              broadcastStatus: "active",
+            }
+          );
+          if (broadcastError) {
+            return res.sendStatus(500);
+          }
+
+          return res.render(TEMPLATES.DASHBOARD_ACTIVE_BROADCASTS, {
+            layout: false,
+            broadcasts,
+          });
+        }
         default:
           return res.render(TEMPLATES.DASHBOARD_HOME);
       }

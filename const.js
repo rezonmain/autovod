@@ -104,6 +104,7 @@ export const TEMPLATES = {
   DASHBOARD_EVENT_LOG: "dashboard-event-log.hbs",
   DASHBOARD_RESTREAM: "dashboard-restream.hbs",
   DASHBOARD_STOP_STREAM: "dashboard-stop-stream.hbs",
+  DASHBOARD_ACTIVE_BROADCASTS: "dashboard-active-broadcasts.hbs",
 };
 export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";
