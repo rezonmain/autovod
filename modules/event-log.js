@@ -4,7 +4,7 @@ import { log as appLogger } from "./log.js";
 export const eventLog = {
   /**
    * @param {string} message
-   * @param {"info" | "error"} type
+   * @param {"info" | "error" | "debug"} type
    * @param {Record<string, any>} metadata
    */
   log(message, type, metadata = {}) {
@@ -12,7 +12,7 @@ export const eventLog = {
       eventsRepository.createEvent({
         type,
         message,
-        metadata,
+        metadata: JSON.stringify(metadata),
       });
     } catch (error) {
       appLogger.error(`[EventLog] Unable to insert event log ${error.message}`);

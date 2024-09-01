@@ -3,7 +3,7 @@ export const CACHE_KEYS = {
   TWITCH_ACCESS: "@twitch-access",
   YT_ACCESS: "@yt-access",
   YT_REFRESH: "@yt-refresh",
-  GOOGLE_CERTS: "@google-certs-v1.1",
+  GOOGLE_CERTS: "@google-certs-v1.2",
 };
 export const TWITCH_WEBHOOK_HEADERS = {
   MESSAGE_ID: "Twitch-Eventsub-Message-Id".toLowerCase(),
@@ -83,9 +83,12 @@ export const BROADCAST_DEFAULT_BODY = {
   },
   contentDetails: {
     enableAutoStart: true,
-    enableAutoStop: true,
+    enableAutoStop: false,
     enableDvr: true,
     recordFromStart: true,
+    monitorStream: {
+      enableMonitorStream: false,
+    },
   },
 };
 export const SCRIPTS = {
@@ -95,8 +98,13 @@ export const APP_COOKIES = {
   CLIENT_AUTH_STATE: "client-auth-state",
   CLIENT_AUTH_TOKEN: "client-auth-token",
 };
-export const DOCUMENTS = {
-  DASHBOARD_AUTH_REDIRECT: "dashboard-auth-redirect.html",
+export const TEMPLATES = {
+  SIGN_IN: "sign-in.hbs",
+  DASHBOARD_HOME: "dashboard-home.hbs",
+  DASHBOARD_EVENT_LOG: "dashboard-event-log.hbs",
+  DASHBOARD_RESTREAM: "dashboard-restream.hbs",
+  DASHBOARD_STOP_STREAM: "dashboard-stop-stream.hbs",
+  DASHBOARD_ACTIVE_BROADCASTS: "dashboard-active-broadcasts.hbs",
 };
 export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";

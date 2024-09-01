@@ -1,0 +1,32 @@
+<div class="p-4 bg-neutral-900 shadow-lg border border-neutral-600 flex flex-col gap-4">
+  <h1 class="text-2xl">event logs</h1>
+  <ul>
+    {{#each events as |event|}}
+    <li class="p-2 bg-neutral-800 shadow-lg border border-neutral-600">
+      <div class="flex gap-8">
+        <div class="w-[50%]">
+          <span class="font-bold">[{{event.type}}]</span>
+          <span class="text-sm">{{event.message}}</span>
+          <div class="text-sm">{{event.createdAt}}</div>
+        </div>
+        <div class="max-w-[50%]">
+          <details>
+            <summary>See metadata</summary>
+            <pre
+              class="text-sm font-mono block p-2 overflow-scroll bg-black max-h-40 m-2 rounded-lg">{{event.metadata}}</pre>
+          </details>
+        </div>
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+  <div class="flex flex-row gap-8 items-baseline">
+    <a hx-get="/dashboard?k=event-logs&eventsPage={{previousPage}}" hx-target="#widget-div" hx-trigger="click"
+      class="cursor-pointer px-2 py-0.5 hover:bg-purple-600/90 bg-purple-600 font-bold border border-white shadow-inner inline-flex items-center justify-center whitespace-nowrap ring-offset-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">previous
+      page</a>
+    <p>{{page}} of {{lastPage}}</p>
+    <a hx-get="/dashboard?k=event-logs&eventsPage={{nextPage}}" hx-target="#widget-div" hx-trigger="click"
+      class="cursor-pointer px-2 py-0.5 hover:bg-purple-600/90 bg-purple-600 font-bold border border-white shadow-inner inline-flex items-center justify-center whitespace-nowrap ring-offset-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">next
+      page</a>
+  </div>
+</div>

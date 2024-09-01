@@ -133,7 +133,6 @@ export class TwitchApi {
   };
 
   /**
-   *
    * @returns {Promise<[Error, {id: string, channel: string, eventsubType: string, status: string}[]]>}
    */
   listFormattedSubscriptions = async () => {
@@ -280,7 +279,6 @@ export class TwitchApi {
   };
 
   /**
-   *
    * @param {Object} options
    * @param {string} options.user_id
    * @param {string} options.user_login

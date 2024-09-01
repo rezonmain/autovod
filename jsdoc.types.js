@@ -131,6 +131,14 @@
  */
 
 /**
+ * @typedef {Object} YTListBroadcastsOptions
+ * @property {("id" | "snippet" | "contentDetails" | "monetizationDetails" | "status")[]} part
+ * @property {"completed" | "all" | "active" | "upcoming"} broadcastStatus
+ * @property {string} id
+ * @property {boolean} mine
+ */
+
+/**
  * @typedef {Object} YTInsertBroadcastOptions
  * @property {("snippet" | "contentDetails" | "status")[]} part
  */
@@ -173,4 +181,24 @@
  * @property {() => {changes: number, lastInsertRowid: number}} run - This method executes a prepared statement and returns an object summarizing the resulting changes. The prepared statement parameters are bound using the values in namedParameters and anonymousParameters.
  * @property {() => string} sourceSQL This method returns the source SQL of the prepared statement. This method is a wrapper around sqlite3_sql().
  */
+
+/**
+ * @typedef {Object} GoogleCert
+ * @property {string} kty
+ * @property {string} n
+ * @property {string} alg
+ * @property {string} use
+ * @property {string} e
+ * @property {string} kid
+ */
+
+/**
+ * @template T
+ * @typedef {Object} Paginated
+ * @property {number} limit
+ * @property {number} page
+ * @property {number} total
+ * @property {T[]} data
+ */
+
 export {};

@@ -1,42 +1,100 @@
 /** @import { Request as ExpressRequest, Response as ExpressResponse} from "express" */
 import { googleAuth } from "../modules/google-auth.js";
 import jwt from "jsonwebtoken";
-import { APP_COOKIES, ENV_KEYS, YT_ACCESS_TOKEN_URL } from "../const.js";
-import { eventsRepository } from "../repositories/events.repository.js";
+import {
+  APP_COOKIES,
+  ENV_KEYS,
+  TEMPLATES,
+  YT_ACCESS_TOKEN_URL,
+} from "../const.js";
 import { eventLog } from "../modules/event-log.js";
 import { log } from "../modules/log.js";
 import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
+import { eventsRepository } from "../repositories/events.repository.js";
+import { YTStreamManager } from "../modules/youtube-stream-manager.js";
+import { ytApi } from "../modules/yt-api.js";
+import { ytAuth } from "../modules/yt-auth.js";
 
 export const dashboardService = {
   /**
    * @param {ExpressRequest} req
    * @param {ExpressResponse} res
    */
-  handleGetHome(req, res) {
+  async handleGetHome(req, res) {
+    const { k: action, eventsPage = 0 } = req.query;
+
     try {
-      const events = eventsRepository.getAllEvents();
-      res.send(`
-        <html>
-          <head>
-            <title>autovod | events</title>
-          </head>
-          <body style='width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif;'>
-            <h1>Events</h1>
-            <ul>
-              ${events
-                .map(
-                  (row) =>
-                    `<li>[${row.createdAt}] ${row.type} | ${row.message} | ${row.metadata}</li>`
-                )
-                .join("")}
-            </ul>
-          </body>
-        </html>
-        `);
+      switch (action) {
+        case "event-logs": {
+          const {
+            page,
+            total,
+            data: events,
+          } = eventsRepository.getPaginatedEvents(5, parseInt(eventsPage));
+
+          const lastPage = Math.ceil(total / 5);
+          const nextPage = page < lastPage ? page + 1 : lastPage;
+          const previousPage = page > 1 ? page - 1 : 1;
+
+          return res.render(TEMPLATES.DASHBOARD_EVENT_LOG, {
+            layout: false,
+            events: events.map((event) => ({
+              ...event,
+              metadata: JSON.stringify(JSON.parse(event.metadata), null, 2),
+            })),
+            page,
+            lastPage,
+            nextPage,
+            previousPage,
+          });
+        }
+        case "restream": {
+          const streamManager = YTStreamManager.getInstance();
+          const availableStreams = streamManager.streams.difference(
+            streamManager.scheduledBroadcasts
+          );
+          return res.render(TEMPLATES.DASHBOARD_RESTREAM, {
+            layout: false,
+            availableStreams: availableStreams.size,
+          });
+        }
+        case "stop-stream": {
+          const streamManager = YTStreamManager.getInstance();
+          const logins = streamManager.logins;
+          return res.render(TEMPLATES.DASHBOARD_STOP_STREAM, {
+            layout: false,
+            logins: logins.keys(),
+          });
+        }
+        case "active-streams": {
+          const [accessError, accessToken] = await ytAuth.getAccessToken();
+          if (accessError) {
+            return res.sendStatus(500);
+          }
+
+          const [broadcastError, broadcasts] = await ytApi.listBroadcasts(
+            accessToken,
+            {
+              part: ["snippet", "id"],
+              broadcastStatus: "active",
+            }
+          );
+          if (broadcastError) {
+            return res.sendStatus(500);
+          }
+
+          return res.render(TEMPLATES.DASHBOARD_ACTIVE_BROADCASTS, {
+            layout: false,
+            broadcasts,
+          });
+        }
+        default:
+          return res.render(TEMPLATES.DASHBOARD_HOME);
+      }
     } catch (error) {
       log.error(`[dashboardService.handleGetHome] Error: ${error}`);
-      res.sendStatus(500);
+      return res.sendStatus(500);
     }
   },
 
@@ -59,17 +117,7 @@ export const dashboardService = {
       maxAge: 1000 * 60 * 5, // 5 minutes,
     });
 
-    res.send(`
-      <html>
-        <head>
-          <title>autovod | login</title>
-        </head>
-        <body style='width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif;'>
-          <p>sign in with google</p>
-          <a href=${clientAuthUrl}>sign in</a>
-        </body>
-      </html>
-      `);
+    res.render(TEMPLATES.SIGN_IN, { googleAuthUrl: clientAuthUrl });
   },
 
   /**
@@ -160,5 +208,68 @@ export const dashboardService = {
       );
       res.sendStatus(500);
     }
+  },
+
+  /**
+   * @param {ExpressRequest} req
+   * @param {ExpressResponse} res
+   */
+  async handlePostActionRestream(req, res) {
+    const body = new URLSearchParams(req.rawBody);
+
+    if (!body.has("login")) {
+      return res.sendStatus(400);
+    }
+
+    const login = body.get("login");
+
+    const streamManager = YTStreamManager.getInstance();
+
+    if (streamManager.logins.has(login)) {
+      return res.sendStatus(409);
+    }
+
+    const [error, scheduled] = await streamManager.scheduleBroadcast(login);
+    if (error) {
+      log.error(
+        "[dashboardService.handlePostActionRestream] Error scheduling broadcast",
+        error
+      );
+      return res.sendStatus(500);
+    }
+
+    streamManager.restreamToYT(scheduled.stream, login);
+    res.sendStatus(200);
+  },
+
+  /**
+   * @param {ExpressRequest} req
+   * @param {ExpressResponse} res
+   */
+  handlePostActionStopStream(req, res) {
+    const body = new URLSearchParams(req.rawBody);
+
+    if (!body.has("login")) {
+      return res.sendStatus(400);
+    }
+
+    const login = body.get("login");
+
+    const streamManager = YTStreamManager.getInstance();
+
+    if (!streamManager.logins.has(login)) {
+      return res.sendStatus(404);
+    }
+
+    const error = streamManager.stopStream(login);
+    if (error) {
+      log.error(
+        "[dashboardService.handlePostActionStopStream] Error stopping stream",
+        error
+      );
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(200);
   },
 };

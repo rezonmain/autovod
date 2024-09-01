@@ -1,4 +1,4 @@
-/** @import { YTBroadcast } from '../jsdoc.types.js'*/
+/** @import { YTBroadcast, YTStream } from '../jsdoc.types.js'*/
 /** @import { ChildProcess } from 'node:child_process' */
 import { format } from "node:util";
 import { BROADCAST_DEFAULT_BODY, YT_HLS_INGEST_URL } from "../const.js";
@@ -24,7 +24,7 @@ export class YTStreamManager {
   scheduledBroadcasts;
 
   /**
-   * @type {Set<string>} - twitch logins we are currently streaming to YT
+   * @type {Map<string, ChildProcess} - twitch logins we are currently streaming to YT and their child processes
    */
   logins;
 
@@ -36,7 +36,7 @@ export class YTStreamManager {
   constructor() {
     this.streams = new Set();
     this.scheduledBroadcasts = new Map();
-    this.logins = new Set();
+    this.logins = new Map();
   }
 
   /**
@@ -55,7 +55,7 @@ export class YTStreamManager {
    * @returns {Promise<Error | void>}
    */
   async init() {
-    const availableStreamsError = await this.loadAvailableStreams();
+    const [availableStreamsError] = await this.loadAvailableStreams();
     if (availableStreamsError) {
       return availableStreamsError;
     }
@@ -63,12 +63,12 @@ export class YTStreamManager {
 
   /**
    *
-   * @returns {Promise<Error | void>}
+   * @returns {Promise<[Error, YTStream[]]>}
    */
   async loadAvailableStreams() {
     const [accessError, accessToken] = await ytAuth.getAccessToken();
     if (accessError) {
-      return accessError;
+      return [accessError, null];
     }
 
     const [streamsError, streams] = await ytApi.getStreams(accessToken, {
@@ -76,14 +76,16 @@ export class YTStreamManager {
       mine: true,
     });
     if (streamsError) {
-      return streamsError;
+      return [streamsError, null];
     }
 
     streams.forEach((stream) => {
-      if (stream.status.streamStatus == "inactive") {
+      if (["ready", "inactive"].includes(stream.status.streamStatus)) {
         this.streams.add(`${stream.id}${stream.cdn.ingestionInfo.streamName}`);
       }
     });
+
+    return [null, streams];
   }
 
   /**
@@ -173,13 +175,11 @@ export class YTStreamManager {
 
     const destinationUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
 
-    this.logins.add(login);
-
     log.info(
       `[YTStreamManager.restreamToYt] Starting restream for ${login} using streamKey: ${ytStreamKey}`
     );
 
-    return ffmpeg.passthroughHLS({
+    const childProcess = ffmpeg.passthroughHLS({
       sourceUrl,
       destinationUrl,
       onExit: async (code) => {
@@ -195,17 +195,17 @@ export class YTStreamManager {
         }
       },
     });
+
+    this.logins.set(login, childProcess);
   }
 
   /**
-   *
    * @param {string} stream - streamIdstreamKey
    * @param {string} login - twitch login
    * @returns {Promise<Error | void>}
    */
   async handleStreamEnd(stream, login) {
     this.logins.delete(login);
-
     const [accessError, accessToken] = await ytAuth.getAccessToken();
     if (accessError) {
       return accessError;
@@ -220,18 +220,30 @@ export class YTStreamManager {
       return transitionError;
     }
 
+    this.scheduledBroadcasts.delete(stream);
+
     log.info(
       `[YTStreamManager.handleStreamEnd] Transitioned broadcast for ${login} to Complete`
     );
-
-    this.scheduledBroadcasts.delete(stream);
-
     // revalidate available streams after we ended a broadcast
-    const loadStreamsError = await this.loadAvailableStreams();
+    const [loadStreamsError] = await this.loadAvailableStreams();
     if (loadStreamsError) {
       return loadStreamsError;
     }
 
     // TODO: decide if we should make broadcast public ???
+  }
+
+  /**
+   * @param {string} login - twitch login
+   * @returns {Error | void}
+   */
+  stopStream(login) {
+    if (!this.logins.has(login)) {
+      return new Error(`No stream for login: ${login}`);
+    }
+
+    const childProcess = this.logins.get(login);
+    childProcess.kill("SIGHUP");
   }
 }

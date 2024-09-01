@@ -1,4 +1,4 @@
-/** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream, YTTransitionBroadcastOptions } from '../jsdoc.types.js' */
+/** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream, YTTransitionBroadcastOptions, YTListBroadcastsOptions } from '../jsdoc.types.js' */
 import { BROADCAST_DEFAULT_BODY, YT_API_URLS } from "../const.js";
 import { eventLog } from "./event-log.js";
 import { empty } from "../utils/utils.js";
@@ -169,7 +169,6 @@ export const ytApi = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           Accept: "application/json",
-          "Content-Type": "application/json",
         },
       });
 
@@ -190,6 +189,45 @@ export const ytApi = {
       }
 
       return [null, await response.json()];
+    } catch (error) {
+      return [error, null];
+    }
+  },
+
+  /**
+   * @param {string} accessToken
+   * @param {YTListBroadcastsOptions} options
+   * @returns {Promise<[Error, YTBroadcast[]]>}
+   */
+  async listBroadcasts(accessToken, options) {
+    const url = new URL(YT_API_URLS.BROADCAST);
+    const queryParams = new URLSearchParams({
+      ...options,
+      part: options?.part.join(",") ?? "",
+    });
+    url.search = queryParams.toString();
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        const responseBody = await response.json();
+        eventLog.log("[ytApi.listBroadcasts] Failed to get streams", "error", {
+          responseJson: responseBody,
+          responseCode: response.status,
+          responseText: response.statusText,
+          queryParams: queryParams.toString(),
+        });
+        throw new Error(JSON.stringify(responseBody));
+      }
+
+      const data = await response.json();
+
+      return [null, data.items];
     } catch (error) {
       return [error, null];
     }

@@ -1,0 +1,42 @@
+{{> header}}
+<div class="p-8 space-y-4">
+  <h1 class="text-4xl pb-0.5 inline-block w-full font-bold">dashboard</h1>
+  <div class="space-y-4">
+    <h2 class='text-2xl pb-0.5'>choose one of the following:</h2>
+    <ul class="w-full">
+      <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600 flex flex-row gap-4">
+        <a hx-sync="closest a:drop" hx-get="/dashboard?k=event-logs&eventsPage=1" hx-target="#widget-div"
+          hx-trigger="click" hx-indicator="#loading-event-log"
+          class="inline-block underline hover:no-underline cursor-pointer flex-1">see
+          event logs</a>
+        <p id="loading-event-log" class="loading-indicator flex flex-row items-center gap-2">loading {{> spinner}}
+        </p>
+      </li>
+      <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600 flex flex-row gap-4">
+        <a hx-sync="closest a:drop" hx-get="/dashboard?k=restream" hx-target="#widget-div" hx-trigger="click"
+          hx-indicator="#loading-restream"
+          class="inline-block underline hover:no-underline cursor-pointer flex-1">restream</a>
+        <p id="loading-restream" class="loading-indicator flex flex-row items-center gap-2">loading {{> spinner}}
+        </p>
+      </li>
+      <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600 flex flex-row gap-4">
+        <a hx-sync="closest a:drop" hx-get="/dashboard?k=stop-stream" hx-target="#widget-div" hx-trigger="click"
+          hx-indicator="#loading-stop-stream"
+          class="inline-block underline hover:no-underline cursor-pointer flex-1">stop
+          a stream</a>
+        <p id="loading-stop-stream" class="loading-indicator flex flex-row items-center gap-2">loading {{>
+          spinner}}</p>
+      </li>
+      <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600 flex flex-row gap-4">
+        <a hx-sync="closest a:drop" hx-get="/dashboard?k=active-streams" hx-target="#widget-div" hx-trigger="click"
+          hx-indicator="#loading-active-streams"
+          class="inline-block underline hover:no-underline cursor-pointer flex-1">see
+          active streams</a>
+        <p id="loading-active-streams" class="loading-indicator flex flex-row items-center gap-2">loading {{>
+          spinner}}
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div id="widget-div"></div>
+</div>
