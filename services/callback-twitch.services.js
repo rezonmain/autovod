@@ -12,6 +12,7 @@ import { env } from "../utils/env.js";
 import { log } from "../modules/log.js";
 import { YTStreamManager } from "../modules/youtube-stream-manager.js";
 import { Telegram } from "../modules/telegram.js";
+import { empty } from "../utils/utils.js";
 
 /**
  * https://dev.twitch.tv/docs/eventsub/handling-webhook-events/#processing-an-event
@@ -133,7 +134,7 @@ async function handleStreamOnlineEvent(notification) {
   }
   const streamManager = YTStreamManager.getInstance();
 
-  const [scheduleError, { stream, broadcast }] =
+  const [scheduleError, scheduleBroadcast] =
     await streamManager.scheduleBroadcast(login);
   if (scheduleError) {
     log.error(
@@ -142,11 +143,18 @@ async function handleStreamOnlineEvent(notification) {
     return;
   }
 
-  streamManager.restreamToYT(stream, login);
+  if (empty(scheduleBroadcast?.stream) || empty(scheduleBroadcast?.broadcast)) {
+    log.error(
+      `[handleStreamOnlineEvent] Error scheduling broadcast: ${scheduleError}`
+    );
+    return;
+  }
+
+  streamManager.restreamToYT(scheduleBroadcast.stream, login);
 
   try {
     await telegram.sendMessage(
-      `🔴 Restream has started for ${notification.event.broadcaster_user_name} on [youtube](https://youtube.com/watch?v=${broadcast.id})\\. 🔴`
+      `🔴 Restream has started for ${notification.event.broadcaster_user_name} on [youtube](https://youtube.com/watch?v=${scheduleBroadcast.broadcast.id})\\. 🔴`
     );
   } catch (error) {
     log.error(

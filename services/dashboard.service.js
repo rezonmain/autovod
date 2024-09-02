@@ -15,6 +15,7 @@ import { eventsRepository } from "../repositories/events.repository.js";
 import { YTStreamManager } from "../modules/youtube-stream-manager.js";
 import { ytApi } from "../modules/yt-api.js";
 import { ytAuth } from "../modules/yt-auth.js";
+import { Telegram } from "../modules/telegram.js";
 
 export const dashboardService = {
   /**
@@ -240,6 +241,16 @@ export const dashboardService = {
 
     streamManager.restreamToYT(scheduled.stream, login);
     res.sendStatus(200);
+    try {
+      const telegram = Telegram.getInstance();
+      await telegram.sendMessage(
+        `🔴 Restream has started for ${login} on [youtube](https://youtube.com/watch?v=${scheduled.broadcast.id})\\. 🔴`
+      );
+    } catch (error) {
+      log.error(
+        `[dashboardService.handlePostActionRestream] Error sending message to telegram ${error}`
+      );
+    }
   },
 
   /**
