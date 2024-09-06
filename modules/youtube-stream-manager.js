@@ -1,7 +1,11 @@
 /** @import { YTBroadcast, YTStream } from '../jsdoc.types.js'*/
 /** @import { ChildProcess } from 'node:child_process' */
 import { format } from "node:util";
-import { BROADCAST_DEFAULT_BODY, YT_HLS_INGEST_URL } from "../const.js";
+import {
+  BROADCAST_DEFAULT_BODY,
+  FFMPEG_EXIT_CODES,
+  YT_HLS_INGEST_URL,
+} from "../const.js";
 import { ffmpeg } from "./ffmpeg.js";
 import { nil } from "../utils/utils.js";
 import { ytApi } from "./yt-api.js";
@@ -179,13 +183,43 @@ export class YTStreamManager {
       `[YTStreamManager.restreamToYt] Starting restream for ${login} using streamKey: ${ytStreamKey}`
     );
 
-    const childProcess = ffmpeg.passthroughHLS({
+    const childProcess = await this._spawnRestreamProcess(
+      sourceUrl,
+      destinationUrl,
+      login,
+      stream
+    );
+
+    this.logins.set(login, childProcess);
+  }
+
+  /**
+   * @private
+   * @param {string} sourceUrl
+   * @param {string} destinationUrl
+   * @param {string} login
+   * @param {string} stream
+   */
+
+  async _spawnRestreamProcess(sourceUrl, destinationUrl, login, stream) {
+    return ffmpeg.passthroughHLS({
       sourceUrl,
       destinationUrl,
       onExit: async (code) => {
         log.info(
           `[YTStreamManager.restreamToYt] Restream for ${login} ended with code: ${code}`
         );
+        if (code === FFMPEG_EXIT_CODES.UNEXPECTED_EXIT) {
+          log.error(
+            `[YTStreamManager.restreamToYt.OnExit] Restarting restream for ${login} due to unexpected exit`
+          );
+          return this._spawnRestreamProcess(
+            sourceUrl,
+            destinationUrl,
+            login,
+            stream
+          );
+        }
         const streamEndError = await this.handleStreamEnd(stream, login);
         if (streamEndError) {
           log.error(
@@ -195,8 +229,6 @@ export class YTStreamManager {
         }
       },
     });
-
-    this.logins.set(login, childProcess);
   }
 
   /**
