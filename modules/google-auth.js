@@ -144,8 +144,7 @@ export const googleAuth = {
 
     if (error) {
       log.error(
-        "[googleAuth.verifyToken] Failed to get cert for verification",
-        error
+        `[googleAuth.verifyToken] Failed to get cert for verification: ${error.message}`
       );
       return false;
     }
@@ -154,7 +153,11 @@ export const googleAuth = {
       const pem = getPem(cert.n, cert.e);
       return Boolean(jwt.verify(token, pem, { algorithms: ["RS256"] }));
     } catch (error) {
-      log.error("[googleAuth.verifyToken] Failed to verify token", error);
+      log.error(
+        `[googleAuth.verifyToken] Failed to verify token: ${JSON.stringify(
+          error
+        )}`
+      );
       return false;
     }
   },
