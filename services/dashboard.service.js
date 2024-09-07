@@ -283,4 +283,21 @@ export const dashboardService = {
 
     res.sendStatus(200);
   },
+
+  /**
+   * @param {ExpressRequest} req
+   * @param {ExpressResponse} res
+   */
+  async handlePostActionRevalidateAvailableStreams(_, res) {
+    const streamManager = YTStreamManager.getInstance();
+    await streamManager.loadAvailableStreams();
+
+    const availableStreams = streamManager.streams.difference(
+      streamManager.scheduledBroadcasts
+    );
+    return res.render(TEMPLATES.DASHBOARD_RESTREAM, {
+      layout: false,
+      availableStreams: availableStreams.size,
+    });
+  },
 };

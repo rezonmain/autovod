@@ -33,3 +33,11 @@ dashboardController.post(
   rawBodyParser,
   async (req, res) => dashboardService.handlePostActionStopStream(req, res)
 );
+
+dashboardController.post(
+  "/action/revalidate-available-streams",
+  cookieParser(),
+  withAuth,
+  async (req, res) =>
+    dashboardService.handlePostActionRevalidateAvailableStreams(req, res)
+);

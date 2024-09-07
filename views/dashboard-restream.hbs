@@ -1,16 +1,27 @@
 <div hx-boost="true" class="p-2 bg-neutral-900 shadow-lg border border-neutral-600 flex flex-col">
   <h1 class="text-2xl pb-3">restream</h1>
-  <form hx-post="/dashboard/action/restream" hx-indicator="#loading-restream-action" hx-sync="closest form:drop"
-    class="bg-neutral-800 p-4 space-y-4">
-    <p>There are <strong>{{availableStreams}}</strong> available streams currently</p>
-    <label class="flex flex-col gap-2">
-      <span>Enter twitch login to start re-streaming</span>
-      <input type="text" placeholder="hasanabi" name="login" required="true" min="1" max="100"
-        class="max-w-xs flex h-10 w-full rounded-md border border-neutral-600 bg-neutral-900 px-3 py-2 text-sm ring-offset-2 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
-    </label>
-    <button id="loading-restream-action"
-      class="px-4 py-2 flex-row gap-2 hover:bg-purple-600/90 bg-purple-600 border text-sm border-white shadow-inner inline-flex items-center justify-center whitespace-nowrap ring-offset-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">Submit
+  <div class="bg-neutral-800 p-4 space-y-4">
+    <form hx-post="/dashboard/action/restream" hx-indicator="#loading-restream-action" hx-sync="closest form:drop"
+      class="space-y-4">
+      <p>
+        There are <strong>{{availableStreams}}</strong> available streams currently</p>
+      <label class="flex flex-col gap-2">
+        <span>Enter twitch login to start re-streaming</span>
+        <input type="text" placeholder="hasanabi" name="login" required="true" min="1" max="100"
+          class="max-w-xs flex h-10 w-full rounded-md border border-neutral-600 bg-neutral-900 px-3 py-2 text-sm ring-offset-2 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+      </label>
+      <button id="loading-restream-action"
+        class="px-4 py-2 flex-row gap-2 hover:bg-purple-600/90 bg-purple-600 border text-sm border-white shadow-inner inline-flex items-center justify-center whitespace-nowrap ring-offset-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">Submit
+        <span class="loading-indicator">{{> spinner}}</span>
+      </button>
+    </form>
+    <button id="loading-refresh-streams-action" hx-post="/dashboard/action/revalidate-available-streams"
+      hx-indicator="#loading-refresh-streams-action" hx-target="#widget-div" class="px-4 py-2 flex-row gap-2 hover:bg-purple-600/90 bg-purple-600 border text-sm border-white shadow-inner
+      inline-flex items-center justify-center whitespace-nowrap ring-offset-1 transition-colors
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+      disabled:pointer-events-none disabled:opacity-50">Refresh
+      streams
       <span class="loading-indicator">{{> spinner}}</span>
     </button>
-  </form>
+  </div>
 </div>
