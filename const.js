@@ -109,3 +109,6 @@ export const TEMPLATES = {
 export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";
 export const JWKS_URI_KEY = "jwks_uri";
+export const FFMPEG_EXIT_CODES = {
+  UNEXPECTED_EXIT: 146,
+};
