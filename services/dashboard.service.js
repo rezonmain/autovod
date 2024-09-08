@@ -97,6 +97,9 @@ export const dashboardService = {
             const [accessTokenError, accessToken] =
               await twitchAuth.getAccessToken();
             if (accessTokenError) {
+              log.error(
+                `[dashboardService.handleGetHome] Error getting access token: ${accessTokenError.message}`
+              );
               return res.sendStatus(500);
             }
 
@@ -105,6 +108,9 @@ export const dashboardService = {
             const [subsError, subs] =
               await twitchApi.listFormattedSubscriptions();
             if (subsError) {
+              log.error(
+                `[dashboardService.handleGetHome] Error fetching subscription: ${subsError.message}`
+              );
               return res.sendStatus(500);
             }
 
