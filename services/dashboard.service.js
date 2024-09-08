@@ -14,6 +14,8 @@ import { env } from "../utils/env.js";
 import { eventsRepository } from "../repositories/events.repository.js";
 import { YTStreamManager } from "../modules/youtube-stream-manager.js";
 import { ytApi } from "../modules/yt-api.js";
+import { TwitchApi } from "../modules/twitch-api.js";
+import { twitchAuth } from "../modules/twitch-auth.js";
 import { ytAuth } from "../modules/yt-auth.js";
 import { Telegram } from "../modules/telegram.js";
 
@@ -89,6 +91,30 @@ export const dashboardService = {
             layout: false,
             broadcasts,
           });
+        }
+        case "manage-twitch-subs": {
+          try {
+            const [accessTokenError, accessToken] =
+              await twitchAuth.getAccessToken();
+            if (accessTokenError) {
+              return res.sendStatus(500);
+            }
+
+            const twitchApi = new TwitchApi(accessToken);
+
+            const [subsError, subs] =
+              await twitchApi.listFormattedSubscriptions();
+            if (subsError) {
+              return res.sendStatus(500);
+            }
+
+            return res.render(TEMPLATES.DASHBOARD_MANAGE_TWITCH_SUBS, {
+              layout: false,
+              subs,
+            });
+          } catch {
+            return res.sendStatus(500);
+          }
         }
         default:
           return res.render(TEMPLATES.DASHBOARD_HOME);
@@ -299,5 +325,113 @@ export const dashboardService = {
       layout: false,
       availableStreams: availableStreams.size,
     });
+  },
+
+  /**
+   * @param {ExpressRequest} req
+   * @param {ExpressResponse} res
+   */
+  async handleDeleteTwitchSubscription(req, res) {
+    const subId = req.query?.subId ?? "";
+
+    if (!subId) {
+      return res.sendStatus(400);
+    }
+
+    try {
+      const [accessTokenError, accessToken] = await twitchAuth.getAccessToken();
+      if (accessTokenError) {
+        log.error(
+          `[dashboardService.handleDeleteTwitchSubscription] Error getting access token: ${accessTokenError.message}`
+        );
+        return res.sendStatus(500);
+      }
+
+      const twitchApi = new TwitchApi(accessToken);
+
+      await twitchApi.deleteSubscription(String(subId));
+      const [subsError, subs] = await twitchApi.listFormattedSubscriptions();
+      if (subsError) {
+        log.error(
+          `[dashboardService.handleDeleteTwitchSubscription] Error fetching subscription: ${subsError.message}`
+        );
+        return res.sendStatus(500);
+      }
+
+      return res.render(TEMPLATES.DASHBOARD_MANAGE_TWITCH_SUBS, {
+        layout: false,
+        subs,
+      });
+    } catch (error) {
+      log.error(
+        `[dashboardService.handleDeleteTwitchSubscription] Error deleting subscription: ${error}`
+      );
+      return res.sendStatus(500);
+    }
+  },
+
+  /**
+   * @param {ExpressRequest} req
+   * @param {ExpressResponse} res
+   */
+  async handleCreateTwitchSubscription(req, res) {
+    const body = new URLSearchParams(req.rawBody);
+
+    if (!body.has("login") || !body.has("type")) {
+      log.info(
+        `[dashboardService.handleCreateTwitchSubscription] Missing parameters`
+      );
+      return res.sendStatus(400);
+    }
+
+    try {
+      const [accessTokenError, accessToken] = await twitchAuth.getAccessToken();
+      if (accessTokenError) {
+        log.error(
+          `[dashboardService.handleCreateTwitchSubscription] Error getting access token: ${accessTokenError.message}`
+        );
+        return res.sendStatus(500);
+      }
+
+      const twitchApi = new TwitchApi(accessToken);
+
+      const [channelError, channel] = await twitchApi.getChannel(
+        body.get("login")
+      );
+      if (channelError) {
+        log.error(
+          `[dashboardService.handleCreateTwitchSubscription] Error getting channel: ${channelError.message}`
+        );
+        return res.sendStatus(500);
+      }
+
+      const id = channel.id;
+
+      const subscriptionError = await twitchApi.subscribeToEvent(
+        id,
+        body.get("type")
+      );
+      if (subscriptionError) {
+        log.error(
+          `[dashboardService.handleCreateTwitchSubscription] Error subscribing to event: ${subscriptionError.message}`
+        );
+        return res.sendStatus(500);
+      }
+
+      const [subsError, subs] = await twitchApi.listFormattedSubscriptions();
+      if (subsError) {
+        return res.sendStatus(500);
+      }
+
+      return res.render(TEMPLATES.DASHBOARD_MANAGE_TWITCH_SUBS, {
+        layout: false,
+        subs,
+      });
+    } catch (error) {
+      log.error(
+        `[dashboardService.handleDeleteTwitchSubscription] Error deleting subscription: ${error}`
+      );
+      return res.sendStatus(500);
+    }
   },
 };

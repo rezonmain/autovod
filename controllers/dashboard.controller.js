@@ -41,3 +41,18 @@ dashboardController.post(
   async (req, res) =>
     dashboardService.handlePostActionRevalidateAvailableStreams(req, res)
 );
+
+dashboardController.delete(
+  "/action/twitch-subscription",
+  cookieParser(),
+  withAuth,
+  async (req, res) => dashboardService.handleDeleteTwitchSubscription(req, res)
+);
+
+dashboardController.post(
+  "/action/twitch-subscription",
+  cookieParser(),
+  withAuth,
+  rawBodyParser,
+  async (req, res) => dashboardService.handleCreateTwitchSubscription(req, res)
+);
