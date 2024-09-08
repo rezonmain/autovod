@@ -40,7 +40,6 @@ export const fileCache = {
     const [ttl, ...parsedData] = encodedData.split(SEPARATOR);
     if (ttl < new Date()) {
       log.info(`[Cache MISS] EXPIRED | key: ${key} | hash: ${hash}`);
-      fileCache._delete(hash);
       return ["EXPIRED", null];
     }
     log.info(`[Cache HIT] key: ${key} | hash: ${hash}`);

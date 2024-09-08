@@ -83,7 +83,7 @@
  * @property {string} cdn.resolution
  * @property {string} cdn.frameRate
  * @property {Object} status
- * @property {"active" | "inactive"} status.streamStatus
+ * @property {"active" | "inactive" | "ready"} status.streamStatus
  */
 
 /**

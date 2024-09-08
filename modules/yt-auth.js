@@ -53,13 +53,19 @@ export const ytAuth = {
    */
   getAccessToken: async () => {
     const [accessTokenErrorReason, token] = fileCache.get(CACHE_KEYS.YT_ACCESS);
+    const [refreshTokenErrorReason, refreshToken] = fileCache.get(
+      CACHE_KEYS.YT_REFRESH
+    );
 
     if (empty(accessTokenErrorReason)) {
       // cache hit, return the access token
       return [null, token[0]];
     }
 
-    if (accessTokenErrorReason === "NO_DATA") {
+    if (
+      accessTokenErrorReason === "NO_DATA" &&
+      !empty(refreshTokenErrorReason)
+    ) {
       // no data in cache, prompt user for authorization
       try {
         const accessToken = await ytAuth.promptUserForAuthorization();
@@ -70,10 +76,6 @@ export const ytAuth = {
     }
 
     // -> access token has expired
-
-    const [refreshTokenErrorReason, refreshToken] = fileCache.get(
-      CACHE_KEYS.YT_REFRESH
-    );
 
     if (!empty(refreshTokenErrorReason)) {
       // no refresh token, prompt user for authorization
