@@ -179,6 +179,57 @@ export class TwitchApi {
   };
 
   /**
+   * @param {string} channelId
+   * @param {"stream.online" | "stream.offline"} eventType
+   * @return {Promise<Error | null>}
+   */
+  subscribeToEvent = async (channelId, eventType) => {
+    const [callbackBaseUrl, webhookSecret, clientId] = envs(
+      ENV_KEYS.DOMAIN_BASE_URL,
+      ENV_KEYS.TWITCH_WEBHOOK_SECRET,
+      ENV_KEYS.TWITCH_CLIENT_ID
+    );
+
+    const requestBody = {
+      type: eventType,
+      version: TWITCH_EVENTSUB_TYPES.STREAM_ONLINE.version,
+      condition: {
+        broadcaster_user_id: String(channelId),
+      },
+      transport: {
+        method: "webhook",
+        callback: `${callbackBaseUrl}/callback/twitch/eventsub`,
+        secret: webhookSecret,
+      },
+    };
+
+    try {
+      const response = await fetch(TWITCH_API_URLS.EVENTSUB, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          "Client-Id": clientId,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const responseJson = await response.json();
+        return new Error(
+          `[subscribeToEvents] bad request: ${
+            response.status
+          } | ${JSON.stringify(responseJson, null, 4)}`
+        );
+      }
+
+      return null;
+    } catch {
+      return new Error(`[subscribeToEvents] something went wrong`);
+    }
+  };
+
+  /**
    * @param {number} channelId
    * @return {Promise<Error | null>}
    */

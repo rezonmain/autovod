@@ -36,6 +36,14 @@
           spinner}}
         </p>
       </li>
+      <li class="p-2 bg-neutral-900 shadow-lg border border-neutral-600 flex flex-row gap-4">
+        <a hx-sync="closest a:drop" hx-get="/dashboard?k=manage-twitch-subs" hx-target="#widget-div" hx-trigger="click"
+          hx-indicator="#loading-manage-twitch-subs"
+          class="inline-block underline hover:no-underline cursor-pointer flex-1">manage twitch subscriptions</a>
+        <p id="loading-manage-twitch-subs" class="loading-indicator flex flex-row items-center gap-2">loading {{>
+          spinner}}
+        </p>
+      </li>
     </ul>
   </div>
   <div id="widget-div"></div>
