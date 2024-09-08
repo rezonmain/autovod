@@ -13,17 +13,18 @@ import { ytAuth } from "./yt-auth.js";
 import { getDateForSteamTitle } from "../utils/dates.js";
 import { log } from "./log.js";
 import { twitchPlaylist } from "./twitch-playlist.js";
+import { eventLog } from "./event-log.js";
 
 const SEPARATOR = "";
 
 export class YTStreamManager {
   /**
-   * @type {Set<string>} - streamIdstreamKey
+   * @type {Set<string>} - streamIdSEPARATORstreamKey
    */
   streams;
 
   /**
-   * @type {Map<string, string>} - streamIdstreamKey -> broadcastId
+   * @type {Map<string, string>} - streamIdSEPARATORstreamKey -> broadcastId
    */
   scheduledBroadcasts;
 
@@ -56,12 +57,14 @@ export class YTStreamManager {
 
   /**
    *
-   * @returns {Promise<Error | void>}
+   * @returns {Promise<void>}
    */
   async init() {
     const [availableStreamsError] = await this.loadAvailableStreams();
     if (availableStreamsError) {
-      return availableStreamsError;
+      log.error(
+        `[YTStreamManager.init] Error loading available streams ${availableStreamsError.message}`
+      );
     }
   }
 
@@ -85,9 +88,16 @@ export class YTStreamManager {
 
     streams.forEach((stream) => {
       if (["ready", "inactive"].includes(stream.status.streamStatus)) {
-        this.streams.add(`${stream.id}${stream.cdn.ingestionInfo.streamName}`);
+        this.streams.add(
+          `${stream.id}${SEPARATOR}${stream.cdn.ingestionInfo.streamName}`
+        );
       }
     });
+
+    log.info("[YTStreamManager.loadAvailableStreams] Loaded available streams");
+    for (const stream of this.streams) {
+      log.info(`[YTStreamManager.loadAvailableStreams] ${stream}`);
+    }
 
     return [null, streams];
   }
@@ -154,7 +164,7 @@ export class YTStreamManager {
   }
 
   /**
-   * @param {string} stream - streamIdstreamKey
+   * @param {string} stream - streamIdSEPARATORstreamKey
    * @param {string} login - twitch login
    * @returns {Promise<Error | ChildProcess>}
    */
@@ -210,7 +220,7 @@ export class YTStreamManager {
           `[YTStreamManager.restreamToYt] Restream for ${login} ended with code: ${code}`
         );
         if (code === FFMPEG_EXIT_CODES.UNEXPECTED_EXIT) {
-          log.error(
+          eventLog.log(
             `[YTStreamManager.restreamToYt.OnExit] Restarting restream for ${login} due to unexpected exit`
           );
           return this._spawnRestreamProcess(
@@ -232,7 +242,7 @@ export class YTStreamManager {
   }
 
   /**
-   * @param {string} stream - streamIdstreamKey
+   * @param {string} stream - streamIdSEPARATORstreamKey
    * @param {string} login - twitch login
    * @returns {Promise<Error | void>}
    */
