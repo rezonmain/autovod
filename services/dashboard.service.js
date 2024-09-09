@@ -289,7 +289,7 @@ export const dashboardService = {
    * @param {ExpressRequest} req
    * @param {ExpressResponse} res
    */
-  handlePostActionStopStream(req, res) {
+  async handlePostActionStopStream(req, res) {
     const body = new URLSearchParams(req.rawBody);
 
     if (!body.has("login")) {
@@ -314,6 +314,15 @@ export const dashboardService = {
     }
 
     res.sendStatus(200);
+
+    try {
+      const telegram = Telegram.getInstance();
+      await telegram.sendMessage(`❌ Restream for ${login} was stopped\\. ❌`);
+    } catch (error) {
+      log.error(
+        `[dashboardService.handlePostActionRestream] Error sending message to telegram ${error}`
+      );
+    }
   },
 
   /**
