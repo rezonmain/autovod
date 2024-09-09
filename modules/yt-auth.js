@@ -124,7 +124,7 @@ export const ytAuth = {
 
       if (!response.ok) {
         const json = await response.json();
-        throw new Error(json);
+        throw new Error(JSON.stringify(json));
       }
 
       return [null, await response.json()];
