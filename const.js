@@ -75,7 +75,7 @@ export const APPLICATION_STORE_KEYS = {
 export const BROADCAST_DEFAULT_BODY = {
   snippet: {
     title: "%s autovod | %s",
-    description: `don't panic! this is an automated vod channel ran by robo-cats that are still on BETA.\n\nThis channel is not affiliated with the featured creators: twitch.tv/%s`,
+    description: `don't panic! this is an automated vod channel run by robo-cats that are still in BETA.\n\nThis channel is not affiliated with the featured creators: twitch.tv/%s`,
   },
   status: {
     privacyStatus: "unlisted",
@@ -111,5 +111,7 @@ export const GOOGLE_DISCOVERY_DOC_URL =
   "https://accounts.google.com/.well-known/openid-configuration";
 export const JWKS_URI_KEY = "jwks_uri";
 export const FFMPEG_EXIT_CODES = {
+  SUCCESS: 0,
+  STOPPED_BY_AUTOVOD: null,
   UNEXPECTED_EXIT: 146,
 };
