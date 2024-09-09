@@ -124,7 +124,10 @@ export const ytAuth = {
 
       if (!response.ok) {
         const json = await response.json();
-        throw new Error(JSON.stringify(json));
+        throw new Error(
+          "[yt-auth.refreshAccessToken] Error refreshing token: " +
+            JSON.stringify(json)
+        );
       }
 
       return [null, await response.json()];
