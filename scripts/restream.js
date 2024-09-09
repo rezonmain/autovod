@@ -51,9 +51,8 @@ if (initError) {
   process.exit(1);
 }
 
-const [scheduleError, { stream }] = await streamManager.scheduleBroadcast(
-  login
-);
+const [scheduleError, scheduleBroadcast] =
+  await streamManager.scheduleBroadcast(login);
 
 if (scheduleError) {
   console.error(scheduleError);
@@ -62,7 +61,10 @@ if (scheduleError) {
 
 server.close();
 
-const childProcess = await streamManager.restreamToYT(stream, login);
+const childProcess = await streamManager.restreamToYT(
+  scheduleBroadcast.stream,
+  login
+);
 
 if (childProcess instanceof Error) {
   console.error(childProcess);
