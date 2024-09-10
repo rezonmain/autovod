@@ -23,7 +23,7 @@ class Telegram {
   /**
    * @type {Telegram}
    */
-  _instance = null;
+  _instance;
 
   /**
    * @private

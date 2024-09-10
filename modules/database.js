@@ -9,12 +9,12 @@ export class Database {
   /**
    * @returns {Database}
    */
-  _instance = null;
+  _instance;
 
   /**
    * @type {DatabaseSync}
    */
-  conn = null;
+  conn;
 
   constructor() {}
 
@@ -29,7 +29,7 @@ export class Database {
   }
 
   init() {
-    if (this.conn === null) {
+    if (!this.conn) {
       this.conn = new DatabaseSync(DB_PATH);
     }
   }
@@ -41,7 +41,7 @@ export class Database {
    */
   exec(sql) {
     try {
-      if (this.conn === null) {
+      if (!this.conn) {
         throw new Error("[Database] Database not initialized");
       }
       return this.conn.exec(sql);
@@ -59,7 +59,7 @@ export class Database {
   }
 
   close() {
-    if (this.conn === null) {
+    if (!this.conn) {
       return;
     }
     this.conn.close();
