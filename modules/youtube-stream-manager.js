@@ -7,7 +7,6 @@ import {
   YT_HLS_INGEST_URL,
 } from "../const.js";
 import { ffmpeg } from "./ffmpeg.js";
-import { nil } from "../utils/utils.js";
 import { ytApi } from "./yt-api.js";
 import { ytAuth } from "./yt-auth.js";
 import { getDateForSteamTitle } from "../utils/dates.js";
@@ -36,7 +35,7 @@ export class YTStreamManager {
   /**
    * @type {YTStreamManager}
    */
-  _instance = null;
+  _instance;
 
   constructor() {
     this.streams = new Set();
@@ -49,7 +48,7 @@ export class YTStreamManager {
    * @returns {YTStreamManager}
    */
   static getInstance() {
-    if (nil(this._instance)) {
+    if (!this._instance) {
       this._instance = new YTStreamManager();
     }
     return this._instance;

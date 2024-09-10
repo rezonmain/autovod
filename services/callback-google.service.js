@@ -2,7 +2,6 @@
 import { store } from "../modules/store.js";
 import { eventBus } from "../modules/event-bus.js";
 import { log } from "../modules/log.js";
-import { empty } from "../utils/utils.js";
 import {
   APPLICATION_EVENT_TYPES,
   APPLICATION_STORE_KEYS,
@@ -19,13 +18,13 @@ import { eventLog } from "../modules/event-log.js";
 async function handleAuthRedirect(req, res) {
   const { state, error = "", code } = req.query;
 
-  if (!empty(error)) {
+  if (error) {
     log.error(`[handleAuthRedirect] Google OAuth error: ${error}`);
     res.send("Google OAuth error").status(204);
     return;
   }
 
-  if (empty(state)) {
+  if (!state.length) {
     log.error("[handleAuthRedirect] Missing state in query parameters");
     res.sendStatus(400);
     return;
@@ -39,7 +38,7 @@ async function handleAuthRedirect(req, res) {
   // delete the generated state after use, avoids replay attacks
   store.delete(APPLICATION_STORE_KEYS.GOOGLE_AUTH_STATE);
 
-  if (empty(code)) {
+  if (!code.length) {
     log.error("[handleAuthRedirect] Missing code in query parameters");
     res.sendStatus(400);
     return;

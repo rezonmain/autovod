@@ -1,10 +1,9 @@
 import { TwitchApi } from "../modules/twitch-api.js";
 import { twitchAuth } from "../modules/twitch-auth.js";
-import { empty } from "../utils/utils.js";
 
 const [, , subscriptionId] = process.argv;
 
-if (empty(subscriptionId)) {
+if (!subscriptionId) {
   console.error("No subscription ID provided");
   process.exit(1);
 }

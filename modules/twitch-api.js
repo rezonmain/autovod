@@ -1,7 +1,6 @@
 /** @import { TwitchSubscription, TwitchUser, TwitchStream } from '../jsdoc.types.js'*/
 import { ENV_KEYS, TWITCH_API_URLS, TWITCH_EVENTSUB_TYPES } from "../const.js";
 import { env, envs } from "../utils/env.js";
-import { nil } from "../utils/utils.js";
 
 export class TwitchApi {
   accessToken;
@@ -162,7 +161,7 @@ export class TwitchApi {
       const user = users.find(
         (user) => user.id === sub.condition.broadcaster_user_id
       );
-      if (nil(user)) {
+      if (!user) {
         return {};
       }
       return {

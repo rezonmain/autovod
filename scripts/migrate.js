@@ -2,7 +2,6 @@
 import path from "node:path";
 import { readdir } from "node:fs/promises";
 import { Database } from "../modules/database.js";
-import { empty, nil } from "../utils/utils.js";
 
 const DIRNAME = process.cwd();
 const MIGRATIONS_PATH = path.resolve(DIRNAME, path.join("data", "migrations"));
@@ -15,7 +14,7 @@ async function migrate() {
 
   const migrationFiles = await readdir(MIGRATIONS_PATH);
 
-  if (empty(migrationFiles)) {
+  if (!migrationFiles.length) {
     console.log("[migrate] No migration files found");
     return;
   }
@@ -43,7 +42,7 @@ async function migrate() {
 
     const res = query.get();
 
-    if (nil(res?.version)) {
+    if (!res?.version) {
       dbMigrationVersion = 0;
     } else {
       dbMigrationVersion = Number(res.version);

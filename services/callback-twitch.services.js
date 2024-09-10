@@ -12,7 +12,6 @@ import { env } from "../utils/env.js";
 import { log } from "../modules/log.js";
 import { YTStreamManager } from "../modules/youtube-stream-manager.js";
 import { Telegram } from "../modules/telegram.js";
-import { empty } from "../utils/utils.js";
 
 /**
  * https://dev.twitch.tv/docs/eventsub/handling-webhook-events/#processing-an-event
@@ -143,7 +142,7 @@ async function handleStreamOnlineEvent(notification) {
     return;
   }
 
-  if (empty(scheduleBroadcast?.stream) || empty(scheduleBroadcast?.broadcast)) {
+  if (!scheduleBroadcast?.stream || !scheduleBroadcast?.broadcast) {
     log.error(
       `[handleStreamOnlineEvent] Error scheduling broadcast: ${scheduleError}`
     );
