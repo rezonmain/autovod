@@ -11,7 +11,6 @@ import {
   GOOGLE_DISCOVERY_DOC_URL,
   JWKS_URI_KEY,
 } from "../const.js";
-import { empty } from "../utils/utils.js";
 import { log } from "./log.js";
 
 export const googleAuth = {
@@ -73,11 +72,11 @@ export const googleAuth = {
     const [certsError, cachedCerts] = fileCache.get(CACHE_KEYS.GOOGLE_CERTS);
     const payload = jwt.decode(token, { complete: true });
 
-    if (empty(certsError)) {
+    if (certsError === null) {
       /** @type {GoogleCert[]} */
       const certs = cachedCerts.map((cert) => JSON.parse(cert));
       const certToUse = certs.find((cert) => cert.kid === payload.header.kid);
-      if (empty(certToUse)) {
+      if (!certToUse) {
         return [
           new Error(
             "[googleAuth.getCertForToken] Failed to find cert to use for verification"
@@ -113,7 +112,7 @@ export const googleAuth = {
 
       const certToUse = certs.find((cert) => cert.kid === payload.header.kid);
 
-      if (empty(certToUse)) {
+      if (!certToUse) {
         throw new Error(
           "[googleAuth.getCertForToken] Failed to find cert to use for verification"
         );
@@ -136,7 +135,7 @@ export const googleAuth = {
    * @returns {Promise<boolean>}
    */
   async verifyToken(token) {
-    if (empty(token)) {
+    if (!token) {
       return false;
     }
 

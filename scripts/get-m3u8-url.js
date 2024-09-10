@@ -1,11 +1,10 @@
 import { ENV_KEYS } from "../const.js";
 import { twitchPlaylist } from "../modules/twitch-playlist.js";
 import { env } from "../utils/env.js";
-import { empty } from "../utils/utils.js";
 
 const [, , login] = process.argv;
 
-if (empty(login)) {
+if (!login) {
   console.log("login not provided");
   console.error("Usage: SCRIPT <login>");
   process.exit(1);

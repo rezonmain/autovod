@@ -1,7 +1,6 @@
 /** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream, YTTransitionBroadcastOptions, YTListBroadcastsOptions } from '../jsdoc.types.js' */
 import { BROADCAST_DEFAULT_BODY, YT_API_URLS } from "../const.js";
 import { eventLog } from "./event-log.js";
-import { empty } from "../utils/utils.js";
 
 export const ytApi = {
   /**
@@ -38,7 +37,7 @@ export const ytApi = {
 
       const data = await response.json();
 
-      if (empty(data?.items)) {
+      if (!data?.items.length) {
         throw new Error("No streams found");
       }
 

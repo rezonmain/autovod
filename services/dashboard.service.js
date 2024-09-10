@@ -9,7 +9,6 @@ import {
 } from "../const.js";
 import { eventLog } from "../modules/event-log.js";
 import { log } from "../modules/log.js";
-import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
 import { eventsRepository } from "../repositories/events.repository.js";
 import { YTStreamManager } from "../modules/youtube-stream-manager.js";
@@ -160,14 +159,14 @@ export const dashboardService = {
   async handleAuthRedirect(req, res) {
     const { code, state, error = "" } = req.query;
 
-    if (!empty(error)) {
+    if (error) {
       log.error(
         `[dashboardService.handleAuthRedirect] Google OAuth error: ${error}`
       );
       return res.send("Google OAuth error").status(204);
     }
 
-    if (empty(state)) {
+    if (!state.length) {
       log.error(
         "[dashboardService.handleAuthRedirect] Missing state in query parameters"
       );
@@ -219,7 +218,7 @@ export const dashboardService = {
 
       const payload = jwt.decode(id_token);
 
-      if (empty(payload.email)) {
+      if (!payload.email) {
         return res.sendStatus(401);
       }
 

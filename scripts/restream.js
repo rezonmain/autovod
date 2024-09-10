@@ -4,12 +4,11 @@ import { TwitchApi } from "../modules/twitch-api.js";
 import { YTStreamManager } from "../modules/youtube-stream-manager.js";
 import { twitchAuth } from "../modules/twitch-auth.js";
 import { env } from "../utils/env.js";
-import { empty } from "../utils/utils.js";
 import { callbackGoogleController } from "../controllers/callback-google.controller.js";
 
 const [, , login] = process.argv;
 
-if (empty(login)) {
+if (!login) {
   console.log("login not provided");
   console.error("Usage: SCRIPT <login> <streamKey>");
   process.exit(1);

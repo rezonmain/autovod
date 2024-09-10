@@ -1,6 +1,5 @@
 import { TwitchApi } from "../modules/twitch-api.js";
 import { twitchAuth } from "../modules/twitch-auth.js";
-import { empty } from "../utils/utils.js";
 
 const SUPPORTED = ["stream.online", "stream.offline"];
 const printUsage = () =>
@@ -14,7 +13,7 @@ if (SUPPORTED.indexOf(subscriptionType) === -1) {
   process.exit(1);
 }
 
-if (empty(channelId)) {
+if (!channelId) {
   console.error("No channel ID provided");
   printUsage();
   process.exit(1);
