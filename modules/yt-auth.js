@@ -12,7 +12,6 @@ import { eventBus } from "./event-bus.js";
 import { store } from "./store.js";
 import { Telegram } from "./telegram.js";
 import { fileCache } from "./file-cache.js";
-import { empty } from "../utils/utils.js";
 import { env } from "../utils/env.js";
 
 export const ytAuth = {
@@ -52,20 +51,18 @@ export const ytAuth = {
    * @returns {Promise<[Error, string]>}
    */
   getAccessToken: async () => {
-    const [accessTokenErrorReason, token] = fileCache.get(CACHE_KEYS.YT_ACCESS);
-    const [refreshTokenErrorReason, refreshToken] = fileCache.get(
-      CACHE_KEYS.YT_REFRESH
-    );
+    const [accessTokenError, token] = fileCache.get(CACHE_KEYS.YT_ACCESS);
 
-    if (empty(accessTokenErrorReason)) {
+    if (accessTokenError === null) {
       // cache hit, return the access token
       return [null, token[0]];
     }
 
-    if (
-      accessTokenErrorReason === "NO_DATA" &&
-      !empty(refreshTokenErrorReason)
-    ) {
+    const [refreshTokenError, refreshToken] = fileCache.get(
+      CACHE_KEYS.YT_REFRESH
+    );
+
+    if (accessTokenError && refreshTokenError) {
       // no data in cache, prompt user for authorization
       try {
         const accessToken = await ytAuth.promptUserForAuthorization();
@@ -75,33 +72,36 @@ export const ytAuth = {
       }
     }
 
-    // -> access token has expired
+    if (accessTokenError && !refreshTokenError) {
+      // access token is expired, but refresh token is available
+      const [refreshAccessTokenError, payload] =
+        await ytAuth.refreshAccessToken(refreshToken[0]);
 
-    if (!empty(refreshTokenErrorReason)) {
-      // no refresh token, prompt user for authorization
-      try {
-        const accessToken = await ytAuth.promptUserForAuthorization();
-        return [null, accessToken];
-      } catch (error) {
-        return [error, null];
+      if (refreshAccessTokenError) {
+        // refresh token has expired for some reason
+        try {
+          const accessToken = await ytAuth.promptUserForAuthorization();
+          return [null, accessToken];
+        } catch (error) {
+          return [error, null];
+        }
       }
+
+      log.info("[ytAuth.getAccessToken] Refreshed access token");
+
+      const ttl = Date.now() + payload.expires_in * 1000;
+      ytAuth._setAccessToken(ttl, payload.access_token);
+
+      return [null, payload.access_token];
     }
 
-    // -> refresh token is available, get new access token with it
-
-    const [refreshTokenError, payload] = await ytAuth.refreshAccessToken(
-      refreshToken[0]
-    );
-    if (refreshTokenError) {
-      return [refreshTokenError, null];
+    // refresh token has expired for some reason
+    try {
+      const accessToken = await ytAuth.promptUserForAuthorization();
+      return [null, accessToken];
+    } catch (error) {
+      return [error, null];
     }
-
-    log.info("[ytAuth.getAccessToken] Refreshed access token");
-
-    const ttl = Date.now() + payload.expires_in * 1000;
-    ytAuth._setAccessToken(ttl, payload.access_token);
-
-    return [null, payload.access_token];
   },
 
   _setAccessToken: (ttl, accessToken) => {
@@ -132,7 +132,10 @@ export const ytAuth = {
 
       if (!response.ok) {
         const json = await response.json();
-        throw new Error(json);
+        throw new Error(
+          "[yt-auth.refreshAccessToken] Error refreshing token: " +
+            JSON.stringify(json)
+        );
       }
 
       return [null, await response.json()];

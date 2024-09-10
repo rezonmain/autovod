@@ -189,7 +189,7 @@ export class YTStreamManager {
 
     const destinationUrl = format(YT_HLS_INGEST_URL, ytStreamKey);
 
-    log.info(
+    log.log(
       `[YTStreamManager.restreamToYt] Starting restream for ${login} using streamKey: ${ytStreamKey}`
     );
 
@@ -216,27 +216,36 @@ export class YTStreamManager {
       sourceUrl,
       destinationUrl,
       onExit: async (code) => {
-        log.info(
+        log.log(
           `[YTStreamManager.restreamToYt] Restream for ${login} ended with code: ${code}`
         );
-        if (code === FFMPEG_EXIT_CODES.UNEXPECTED_EXIT) {
-          eventLog.log(
-            `[YTStreamManager.restreamToYt.OnExit] Restarting restream for ${login} due to unexpected exit`
-          );
-          return this._spawnRestreamProcess(
-            sourceUrl,
-            destinationUrl,
-            login,
-            stream
-          );
+
+        if (
+          [
+            FFMPEG_EXIT_CODES.STOPPED_BY_AUTOVOD,
+            FFMPEG_EXIT_CODES.SUCCESS,
+          ].includes(code)
+        ) {
+          const streamEndError = await this.handleStreamEnd(stream, login);
+          if (streamEndError) {
+            log.error(
+              "[YTStreamManager.restreamToYt.OnExit] Error handling stream end",
+              streamEndError
+            );
+          }
+          return;
         }
-        const streamEndError = await this.handleStreamEnd(stream, login);
-        if (streamEndError) {
-          log.error(
-            "[YTStreamManager.restreamToYt.OnExit] Error handling stream end",
-            streamEndError
-          );
-        }
+
+        eventLog.log(
+          `[YTStreamManager.restreamToYt.OnExit] Restarting restream for ${login} due to unexpected exit`,
+          "info"
+        );
+        return this._spawnRestreamProcess(
+          sourceUrl,
+          destinationUrl,
+          login,
+          stream
+        );
       },
     });
   }
