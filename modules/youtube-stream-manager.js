@@ -35,7 +35,7 @@ export class YTStreamManager {
   /**
    * @type {YTStreamManager}
    */
-  _instance = null;
+  _instance;
 
   constructor() {
     this.streams = new Set();
@@ -48,7 +48,7 @@ export class YTStreamManager {
    * @returns {YTStreamManager}
    */
   static getInstance() {
-    if (this._instance === null) {
+    if (!this._instance) {
       this._instance = new YTStreamManager();
     }
     return this._instance;

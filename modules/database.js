@@ -22,7 +22,7 @@ export class Database {
    * @returns {Database}
    */
   static getInstance() {
-    if (this._instance == null) {
+    if (!this._instance) {
       this._instance = new Database();
     }
     return this._instance;

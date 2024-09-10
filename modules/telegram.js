@@ -43,7 +43,7 @@ class Telegram {
    * @returns {Telegram}
    */
   static getInstance() {
-    if (this._instance === null) {
+    if (!this._instance) {
       this._instance = new Telegram();
     }
     return this._instance;
