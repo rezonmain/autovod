@@ -52,14 +52,15 @@ export const ytAuth = {
    */
   getAccessToken: async () => {
     const [accessTokenError, token] = fileCache.get(CACHE_KEYS.YT_ACCESS);
-    const [refreshTokenError, refreshToken] = fileCache.get(
-      CACHE_KEYS.YT_REFRESH
-    );
 
     if (accessTokenError === null) {
       // cache hit, return the access token
       return [null, token[0]];
     }
+
+    const [refreshTokenError, refreshToken] = fileCache.get(
+      CACHE_KEYS.YT_REFRESH
+    );
 
     if (accessTokenError && refreshTokenError) {
       // no data in cache, prompt user for authorization
