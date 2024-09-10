@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "node:path";
 import crypto from "crypto";
-import { empty } from "../utils/utils.js";
 import { log } from "./log.js";
 const SEPARATOR = "";
 const EXTENSION = "che";
@@ -33,7 +32,7 @@ export const fileCache = {
     const hash = fileCache._hash(key);
     const encodedData = fileCache._read(hash);
 
-    if (empty(encodedData)) {
+    if (!encodedData) {
       log.info(`[Cache MISS] NO_DATA | key: ${key} | hash: ${hash}`);
       return ["NO_DATA", null];
     }
