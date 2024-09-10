@@ -1,7 +1,6 @@
 import { Bot } from "grammy";
 import { ENV_KEYS } from "../const.js";
 import { env } from "../utils/env.js";
-import { nil } from "../utils/utils.js";
 import { log } from "./log.js";
 import { eventLog } from "./event-log.js";
 
@@ -44,7 +43,7 @@ class Telegram {
    * @returns {Telegram}
    */
   static getInstance() {
-    if (nil(this._instance)) {
+    if (this._instance === null) {
       this._instance = new Telegram();
     }
     return this._instance;

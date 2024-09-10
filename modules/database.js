@@ -1,7 +1,6 @@
 /** @import { StatementSync } from '../jsdoc.types'; */
 import { DatabaseSync } from "node:sqlite";
 import path from "node:path";
-import { nil } from "../utils/utils.js";
 
 const DIRNAME = process.cwd();
 const DB_PATH = path.resolve(DIRNAME, path.join("data", "db", "db.sqlite"));
@@ -23,14 +22,14 @@ export class Database {
    * @returns {Database}
    */
   static getInstance() {
-    if (nil(this._instance)) {
+    if (this._instance == null) {
       this._instance = new Database();
     }
     return this._instance;
   }
 
   init() {
-    if (nil(this.conn)) {
+    if (this.conn === null) {
       this.conn = new DatabaseSync(DB_PATH);
     }
   }
@@ -42,7 +41,7 @@ export class Database {
    */
   exec(sql) {
     try {
-      if (nil(this.conn)) {
+      if (this.conn === null) {
         throw new Error("[Database] Database not initialized");
       }
       return this.conn.exec(sql);
@@ -60,7 +59,7 @@ export class Database {
   }
 
   close() {
-    if (nil(this.conn)) {
+    if (this.conn === null) {
       return;
     }
     this.conn.close();

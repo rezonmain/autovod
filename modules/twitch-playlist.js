@@ -5,7 +5,6 @@ import {
   TWITCH_PUBLIC_CLIENT_ID,
 } from "../const.js";
 import { env } from "../utils/env.js";
-import { nil } from "../utils/utils.js";
 /**
  * @typedef {Object} PlaybackAccessToken
  * @property {string} value
@@ -46,7 +45,7 @@ export const twitchPlaylist = {
       "Content-Type": "application/json",
     };
 
-    if (!nil(personalOAuthToken)) {
+    if (personalOAuthToken) {
       headers["Authorization"] = `OAuth ${personalOAuthToken}`;
     }
 
