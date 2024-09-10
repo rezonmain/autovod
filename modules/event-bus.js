@@ -1,6 +1,5 @@
 /** @import { ApplicationEventType } from '../jsdoc.types' */
 import crypto from "node:crypto";
-import { empty } from "../utils/utils.js";
 
 const subscriptions = {};
 
@@ -17,7 +16,7 @@ export const eventBus = {
       .update(crypto.randomBytes(4))
       .digest("hex");
 
-    if (empty(subscriptions[eventType])) {
+    if (!subscriptions[eventType]) {
       subscriptions[eventType] = {};
     }
 
@@ -25,7 +24,7 @@ export const eventBus = {
 
     return () => {
       delete subscriptions[eventType][id];
-      if (empty(subscriptions[eventType])) {
+      if (!subscriptions[eventType]) {
         delete subscriptions[eventType];
       }
     };
@@ -38,7 +37,7 @@ export const eventBus = {
    * @returns
    */
   publish(eventType, ...args) {
-    if (empty(subscriptions[eventType])) {
+    if (!subscriptions[eventType]) {
       return;
     }
 
