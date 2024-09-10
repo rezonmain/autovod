@@ -76,8 +76,15 @@ export const ytAuth = {
       // access token is expired, but refresh token is available
       const [refreshAccessTokenError, payload] =
         await ytAuth.refreshAccessToken(refreshToken[0]);
+
       if (refreshAccessTokenError) {
-        return [refreshAccessTokenError, null];
+        // refresh token has expired for some reason
+        try {
+          const accessToken = await ytAuth.promptUserForAuthorization();
+          return [null, accessToken];
+        } catch (error) {
+          return [error, null];
+        }
       }
 
       log.info("[ytAuth.getAccessToken] Refreshed access token");
