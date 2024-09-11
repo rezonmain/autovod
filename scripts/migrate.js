@@ -14,7 +14,7 @@ async function migrate() {
 
   const migrationFiles = await readdir(MIGRATIONS_PATH);
 
-  if (!migrationFiles.length) {
+  if (!migrationFiles?.length) {
     console.log("[migrate] No migration files found");
     return;
   }

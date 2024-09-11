@@ -166,7 +166,7 @@ export const dashboardService = {
       return res.send("Google OAuth error").status(204);
     }
 
-    if (!state.length) {
+    if (!state?.length) {
       log.error(
         "[dashboardService.handleAuthRedirect] Missing state in query parameters"
       );

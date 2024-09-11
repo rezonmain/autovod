@@ -37,7 +37,7 @@ export const ytApi = {
 
       const data = await response.json();
 
-      if (!data?.items.length) {
+      if (!data?.items?.length) {
         throw new Error("No streams found");
       }
 

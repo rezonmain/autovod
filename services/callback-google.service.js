@@ -24,7 +24,7 @@ async function handleAuthRedirect(req, res) {
     return;
   }
 
-  if (!state.length) {
+  if (!state?.length) {
     log.error("[handleAuthRedirect] Missing state in query parameters");
     res.sendStatus(400);
     return;
@@ -38,7 +38,7 @@ async function handleAuthRedirect(req, res) {
   // delete the generated state after use, avoids replay attacks
   store.delete(APPLICATION_STORE_KEYS.GOOGLE_AUTH_STATE);
 
-  if (!code.length) {
+  if (!code?.length) {
     log.error("[handleAuthRedirect] Missing code in query parameters");
     res.sendStatus(400);
     return;
