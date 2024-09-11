@@ -97,8 +97,8 @@ async function handleAuthRedirect(req, res) {
  */
 async function handleGetEventSubVerification(req, res) {
   log.log("Received GET request for event subscription verification");
-  log.log(req.method, req.url, req.query);
-  return res.send(200);
+  console.log(req.method, req.url, req.query);
+  return res.sendStatus(200);
 }
 
 /**
