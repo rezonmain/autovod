@@ -144,7 +144,7 @@ export class TwitchApi {
       (sub) => sub.condition.broadcaster_user_id
     );
 
-    if (!broadcasterIds.length) {
+    if (!broadcasterIds?.length) {
       return [null, []];
     }
 
