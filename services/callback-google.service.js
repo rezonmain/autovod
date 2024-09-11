@@ -91,6 +91,16 @@ async function handleAuthRedirect(req, res) {
   }
 }
 
+/**
+ * @param {ExpressRequest} req
+ * @param {ExpressResponse} res
+ */
+async function handleEventSub(req, res) {
+  console.log(req.body, res);
+  return res.send("yey!");
+}
+
 export const callbackGoogleService = {
   handleAuthRedirect,
+  handleEventSub,
 };
