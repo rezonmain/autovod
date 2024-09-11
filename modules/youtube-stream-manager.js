@@ -283,6 +283,7 @@ export class YTStreamManager {
         part: ["status"],
       },
       {
+        id: videoId,
         status: {
           privacyStatus: "public",
         },
