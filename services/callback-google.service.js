@@ -95,6 +95,16 @@ async function handleAuthRedirect(req, res) {
  * @param {ExpressRequest} req
  * @param {ExpressResponse} res
  */
+async function handleGetEventSubVerification(req, res) {
+  log.log("Received GET request for event subscription verification");
+  log.log(req.method, req.url, req.query);
+  return res.send(200);
+}
+
+/**
+ * @param {ExpressRequest} req
+ * @param {ExpressResponse} res
+ */
 async function handleEventSub(req, res) {
   console.log(req.body, res);
   return res.send("yey!");
@@ -103,4 +113,5 @@ async function handleEventSub(req, res) {
 export const callbackGoogleService = {
   handleAuthRedirect,
   handleEventSub,
+  handleGetEventSubVerification,
 };
