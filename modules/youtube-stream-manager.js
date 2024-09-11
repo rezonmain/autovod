@@ -293,6 +293,10 @@ export class YTStreamManager {
       return updateVideoError;
     }
 
+    log.info(
+      `[YTStreamManager.handleStreamEnd] Set ${login} broadcast privacy status to Public`
+    );
+
     // revalidate available streams after we ended a broadcast
     const [loadStreamsError] = await this.loadAvailableStreams();
     if (loadStreamsError) {
