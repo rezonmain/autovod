@@ -13,6 +13,7 @@ import { getDateForSteamTitle } from "../utils/dates.js";
 import { log } from "./log.js";
 import { twitchPlaylist } from "./twitch-playlist.js";
 import { eventLog } from "./event-log.js";
+import { Telegram } from "./telegram.js";
 
 const SEPARATOR = "";
 
@@ -230,6 +231,16 @@ export class YTStreamManager {
             log.error(
               `[YTStreamManager.restreamToYt.OnExit] Error handling stream end for ${login}: ${streamEndError.message}`
             );
+            try {
+              const telegram = Telegram.getInstance();
+              telegram.sendMessage(
+                `❌ Error handling stream end for ${login} ❌`
+              );
+            } catch {
+              log.error(
+                `[YTStreamManager.restreamToYt.OnExit] Error sending telegram message`
+              );
+            }
           }
           return;
         }
