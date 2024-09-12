@@ -1,4 +1,4 @@
-/** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream, YTTransitionBroadcastOptions, YTListBroadcastsOptions } from '../jsdoc.types.js' */
+/** @import { YTGetStreamsOptions, YTInsertBroadcastBody, YTInsertBroadcastOptions, YTBroadcast, YTStream, YTTransitionBroadcastOptions, YTListBroadcastsOptions, YTUpdateVideoOptions, YTUpdateVideoBody, YTVideo } from '../jsdoc.types.js' */
 import { BROADCAST_DEFAULT_BODY, YT_API_URLS } from "../const.js";
 import { eventLog } from "./event-log.js";
 
@@ -227,6 +227,53 @@ export const ytApi = {
       const data = await response.json();
 
       return [null, data.items];
+    } catch (error) {
+      return [error, null];
+    }
+  },
+
+  /**
+   *
+   * @param {string} accessToken
+   * @param {YTUpdateVideoOptions} options
+   * @param {YTUpdateVideoBody} body
+   * @returns {Promise<[Error, YTVideo]>}
+   *
+   */
+  async updateVideo(accessToken, options, body) {
+    const url = new URL(YT_API_URLS.VIDEOS);
+    const queryParams = new URLSearchParams({
+      ...options,
+      part: options.part.join(","),
+    });
+    url.search = queryParams.toString();
+
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const responseBody = await response.json();
+        eventLog.log("[ytApi.updateVideo] Failed to update video", "error", {
+          responseJson: JSON.stringify(responseBody),
+          responseCode: response.status,
+          responseText: response.statusText,
+          requestBody: JSON.stringify(body),
+          queryParams: queryParams.toString(),
+        });
+        throw new Error(JSON.stringify(responseBody));
+      }
+
+      const data = await response.json();
+
+      return [null, data];
     } catch (error) {
       return [error, null];
     }

@@ -166,6 +166,67 @@
  */
 
 /**
+ * @typedef {Object} YTUpdateVideoOptions
+ * @property {("id" | "snippet" | "contentDetails" | "status" | "fileDetails" | "liveStreamingDetails" | "localizations" | "player" | "processingDetails")[]} part
+ */
+
+/**
+ * @typedef {Object} YTUpdateVideoBody
+ * @property {string} id
+ * @property {Object} snippet
+ * @property {string} snippet.title
+ * @property {string} snippet.categoryId
+ * @property {string} snippet.defaultLanguage
+ * @property {string} snippet.description
+ * @property {string[]} snippet.tags
+ * @property {Object} status
+ * @property {boolean} status.embeddable
+ * @property {string} status.license
+ * @property {string} status.privacyStatus
+ * @property {boolean} status.publicStatsViewable
+ * @property {string} status.privacyStatus
+ * @property {boolean} status.selfDeclaredMadeForKids
+ *
+ */
+
+/**
+ * @typedef {Object} YTVideo
+ *  @property {string} kind
+ * @property {string} etag
+ * @property {string} id
+ * @property {Object} snippet
+ * @property {string} snippet.publishedAt
+ * @property {string} snippet.channelId
+ * @property {string} snippet.title
+ * @property {string} snippet.description
+ * @property {Object[]} snippet.thumbnails
+ * @property {string} snippet.thumbnails.url
+ * @property {number} snippet.thumbnails.width
+ * @property {number} snippet.thumbnails.height
+ * @property {string} snippet.channelTitle
+ * @property {string[]} snippet.tags
+ * @property {string} snippet.categoryId
+ * @property {string} snippet.liveBroadcastContent
+ * @property {string} snippet.defaultLanguage
+ * @property {Object} status
+ * @property {string} status.uploadStatus
+ * @property {string} status.failureReason
+ * @property {string} status.rejectionReason
+ * @property {string} status.privacyStatus
+ * @property {boolean} status.publishAt
+ * @property {string} status.license
+ * @property {boolean} status.embeddable
+ * @property {boolean} status.selfDeclaredMadeForKids
+ * @property {boolean} status.madeForKids
+ * @property {Object} contentDetails
+ * @property {string} contentDetails.duration
+ * @property {string} contentDetails.dimension
+ * @property {string} contentDetails.definition
+ * @property {string} contentDetails.caption
+ * @property {boolean} contentDetails.licensedContent
+ */
+
+/**
  * @typedef {'google-auth-redirect'} ApplicationEventType
  */
 

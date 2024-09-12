@@ -13,6 +13,7 @@ import { getDateForSteamTitle } from "../utils/dates.js";
 import { log } from "./log.js";
 import { twitchPlaylist } from "./twitch-playlist.js";
 import { eventLog } from "./event-log.js";
+import { Telegram } from "./telegram.js";
 
 const SEPARATOR = "";
 
@@ -228,9 +229,18 @@ export class YTStreamManager {
           const streamEndError = await this.handleStreamEnd(stream, login);
           if (streamEndError) {
             log.error(
-              "[YTStreamManager.restreamToYt.OnExit] Error handling stream end",
-              streamEndError
+              `[YTStreamManager.restreamToYt.OnExit] Error handling stream end for ${login}: ${streamEndError.message}`
             );
+            try {
+              const telegram = Telegram.getInstance();
+              telegram.sendMessage(
+                `❌ Error handling stream end for ${login} ❌`
+              );
+            } catch {
+              log.error(
+                `[YTStreamManager.restreamToYt.OnExit] Error sending telegram message`
+              );
+            }
           }
           return;
         }
@@ -261,8 +271,10 @@ export class YTStreamManager {
       return accessError;
     }
 
+    const videoId = this.scheduledBroadcasts.get(stream);
+
     const [transitionError] = await ytApi.transitionBroadcast(accessToken, {
-      id: this.scheduledBroadcasts.get(stream),
+      id: videoId,
       broadcastStatus: "complete",
       part: ["snippet"],
     });
@@ -275,13 +287,32 @@ export class YTStreamManager {
     log.info(
       `[YTStreamManager.handleStreamEnd] Transitioned broadcast for ${login} to Complete`
     );
+
+    const [updateVideoError] = await ytApi.updateVideo(
+      accessToken,
+      {
+        part: ["status"],
+      },
+      {
+        id: videoId,
+        status: {
+          privacyStatus: "public",
+        },
+      }
+    );
+    if (updateVideoError) {
+      return updateVideoError;
+    }
+
+    log.info(
+      `[YTStreamManager.handleStreamEnd] Set ${login} broadcast privacy status to Public`
+    );
+
     // revalidate available streams after we ended a broadcast
     const [loadStreamsError] = await this.loadAvailableStreams();
     if (loadStreamsError) {
       return loadStreamsError;
     }
-
-    // TODO: decide if we should make broadcast public ???
   }
 
   /**

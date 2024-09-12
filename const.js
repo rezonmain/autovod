@@ -58,6 +58,7 @@ export const YT_API_URLS = {
   BROADCAST_BIND: "https://www.googleapis.com/youtube/v3/liveBroadcasts/bind",
   STREAM: "https://www.googleapis.com/youtube/v3/liveStreams",
   TRANSITION: "https://www.googleapis.com/youtube/v3/liveBroadcasts/transition",
+  VIDEOS: "https://www.googleapis.com/youtube/v3/videos",
 };
 export const GOOGLE_API_SCOPES = {
   YT: "https://www.googleapis.com/auth/youtube",
