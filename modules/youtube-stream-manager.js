@@ -12,7 +12,6 @@ import { ytAuth } from "./yt-auth.js";
 import { getDateForSteamTitle } from "../utils/dates.js";
 import { log } from "./log.js";
 import { twitchPlaylist } from "./twitch-playlist.js";
-import { eventLog } from "./event-log.js";
 import { Telegram } from "./telegram.js";
 
 const SEPARATOR = "";
@@ -178,7 +177,6 @@ export class YTStreamManager {
 
     const [playbackTokenError, playbackToken] =
       await twitchPlaylist.getPlaybackAccessToken(login);
-
     if (playbackTokenError) {
       return playbackTokenError;
     }
@@ -245,16 +243,24 @@ export class YTStreamManager {
           return;
         }
 
-        eventLog.log(
-          `[YTStreamManager.restreamToYt.OnExit] Restarting restream for ${login} due to unexpected exit`,
-          "info"
+        this.logins.delete(login);
+        const [, ytStreamKey] = stream.split(SEPARATOR);
+
+        log.error(
+          `[YTStreamManager.restreamToYt.OnExit] Restream for ${login} exited with unexpected code: ${code}`
         );
-        return this._spawnRestreamProcess(
-          sourceUrl,
-          destinationUrl,
-          login,
-          stream
-        );
+
+        try {
+          const telegram = Telegram.getInstance();
+          telegram.sendMessage(
+            `❌ Restream for ${login} exited with unexpected code: ${code}, stream key in next message ❌`
+          );
+          telegram.sendMessage(`||${ytStreamKey}||`);
+        } catch {
+          log.error(
+            `[YTStreamManager.restreamToYt.OnExit] Error sending telegram message`
+          );
+        }
       },
     });
   }
