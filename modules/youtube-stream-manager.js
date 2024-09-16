@@ -13,6 +13,7 @@ import { getDateForSteamTitle } from "../utils/dates.js";
 import { log } from "./log.js";
 import { twitchPlaylist } from "./twitch-playlist.js";
 import { Telegram } from "./telegram.js";
+import { sanitizeTelegramMessage } from "../utils/telegram-sanitize.js";
 
 const SEPARATOR = "";
 
@@ -255,7 +256,7 @@ export class YTStreamManager {
           telegram.sendMessage(
             `❌ Restream for ${login} exited with unexpected code: ${code}, stream key in next message ❌`
           );
-          telegram.sendMessage(`||${ytStreamKey}||`);
+          telegram.sendMessage(`||${sanitizeTelegramMessage(ytStreamKey)}||`);
         } catch {
           log.error(
             `[YTStreamManager.restreamToYt.OnExit] Error sending telegram message`
