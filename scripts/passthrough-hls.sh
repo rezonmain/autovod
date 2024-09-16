@@ -3,7 +3,6 @@ ffmpeg -hide_banner \
       -loglevel quiet \
       -i "$2" \
       -map 0:v:0 -map 0:a:0 \
-      -readrate 1 \
       -c:v copy \
       -c:a copy \
       -f hls \
