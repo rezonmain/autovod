@@ -1,18 +1,18 @@
 const invalidChars = ["-"];
-
 /**
- *
- * @param {string} message
+ * @param {Object} params
+ * @param {string} params.message
  * @returns
  */
-export function sanitizeTelegramMessage(message) {
-  const sanitizedMessage = message.split("");
+export function sanitizeTelegramMessage({ message }) {
+  const charArray = message.split("");
 
-  for (let i = 0; i < sanitizedMessage.length; i++) {
-    if (invalidChars.includes(sanitizedMessage[i])) {
-      sanitizedMessage.splice(i, 0, "\\");
-    }
-  }
-
-  return sanitizedMessage.join();
+  return charArray
+    .map((char) => {
+      if (invalidChars.includes(char)) {
+        return `\\${char}`;
+      }
+      return char;
+    })
+    .join("");
 }
