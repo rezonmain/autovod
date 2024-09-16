@@ -253,8 +253,10 @@ export class YTStreamManager {
         try {
           const telegram = Telegram.getInstance();
           telegram.sendMessage(
-            `❌ Restream for ${login} exited with unexpected code: ${code} ❌`
+            `❌ Restream for ${login} exited with unexpected code: ${code}, stream key in following message ❌`
           );
+          const streamKey = stream.split(SEPARATOR)[1];
+          telegram.sendMessage(sanitizeTelegramMessage({ message: streamKey }));
         } catch {
           log.error(
             `[YTStreamManager.restreamToYt.OnExit] Error sending telegram message`
