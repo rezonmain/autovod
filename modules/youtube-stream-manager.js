@@ -248,7 +248,12 @@ export class YTStreamManager {
       log.error(
         `[YTStreamManager.handleRestreamProcessExit] Restream for ${login} exited with unexpected code: ${code} - stopping re-streaming after 3 attempts`
       );
-      return this.handleStreamEnd(stream, login);
+      const streamEndError = await this.handleStreamEnd(stream, login);
+      if (streamEndError) {
+        log.error(
+          `[YTStreamManager.handleRestreamProcessExit] Error handling stream end for ${login}: ${streamEndError.message}`
+        );
+      }
     }
 
     this.logins.delete(login);
