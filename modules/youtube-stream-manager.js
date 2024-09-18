@@ -258,7 +258,7 @@ export class YTStreamManager {
 
     this.restreamToYT(stream, login);
 
-    this._restreamCounters[login] = this._restreamCounters[login] + 1 || 1;
+    this._restreamCounters[login] = this._restreamCounters?.[login] + 1 || 1;
 
     setTimeout(() => {
       this._restreamCounters[login] = 0;
