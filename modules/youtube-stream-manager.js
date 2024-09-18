@@ -13,7 +13,6 @@ import { getDateForSteamTitle } from "../utils/dates.js";
 import { log } from "./log.js";
 import { twitchPlaylist } from "./twitch-playlist.js";
 import { Telegram } from "./telegram.js";
-import { sanitizeTelegramMessage } from "../utils/telegram-sanitize.js";
 
 const SEPARATOR = "";
 
@@ -37,6 +36,11 @@ export class YTStreamManager {
    * @type {YTStreamManager}
    */
   _instance;
+
+  /**
+   * @type {Object}
+   */
+  _restreamCounters;
 
   constructor() {
     this.streams = new Set();
@@ -192,78 +196,73 @@ export class YTStreamManager {
       `[YTStreamManager.restreamToYt] Starting restream for ${login} using streamKey: ${ytStreamKey}`
     );
 
-    const childProcess = await this._spawnRestreamProcess(
+    const childProcess = ffmpeg.passthroughHLS({
       sourceUrl,
       destinationUrl,
-      login,
-      stream
-    );
+      onExit: (code) => this.handleRestreamProcessExit({ code, login, stream }),
+    });
 
     this.logins.set(login, childProcess);
   }
 
   /**
    * @private
-   * @param {string} sourceUrl
-   * @param {string} destinationUrl
-   * @param {string} login
-   * @param {string} stream
+   * @param {object} options
+   * @param {number} options.code
+   * @param {string} options.login
+   * @param {string} options.stream
    */
+  async handleRestreamProcessExit({ code, login, stream }) {
+    log.log(
+      `[YTStreamManager.handleRestreamProcessExit] Restream for ${login} ended with code: ${code}`
+    );
 
-  async _spawnRestreamProcess(sourceUrl, destinationUrl, login, stream) {
-    return ffmpeg.passthroughHLS({
-      sourceUrl,
-      destinationUrl,
-      onExit: async (code) => {
-        log.log(
-          `[YTStreamManager.restreamToYt] Restream for ${login} ended with code: ${code}`
-        );
-
-        if (
-          [
-            FFMPEG_EXIT_CODES.STOPPED_BY_AUTOVOD,
-            FFMPEG_EXIT_CODES.SUCCESS,
-          ].includes(code)
-        ) {
-          const streamEndError = await this.handleStreamEnd(stream, login);
-          if (streamEndError) {
-            log.error(
-              `[YTStreamManager.restreamToYt.OnExit] Error handling stream end for ${login}: ${streamEndError.message}`
-            );
-            try {
-              const telegram = Telegram.getInstance();
-              telegram.sendMessage(
-                `❌ Error handling stream end for ${login} ❌`
-              );
-            } catch {
-              log.error(
-                `[YTStreamManager.restreamToYt.OnExit] Error sending telegram message`
-              );
-            }
-          }
-          return;
-        }
-
-        this.logins.delete(login);
-
+    if (
+      [
+        FFMPEG_EXIT_CODES.STOPPED_BY_AUTOVOD,
+        FFMPEG_EXIT_CODES.SUCCESS,
+      ].includes(code)
+    ) {
+      const streamEndError = await this.handleStreamEnd(stream, login);
+      if (streamEndError) {
         log.error(
-          `[YTStreamManager.restreamToYt.OnExit] Restream for ${login} exited with unexpected code: ${code}`
+          `[YTStreamManager.handleRestreamProcessExit] Error handling stream end for ${login}: ${streamEndError.message}`
         );
-
         try {
           const telegram = Telegram.getInstance();
-          telegram.sendMessage(
-            `❌ Restream for ${login} exited with unexpected code: ${code}, stream key in following message ❌`
-          );
-          const streamKey = stream.split(SEPARATOR)[1];
-          telegram.sendMessage(sanitizeTelegramMessage({ message: streamKey }));
+          telegram.sendMessage(`❌ Error handling stream end for ${login} ❌`);
         } catch {
           log.error(
-            `[YTStreamManager.restreamToYt.OnExit] Error sending telegram message`
+            `[YTStreamManager.handleRestreamProcessExit] Error sending telegram message`
           );
         }
-      },
-    });
+      }
+      return;
+    }
+
+    // handle unexpected exit codes
+
+    // if we have more than 3 unexpected exits in a minute, stop trying to re-stream
+    if (this._restreamCounters?.[login] >= 3) {
+      log.error(
+        `[YTStreamManager.handleRestreamProcessExit] Restream for ${login} exited with unexpected code: ${code} - stopping re-streaming after 3 attempts`
+      );
+      return this.handleStreamEnd(stream, login);
+    }
+
+    this.logins.delete(login);
+
+    log.error(
+      `[YTStreamManager.handleRestreamProcessExit] Restream for ${login} exited with unexpected code: ${code}`
+    );
+
+    this.restreamToYT(stream, login);
+
+    this._restreamCounters[login] = this._restreamCounters[login] + 1 || 1;
+
+    setTimeout(() => {
+      this._restreamCounters[login] = 0;
+    }, 1000 * 60);
   }
 
   /**
