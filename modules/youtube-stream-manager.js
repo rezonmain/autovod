@@ -46,6 +46,7 @@ export class YTStreamManager {
     this.streams = new Set();
     this.scheduledBroadcasts = new Map();
     this.logins = new Map();
+    this._restreamCounters = {};
   }
 
   /**
